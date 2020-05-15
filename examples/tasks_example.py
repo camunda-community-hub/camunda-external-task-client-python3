@@ -1,8 +1,8 @@
 import logging
+from datetime import datetime
 
 import time
 
-from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 
 
@@ -10,7 +10,7 @@ def main():
     configure_logging()
     ExternalTaskWorker(options={
         "maxTasks": 1,
-        "lockDuration": 60000,
+        "lockDuration": 10000,
         "asyncResponseTimeout": 5000,
         "retries": 3,
         "retryTimeout": 5000,
@@ -22,18 +22,20 @@ def configure_logging():
                         handlers=[logging.StreamHandler()])
 
 
-async def handleTask(task: ExternalTask):
-    print(f"handleTask() - {task}")
-    # error = random_true()
-    # bpmn_error = False if error else random_true()
-    error, bpmn_error = False, True
+async def handleTask(task):
+    logging.info(f"handleTask() - {task}")
+    failure = random_true()
+    bpmn_error = False if failure else random_true()
 
-    if error:
-        return task.failure("task failed", "failed task details", 0, 300000)
+    # override the values to simulate success/failure/BPMN error explicitly
+    failure, bpmn_error = False, False
+
+    if failure:
+        return task.failure("task failed", "failed task details", 3, 3000)
     elif bpmn_error:
         return task.bpmn_error("BPMN_ERROR_CODE")
 
-    return task.complete({})
+    return task.complete({"success": True, "task_completed_on": str(datetime.now())})
 
 
 def random_true():

@@ -40,12 +40,15 @@ class ExternalTaskWorker:
         logger.info(f"Stopping worker id={self.worker_id}")
 
     async def _execute_task(self, context, action):
-        task = ExternalTask(context)
-        topic = task.get_topic_name()
-        task_id = task.get_task_id()
-        self._log_with_context(f"External task found for Topic: {topic}", task_id=task_id)
-        task_result = await action(task)
-        await self._handle_task_result(task, task_result)
+        try:
+            task = ExternalTask(context)
+            topic = task.get_topic_name()
+            task_id = task.get_task_id()
+            self._log_with_context(f"External task found for Topic: {topic}", task_id=task_id)
+            task_result = await action(task)
+            await self._handle_task_result(task, task_result)
+        except Exception as e:
+            logger.error('error when executing task', exc_info=True)
 
     async def _handle_task_result(self, task, task_result):
         topic = task.get_topic_name()
@@ -54,6 +57,9 @@ class ExternalTaskWorker:
             self._log_with_context(f"Marking task complete for Topic: {topic}", task_id)
             if await self.client.complete(task_id, task_result.variables):
                 self._log_with_context(f"Marked task completed - Topic: {topic} "
+                                       f"variables: {task_result.variables}", task_id)
+            else:
+                self._log_with_context(f"Not able to mark task completed - Topic: {topic} "
                                        f"variables: {task_result.variables}", task_id)
         elif task_result.is_bpmn_error():
             bpmn_error_handled = await self.client.bpmn_failure(task_id, task_result.bpmn_error_code)

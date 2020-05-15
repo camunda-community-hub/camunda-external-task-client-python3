@@ -47,11 +47,11 @@ class EngineClient:
 
         body = {
             "workerId": self.worker_id,
-            "variables": variables,
-            "localVariables": {},
+            "variables": self.format(variables),
         }
 
         resp = req.post(url, headers=self._get_headers(), json=body)
+        resp.raise_for_status()
         return resp.status_code == 204
 
     async def failure(self, task_id, error_message, error_details, retries, retry_timeout):
