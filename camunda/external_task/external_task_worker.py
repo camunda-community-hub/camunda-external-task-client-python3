@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from camunda.client.engine_client import EngineClient
+from camunda.external_task.external_task import ExternalTask
 
 logger = logging.getLogger(__name__)
 
@@ -34,38 +35,35 @@ class ExternalTaskWorker:
                 self._log_with_context(f"No external tasks found for Topics: {topic_names}")
 
             for context in response.json():
-                topic = context["topicName"]
-                self._log_with_context(f"External task found for Topic: {topic}")
-                task_id = context["id"]
-                variables = await action(context)
-                is_error = variables.get("error", False)
-                is_bpmn_error = variables.get("bpmn_error", False)
-                formatted_variables = self.client.format(variables)
-
-                if not is_error and not is_bpmn_error:
-                    self._log_with_context(f"Marking task complete for Topic: {topic}", task_id)
-                    if await self.client.complete(task_id, formatted_variables):
-                        self._log_with_context(f"Marked task completed - Topic: {topic} "
-                                               f"variables: {variables} formatted_variables: {formatted_variables}",
-                                               task_id)
-                elif is_bpmn_error:
-                    bpmn_error_handled = await self.client.bpmn_failure(task_id, variables["errorCode"],
-                                                                        variables["errorMessage"],
-                                                                        formatted_variables)
-                    self._log_with_context(f"BPMN Error Handled: {bpmn_error_handled} Topic: {topic} "
-                                           f"variables: {variables} formatted_variables: {formatted_variables}")
-                elif is_error:
-                    err_msg = variables.get("errorMessage", "Task failed")
-                    err_details = variables.get("errorDetails", "Failed Task details")
-                    self._log_with_context(f"Marking task failed - Topic: {topic} "
-                                           f"variables: {variables} formatted_variables: {formatted_variables}",
-                                           task_id)
-                    if await self.client.failure(task_id, 0, err_msg, err_details):
-                        self._log_with_context(f"Marked task failed - Topic: {topic} "
-                                               f"variables: {variables} formatted_variables: {formatted_variables}",
-                                               task_id)
+                await self._execute_task(context, action)
 
         logger.info(f"Stopping worker id={self.worker_id}")
+
+    async def _execute_task(self, context, action):
+        task = ExternalTask(context)
+        topic = task.get_topic_name()
+        task_id = task.get_task_id()
+        self._log_with_context(f"External task found for Topic: {topic}", task_id=task_id)
+        task_result = await action(task)
+        await self._handle_task_result(task, task_result)
+
+    async def _handle_task_result(self, task, task_result):
+        topic = task.get_topic_name()
+        task_id = task.get_task_id()
+        if task_result.is_success():
+            self._log_with_context(f"Marking task complete for Topic: {topic}", task_id)
+            if await self.client.complete(task_id, task_result.variables):
+                self._log_with_context(f"Marked task completed - Topic: {topic} "
+                                       f"variables: {task_result.variables}", task_id)
+        elif task_result.is_bpmn_error():
+            bpmn_error_handled = await self.client.bpmn_failure(task_id, task_result.bpmn_error_code)
+            self._log_with_context(f"BPMN Error Handled: {bpmn_error_handled} "
+                                   f"Topic: {topic} task_result: {task_result}")
+        elif task_result.is_failure():
+            self._log_with_context(f"Marking task failed - Topic: {topic} task_result: {task_result}", task_id)
+            if await self.client.failure(task_id, task_result.error_message, task_result.error_details,
+                                         task_result.retries, task_result.retry_timeout):
+                self._log_with_context(f"Marked task failed - Topic: {topic} task_result: {task_result}", task_id)
 
     def _log_with_context(self, msg, task_id=None):
         if task_id:
