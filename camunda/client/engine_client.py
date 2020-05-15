@@ -54,14 +54,14 @@ class EngineClient:
         resp = req.post(url, headers=self._get_headers(), json=body)
         return resp.status_code == 204
 
-    async def failure(self, task_id, retries, error_message, error_details):
+    async def failure(self, task_id, error_message, error_details, retries, retry_timeout):
         url = f"{self.base_url}/{task_id}/failure"
         logger.info(f"setting retries to: {retries} for task: {task_id}")
         body = {
             "workerId": self.worker_id,
             "errorMessage": error_message,
             "retries": retries,
-            "retryTimeout": self.options["retryTimeout"],
+            "retryTimeout": retry_timeout,
         }
         if error_details:
             body["errorDetails"] = error_details
@@ -69,14 +69,12 @@ class EngineClient:
         resp = req.post(url, headers=self._get_headers(), json=body)
         return resp.status_code == 204
 
-    async def bpmn_failure(self, id, error_code, error_message, variables):
-        url = f"{self.base_url}/{id}/bpmnError"
+    async def bpmn_failure(self, task_id, error_code):
+        url = f"{self.base_url}/{task_id}/bpmnError"
 
         body = {
             "workerId": self.worker_id,
             "errorCode": error_code,
-            "errorMessage": error_message,
-            "variables": variables,
         }
 
         resp = req.post(url, headers=self._get_headers(), json=body)
