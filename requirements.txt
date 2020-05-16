@@ -1,1 +1,2 @@
 aiohttp-requests==0.1.2
+pytest==5.4.2

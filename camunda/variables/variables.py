@@ -19,7 +19,10 @@ class Variables:
             ->
             {"var1": {"value": 1}, "var2": {"value": True}}
         """
-        return {k: {"value": v} for k, v in variables.items()}
+        formatted_vars = {}
+        if variables:
+            formatted_vars = {k: {"value": v} for k, v in variables.items()}
+        return formatted_vars
 
     def to_dict(self):
         """
