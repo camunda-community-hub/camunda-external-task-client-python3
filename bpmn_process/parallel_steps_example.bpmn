@@ -29,7 +29,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0f0en1z" sourceRef="COMBINE_STEP" targetRef="EndEvent_1" />
     <bpmn:sequenceFlow id="Flow_17mik9x" sourceRef="PARALLEL_STEP_1" targetRef="Gateway_10oa4v7" />
-    <bpmn:parallelGateway id="Gateway_10oa4v7" camunda:asyncBefore="true">
+    <bpmn:parallelGateway id="Gateway_10oa4v7" camunda:asyncAfter="true">
       <bpmn:incoming>Flow_17mik9x</bpmn:incoming>
       <bpmn:incoming>Flow_1qhzcn4</bpmn:incoming>
       <bpmn:outgoing>Flow_1j9z2co</bpmn:outgoing>
