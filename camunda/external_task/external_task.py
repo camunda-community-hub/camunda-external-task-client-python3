@@ -5,7 +5,7 @@ class ExternalTask:
 
     def __init__(self, context):
         self._context = context
-        self._local_variables = Variables(context["variables"])
+        self._local_variables = Variables(context.get("variables", {}))
         self._task_result = TaskResult.empty_task_result(task=self)
 
     def get_worker_id(self):
@@ -23,6 +23,9 @@ class ExternalTask:
     def get_tenant_id(self):
         return self._context.get("tenantId", None)
 
+    def get_task_result(self):
+        return self._task_result
+
     def complete(self, variables):
         self._task_result = TaskResult.success(self, variables)
         return self._task_result
@@ -34,7 +37,7 @@ class ExternalTask:
         return self._task_result
 
     def _calculate_retries(self, max_retries):
-        retries = self._context["retries"]
+        retries = self._context.get("retries", None)
         retries = int(retries - 1) if retries and retries >= 1 else max_retries
         return retries
 
@@ -80,7 +83,7 @@ class TaskResult:
         return self.success and self.bpmn_error_code is None and self.error_message is None
 
     def is_failure(self):
-        return not self.success and self.error_message
+        return not self.success and self.error_message is not None
 
     def is_bpmn_error(self):
         return not self.success and self.bpmn_error_code
