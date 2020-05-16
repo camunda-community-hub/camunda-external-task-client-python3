@@ -18,7 +18,8 @@ class ExternalTaskExecutor:
             task_result = await action(task)
             await self._handle_task_result(task_result)
         except Exception as e:
-            logger.error('error when executing task', exc_info=True)
+            self._log_with_context(f'error when executing task: topic={task.get_topic_name()}',
+                                   task_id=task.get_task_id(), log_level='error', exc_info=True)
 
     async def _handle_task_result(self, task_result):
         task = task_result.get_task()
@@ -53,6 +54,6 @@ class ExternalTaskExecutor:
         self._log_with_context(f"BPMN Error Handled: {bpmn_error_handled} "
                                f"Topic: {topic} task_result: {task_result}")
 
-    def _log_with_context(self, msg, task_id=None, log_level='info'):
+    def _log_with_context(self, msg, task_id=None, log_level='info', **kwargs):
         context = {"WORKER_ID": self.worker_id, "TASK_ID": task_id}
-        log_with_context(msg, context=context, log_level=log_level)
+        log_with_context(msg, context=context, log_level=log_level, **kwargs)
