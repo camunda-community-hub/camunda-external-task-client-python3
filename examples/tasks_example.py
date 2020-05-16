@@ -8,7 +8,7 @@ from camunda.external_task.external_task_worker import ExternalTaskWorker
 
 def main():
     configure_logging()
-    ExternalTaskWorker(options={
+    ExternalTaskWorker(config={
         "maxTasks": 1,
         "lockDuration": 10000,
         "asyncResponseTimeout": 5000,
@@ -28,7 +28,7 @@ async def handleTask(task):
     bpmn_error = False if failure else random_true()
 
     # override the values to simulate success/failure/BPMN error explicitly
-    failure, bpmn_error = False, False
+    # failure, bpmn_error = False, False
 
     if failure:
         return task.failure("task failed", "failed task details", 3, 3000)

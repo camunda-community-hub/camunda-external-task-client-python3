@@ -85,6 +85,9 @@ class TaskResult:
     def is_bpmn_error(self):
         return not self.success and self.bpmn_error_code
 
+    def get_task(self):
+        return self.task
+
     def __str__(self):
         if self.is_success():
             return f"success: task_id={self.task.get_task_id()}, variable={self.variables}"
