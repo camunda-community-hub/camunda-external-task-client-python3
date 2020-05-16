@@ -20,7 +20,7 @@
       <bpmn:incoming>Flow_058ezjl</bpmn:incoming>
       <bpmn:outgoing>Flow_1qhzcn4</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="COMBINE_STEP" name="Combine Step" camunda:type="external" camunda:topic="COMBINE_STEP">
+    <bpmn:serviceTask id="COMBINE_STEP" name="Combine Step" camunda:asyncAfter="true" camunda:type="external" camunda:topic="COMBINE_STEP">
       <bpmn:incoming>Flow_1j9z2co</bpmn:incoming>
       <bpmn:outgoing>Flow_0f0en1z</bpmn:outgoing>
     </bpmn:serviceTask>
