@@ -25,11 +25,11 @@ class ExternalTaskWorker:
 
     async def subscribe(self, topic_names, action):
         while True:
-            await self._fetch_and_execute(action, topic_names)
+            await self._fetch_and_execute(topic_names, action)
 
         self._log_with_context("Stopping worker")
 
-    async def _fetch_and_execute(self, action, topic_names):
+    async def _fetch_and_execute(self, topic_names, action):
         response = await self._fetch_and_lock(topic_names)
         resp_json = response and await response.json()
         if resp_json:

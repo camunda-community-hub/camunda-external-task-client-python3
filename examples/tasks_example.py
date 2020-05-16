@@ -53,8 +53,8 @@ async def handle_task(task: ExternalTask):
 
     # override the values to simulate success/failure/BPMN error explicitly
     # failure, bpmn_error = False, False
-    logger.info(
-        f"handleTask() - business logic executed for task: {task.get_task_id()}, failure: {failure}, bpmn_error: {bpmn_error}")
+    logger.info(f"handleTask() - business logic executed for task: {task.get_task_id()}, "
+                f"failure: {failure}, bpmn_error: {bpmn_error}")
 
     if failure:
         return task.failure("task failed", "failed task details", 3, 5000)
