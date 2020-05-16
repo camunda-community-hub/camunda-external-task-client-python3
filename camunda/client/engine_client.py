@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class EngineClient:
-    default_options = {
+    default_config = {
         "maxTasks": 1,
         "lockDuration": 120000,
         "asyncResponseTimeout": 5000,
@@ -16,19 +16,19 @@ class EngineClient:
         "retryTimeout": 300000,
     }
 
-    def __init__(self, worker_id, base_url, options={}):
-        self.base_url = base_url
+    def __init__(self, worker_id, base_url, config={}):
         self.worker_id = worker_id
-        self.options = type(self).default_options
-        self.options.update(options)
+        self.base_url = base_url
+        self.config = type(self).default_config
+        self.config.update(config)
 
     async def fetchAndLock(self, topic_names):
         url = self.base_url + "/fetchAndLock"
         body = {
             "workerId": self.worker_id,
-            "maxTasks": self.options["maxTasks"],
+            "maxTasks": self.config["maxTasks"],
             "topics": self._get_topics(topic_names),
-            "asyncResponseTimeout": self.options["asyncResponseTimeout"]
+            "asyncResponseTimeout": self.config["asyncResponseTimeout"]
         }
 
         return req.post(url, headers=self._get_headers(), json=body)
@@ -38,7 +38,7 @@ class EngineClient:
         for topic in str_to_list(topic_names):
             topics.append({
                 "topicName": topic,
-                "lockDuration": self.options["lockDuration"],
+                "lockDuration": self.config["lockDuration"],
             })
         return topics
 
@@ -47,11 +47,11 @@ class EngineClient:
 
         body = {
             "workerId": self.worker_id,
-            "variables": variables,
-            "localVariables": {},
+            "variables": self.format(variables),
         }
 
         resp = req.post(url, headers=self._get_headers(), json=body)
+        resp.raise_for_status()
         return resp.status_code == 204
 
     async def failure(self, task_id, error_message, error_details, retries, retry_timeout):

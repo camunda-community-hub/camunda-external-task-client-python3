@@ -27,10 +27,16 @@ class ExternalTask:
         self._task_result = TaskResult.success(self, variables)
         return self._task_result
 
-    def failure(self, error_message, error_details, retries, retry_timeout):
+    def failure(self, error_message, error_details, max_retries, retry_timeout):
+        retries = self._calculate_retries(max_retries)
         self._task_result = TaskResult.failure(self, error_message=error_message, error_details=error_details,
                                                retries=retries, retry_timeout=retry_timeout)
         return self._task_result
+
+    def _calculate_retries(self, max_retries):
+        retries = self._context["retries"]
+        retries = int(retries - 1) if retries and retries >= 1 else max_retries
+        return retries
 
     def bpmn_error(self, error_code):
         self._task_result = TaskResult.bpmn_error(self, error_code=error_code)
@@ -79,6 +85,9 @@ class TaskResult:
     def is_bpmn_error(self):
         return not self.success and self.bpmn_error_code
 
+    def get_task(self):
+        return self.task
+
     def __str__(self):
         if self.is_success():
             return f"success: task_id={self.task.get_task_id()}, variable={self.variables}"
@@ -86,5 +95,7 @@ class TaskResult:
             return f"failure: task_id={self.task.get_task_id()}, " \
                    f"error_message={self.error_message}, error_details={self.error_details}, " \
                    f"retries={self.retries}, retry_timeout={self.retry_timeout}"
+        elif self.is_bpmn_error():
+            return f"bpmn_error: task_id={self.task.get_task_id()}, error_code={self.bpmn_error_code}"
 
-        return f"bpmn_error: task_id={self.task.get_task_id()}, error_code={self.bpmn_error_code}"
+        return "empty_task_result"
