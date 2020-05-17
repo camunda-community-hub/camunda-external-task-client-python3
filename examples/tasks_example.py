@@ -26,17 +26,12 @@ async def main():
     configure_logging()
 
     loop = asyncio.get_event_loop()
+    tasks = []
+    for topic in ["PARALLEL_STEP_1", "PARALLEL_STEP_2", "COMBINE_STEP"]:
+        task = loop.create_task(ExternalTaskWorker(config=default_config).subscribe(topic, handle_task))
+        tasks.append(task)
 
-    first_topic = loop.create_task(ExternalTaskWorker(config=default_config)
-                                   .subscribe(["PARALLEL_STEP_1"], handle_task))
-
-    second_topic = loop.create_task(ExternalTaskWorker(config=default_config)
-                                    .subscribe(["PARALLEL_STEP_2"], handle_task))
-
-    third_topic = loop.create_task(ExternalTaskWorker(config=default_config)
-                                   .subscribe(["COMBINE_STEP"], handle_task))
-
-    await asyncio.gather(first_topic, second_topic, third_topic)
+    await asyncio.gather(*tasks)
 
 
 def configure_logging():

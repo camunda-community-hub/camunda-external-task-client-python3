@@ -4,6 +4,7 @@ from aiohttp_requests import requests as req
 from frozendict import frozendict
 
 from camunda.utils.utils import str_to_list
+from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class ExternalTaskClient:
 
         body = {
             "workerId": self.worker_id,
-            "variables": self.format(variables),
+            "variables": Variables.format(variables),
         }
 
         resp = await req.post(url, headers=self._get_headers(), json=body)
@@ -84,17 +85,6 @@ class ExternalTaskClient:
         resp = await req.post(url, headers=self._get_headers(), json=body)
         resp.raise_for_status()
         return resp.status == 204
-
-    def format(self, variables):
-        """
-        Gives the correct format to variables.
-        :param variables: dict - Dictionary of variable names to values.
-        :return: Dictionary of well formed variables
-            {"var1": 1, "var2": True}
-            ->
-            {"var1": {"value": 1}, "var2": {"value": True}}
-        """
-        return {k: {"value": v} for k, v in variables.items()}
 
     def _get_headers(self):
         return {
