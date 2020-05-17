@@ -4,6 +4,7 @@ from datetime import datetime
 from random import randint
 
 import time
+from frozendict import frozendict
 
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_worker import ExternalTaskWorker
@@ -11,38 +12,29 @@ from camunda.utils.log_utils import log_with_context
 
 logger = logging.getLogger(__name__)
 
+default_config = frozendict({
+    "maxTasks": 1,
+    "lockDuration": 10000,
+    "asyncResponseTimeout": 5000,
+    "retries": 3,
+    "retryTimeout": 5000,
+    "sleepSeconds": 30
+})
+
 
 async def main():
     configure_logging()
 
     loop = asyncio.get_event_loop()
 
-    first_topic = loop.create_task(ExternalTaskWorker(config={
-        "maxTasks": 1,
-        "lockDuration": 10000,
-        "asyncResponseTimeout": 5000,
-        "retries": 3,
-        "retryTimeout": 5000,
-        "sleepSeconds": 30
-    }).subscribe(["PARALLEL_STEP_1"], handle_task))
+    first_topic = loop.create_task(ExternalTaskWorker(config=default_config)
+                                   .subscribe(["PARALLEL_STEP_1"], handle_task))
 
-    second_topic = loop.create_task(ExternalTaskWorker(config={
-        "maxTasks": 1,
-        "lockDuration": 10000,
-        "asyncResponseTimeout": 5000,
-        "retries": 3,
-        "retryTimeout": 5000,
-        "sleepSeconds": 30
-    }).subscribe(["PARALLEL_STEP_2"], handle_task))
+    second_topic = loop.create_task(ExternalTaskWorker(config=default_config)
+                                    .subscribe(["PARALLEL_STEP_2"], handle_task))
 
-    third_topic = loop.create_task(ExternalTaskWorker(config={
-        "maxTasks": 1,
-        "lockDuration": 10000,
-        "asyncResponseTimeout": 5000,
-        "retries": 3,
-        "retryTimeout": 5000,
-        "sleepSeconds": 30
-    }).subscribe(["COMBINE_STEP"], handle_task))
+    third_topic = loop.create_task(ExternalTaskWorker(config=default_config)
+                                   .subscribe(["COMBINE_STEP"], handle_task))
 
     await asyncio.gather(first_topic, second_topic, third_topic)
 
@@ -53,7 +45,8 @@ def configure_logging():
 
 
 async def handle_task(task: ExternalTask):
-    log_context = {"WORKER_ID": task.get_worker_id(), "TASK_ID": task.get_task_id(), "TOPIC": task.get_topic_name()}
+    log_context = frozendict({"WORKER_ID": task.get_worker_id(), "TASK_ID": task.get_task_id(),
+                              "TOPIC": task.get_topic_name()})
     log_with_context("handle_task started", log_context)
 
     # simulate task execution

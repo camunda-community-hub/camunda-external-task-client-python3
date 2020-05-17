@@ -1,6 +1,8 @@
 import asyncio
 import logging
 
+from frozendict import frozendict
+
 from camunda.client.engine_client import ExternalTaskClient
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
@@ -15,7 +17,7 @@ class ExternalTaskWorker:
     worker_id = 0
     DEFAULT_SLEEP_SECONDS = 300
 
-    def __init__(self, base_url=ENGINE_LOCAL_BASE_URL, config={}):
+    def __init__(self, base_url=ENGINE_LOCAL_BASE_URL, config=frozendict({})):
         self.worker_id = str(type(self).worker_id)
         type(self).worker_id += 1
         self.client = ExternalTaskClient(self.worker_id, base_url, config)
@@ -50,7 +52,7 @@ class ExternalTaskWorker:
             await asyncio.sleep(sleep_seconds)
 
     def _log_with_context(self, msg, task_id=None, log_level='info'):
-        context = {"WORKER_ID": self.worker_id, "TASK_ID": task_id}
+        context = frozendict({"WORKER_ID": self.worker_id, "TASK_ID": task_id})
         log_with_context(msg, context=context, log_level=log_level)
 
     def _get_sleep_seconds(self):
