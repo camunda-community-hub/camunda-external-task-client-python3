@@ -26,6 +26,9 @@ class ExternalTask:
     def get_task_result(self):
         return self._task_result
 
+    def set_task_result(self, task_result):
+        self._task_result = task_result
+
     def complete(self, variables):
         self._task_result = TaskResult.success(self, variables)
         return self._task_result

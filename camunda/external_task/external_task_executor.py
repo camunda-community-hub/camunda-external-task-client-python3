@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class ExternalTaskExecutor:
+
     def __init__(self, worker_id, external_task_client):
         self.worker_id = worker_id
         self.external_task_client = external_task_client
@@ -16,9 +17,12 @@ class ExternalTaskExecutor:
         try:
             topic = task.get_topic_name()
             task_id = task.get_task_id()
-            self._log_with_context(f"External task found for Topic: {topic}", task_id=task_id)
+            self._log_with_context(f"Executing external task for Topic: {topic}", task_id=task_id)
             task_result = await action(task)
+            # in case task result is not set by action, set it in task
+            task.set_task_result(task_result)
             await self._handle_task_result(task_result)
+            return task_result
         except Exception as e:
             self._log_with_context(f'error when executing task: topic={task.get_topic_name()}',
                                    task_id=task.get_task_id(), log_level='error', exc_info=True)
@@ -34,7 +38,7 @@ class ExternalTaskExecutor:
         elif task_result.is_bpmn_error():
             await self._handle_task_bpmn_error(task_id, task_result, topic)
         else:
-            self._log_with_context("task result is unknown", 'warning')
+            self._log_with_context("task result is unknown", task_id=task_id, log_level='warning')
 
     async def _handle_task_success(self, task_id, task_result, topic):
         self._log_with_context(f"Marking task complete for Topic: {topic}", task_id)
