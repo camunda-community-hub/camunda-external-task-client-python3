@@ -1,6 +1,7 @@
 import logging
 
 from aiohttp_requests import requests as req
+from frozendict import frozendict
 
 from camunda.utils.utils import str_to_list
 
@@ -16,7 +17,7 @@ class ExternalTaskClient:
         "retryTimeout": 300000,
     }
 
-    def __init__(self, worker_id, engine_base_url, config={}):
+    def __init__(self, worker_id, engine_base_url, config=frozendict({})):
         self.worker_id = worker_id
         self.external_task_base_url = engine_base_url + "/external-task"
         self.config = type(self).default_config
