@@ -62,3 +62,17 @@ class ExternalTaskTest(TestCase):
                                    max_retries=10, retry_timeout=1000)
 
         self.assertEqual(retries - 1, task_result.retries)
+
+    def test_get_local_variable_returns_none_for_missing_variable(self):
+        task = ExternalTask(context={})
+        variable = task.get_local_variable("var_name")
+        self.assertIsNone(variable)
+
+    def test_get_local_variable_returns_value_for_variable_present(self):
+        task = ExternalTask(context={"variables": {"var_name": {"value": 1}}})
+        variable = task.get_local_variable("var_name")
+        self.assertEqual(1, variable)
+
+    def test_str(self):
+        task = ExternalTask(context={"variables": {"var_name": {"value": 1}}})
+        self.assertEqual("{'variables': {'var_name': {'value': 1}}}", str(task))
