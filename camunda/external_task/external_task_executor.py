@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class ExternalTaskExecutor:
-    def __init__(self, worker_id, engine_client):
+    def __init__(self, worker_id, external_task_client):
         self.worker_id = worker_id
-        self.engine_client = engine_client
+        self.external_task_client = external_task_client
 
     async def execute_task(self, task, action):
         try:
@@ -38,7 +38,7 @@ class ExternalTaskExecutor:
 
     async def _handle_task_success(self, task_id, task_result, topic):
         self._log_with_context(f"Marking task complete for Topic: {topic}", task_id)
-        if await self.engine_client.complete(task_id, task_result.variables):
+        if await self.external_task_client.complete(task_id, task_result.variables):
             self._log_with_context(f"Marked task completed - Topic: {topic} "
                                    f"variables: {task_result.variables}", task_id)
         else:
@@ -47,12 +47,12 @@ class ExternalTaskExecutor:
 
     async def _handle_task_failure(self, task_id, task_result, topic):
         self._log_with_context(f"Marking task failed - Topic: {topic} task_result: {task_result}", task_id)
-        if await self.engine_client.failure(task_id, task_result.error_message, task_result.error_details,
-                                            task_result.retries, task_result.retry_timeout):
+        if await self.external_task_client.failure(task_id, task_result.error_message, task_result.error_details,
+                                                   task_result.retries, task_result.retry_timeout):
             self._log_with_context(f"Marked task failed - Topic: {topic} task_result: {task_result}", task_id)
 
     async def _handle_task_bpmn_error(self, task_id, task_result, topic):
-        bpmn_error_handled = await self.engine_client.bpmn_failure(task_id, task_result.bpmn_error_code)
+        bpmn_error_handled = await self.external_task_client.bpmn_failure(task_id, task_result.bpmn_error_code)
         self._log_with_context(f"BPMN Error Handled: {bpmn_error_handled} "
                                f"Topic: {topic} task_result: {task_result}")
 
