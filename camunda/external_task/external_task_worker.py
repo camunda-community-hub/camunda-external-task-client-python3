@@ -3,14 +3,12 @@ import logging
 
 from frozendict import frozendict
 
-from camunda.client.engine_client import ExternalTaskClient
+from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL_BASE_URL
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
 from camunda.utils.log_utils import log_with_context
 
 logger = logging.getLogger(__name__)
-
-ENGINE_LOCAL_BASE_URL = "http://localhost:8080/engine-rest"
 
 
 class ExternalTaskWorker:
