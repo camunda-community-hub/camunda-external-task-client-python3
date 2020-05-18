@@ -1,3 +1,4 @@
+import collections
 from http import HTTPStatus
 
 import aiounittest
@@ -59,3 +60,81 @@ class ExternalTaskExecutorTest(aiounittest.AsyncTestCase):
 
         actual_task_result = await executor.execute_task(task, self.task_bpmn_error_action)
         self.assertEqual(str(expected_task_result), str(actual_task_result))
+
+    async def task_result_not_complete_failure_bpmnerror(self, task):
+        return TaskResult.empty_task_result(task)
+
+    async def test_task_result_not_complete_failure_bpmnerror_raises_exception(self):
+        task = ExternalTask({"id": "1", "topicName": "my_topic"})
+        external_task_client = ExternalTaskClient(worker_id=1)
+        executor = ExternalTaskExecutor(worker_id=1, external_task_client=external_task_client)
+
+        with self.assertRaises(Exception) as exception_ctx:
+            await executor.execute_task(task, self.task_result_not_complete_failure_bpmnerror)
+
+        self.assertEqual("task result for task_id=1 must be either complete/failure/BPMNError",
+                         str(exception_ctx.exception))
+
+    @aioresponses()
+    async def test_execute_task_raises_exception_raised_when_updating_status_in_engine(self, http_mock):
+        client = ExternalTaskClient(worker_id=1)
+        task = ExternalTask({"id": "1", "topicName": "my_topic"})
+        executor = ExternalTaskExecutor(worker_id=1, external_task_client=client)
+
+        TaskResultStatusInput = collections.namedtuple('TaskResultStatusInput',
+                                                       ['task_status', 'task_action', 'task_status_url',
+                                                        'error_message'])
+
+        task_result_tests = [
+            TaskResultStatusInput("complete", self.task_success_action,
+                                  client.get_task_complete_url(task.get_task_id()),
+                                  "cannot update task status to complete"),
+            TaskResultStatusInput("failure", self.task_failure_action,
+                                  client.get_task_failure_url(task.get_task_id()),
+                                  "cannot update task status to failure"),
+            TaskResultStatusInput("bpmn_error", self.task_bpmn_error_action,
+                                  client.get_task_bpmn_error_url(task.get_task_id()),
+                                  "cannot update task status to BPMN err")
+        ]
+
+        for task_result_test in task_result_tests:
+            with self.subTest(task_result_test.task_status):
+                http_mock.post(task_result_test.task_status_url,
+                               exception=Exception(task_result_test.error_message))
+
+                with self.assertRaises(Exception) as exception_ctx:
+                    await executor.execute_task(task, task_result_test.task_action)
+
+                self.assertEqual(task_result_test.error_message, str(exception_ctx.exception))
+
+    @aioresponses()
+    async def test_execute_task_raises_exception_if_engine_returns_http_status_other_than_no_content_204(self,
+                                                                                                         http_mock):
+        client = ExternalTaskClient(worker_id=1)
+        task = ExternalTask({"id": "1", "topicName": "my_topic"})
+        executor = ExternalTaskExecutor(worker_id=1, external_task_client=client)
+
+        TaskResultStatusInput = collections.namedtuple('TaskResultStatusInput',
+                                                       ['task_status', 'task_action', 'task_status_url',
+                                                        'http_status_code', 'expected_error_message'])
+
+        task_result_tests = [
+            TaskResultStatusInput("complete", self.task_success_action,
+                                  client.get_task_complete_url(task.get_task_id()), HTTPStatus.OK,
+                                  'Not able to mark complete for task_id=1 for topic=my_topic, worker_id=1'),
+            TaskResultStatusInput("failure", self.task_failure_action,
+                                  client.get_task_failure_url(task.get_task_id()), HTTPStatus.CREATED,
+                                  'Not able to mark failure for task_id=1 for topic=my_topic, worker_id=1'),
+            TaskResultStatusInput("bpmn_error", self.task_bpmn_error_action,
+                                  client.get_task_bpmn_error_url(task.get_task_id()), HTTPStatus.ACCEPTED,
+                                  'Not able to mark BPMN Error for task_id=1 for topic=my_topic, worker_id=1')
+        ]
+
+        for task_result_test in task_result_tests:
+            with self.subTest(task_result_test.task_status):
+                http_mock.post(task_result_test.task_status_url, status=task_result_test.http_status_code)
+
+                with self.assertRaises(Exception) as exception_ctx:
+                    await executor.execute_task(task, task_result_test.task_action)
+
+                self.assertEqual(task_result_test.expected_error_message, str(exception_ctx.exception))

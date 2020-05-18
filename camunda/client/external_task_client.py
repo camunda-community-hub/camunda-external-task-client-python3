@@ -27,8 +27,11 @@ class ExternalTaskClient:
         self.config = type(self).default_config
         self.config.update(config)
 
+    def get_fetch_and_lock_url(self):
+        return f"{self.external_task_base_url}/fetchAndLock"
+
     async def fetch_and_lock(self, topic_names):
-        url = self.external_task_base_url + "/fetchAndLock"
+        url = self.get_fetch_and_lock_url()
         body = {
             "workerId": self.worker_id,
             "maxTasks": self.config["maxTasks"],

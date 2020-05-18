@@ -34,7 +34,9 @@ class ExternalTaskExecutor:
         elif task_result.is_bpmn_error():
             await self._handle_task_bpmn_error(task_id, task_result, topic)
         else:
-            self._log_with_context("task result is unknown", task_id=task_id, log_level='warning')
+            err_msg = f"task result for task_id={task_id} must be either complete/failure/BPMNError"
+            self._log_with_context(err_msg, task_id=task_id, log_level='warning')
+            raise Exception(err_msg)
 
     async def _handle_task_success(self, task_id, task_result, topic):
         self._log_with_context(f"Marking task complete for Topic: {topic}", task_id)
