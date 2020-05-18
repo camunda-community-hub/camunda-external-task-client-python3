@@ -14,18 +14,14 @@ class ExternalTaskExecutor:
         self.external_task_client = external_task_client
 
     async def execute_task(self, task, action):
-        try:
-            topic = task.get_topic_name()
-            task_id = task.get_task_id()
-            self._log_with_context(f"Executing external task for Topic: {topic}", task_id=task_id)
-            task_result = await action(task)
-            # in case task result is not set by action, set it in task
-            task.set_task_result(task_result)
-            await self._handle_task_result(task_result)
-            return task_result
-        except Exception as e:
-            self._log_with_context(f'error when executing task: topic={task.get_topic_name()}',
-                                   task_id=task.get_task_id(), log_level='error', exc_info=True)
+        topic = task.get_topic_name()
+        task_id = task.get_task_id()
+        self._log_with_context(f"Executing external task for Topic: {topic}", task_id=task_id)
+        task_result = await action(task)
+        # in case task result is not set inside action function, set it in task here
+        task.set_task_result(task_result)
+        await self._handle_task_result(task_result)
+        return task_result
 
     async def _handle_task_result(self, task_result):
         task = task_result.get_task()
@@ -48,17 +44,28 @@ class ExternalTaskExecutor:
         else:
             self._log_with_context(f"Not able to mark task completed - Topic: {topic} "
                                    f"variables: {task_result.variables}", task_id)
+            raise Exception(f"Not able to mark complete for task_id={task_id} "
+                            f"for topic={topic}, worker_id={self.worker_id}")
 
     async def _handle_task_failure(self, task_id, task_result, topic):
         self._log_with_context(f"Marking task failed - Topic: {topic} task_result: {task_result}", task_id)
         if await self.external_task_client.failure(task_id, task_result.error_message, task_result.error_details,
                                                    task_result.retries, task_result.retry_timeout):
             self._log_with_context(f"Marked task failed - Topic: {topic} task_result: {task_result}", task_id)
+        else:
+            self._log_with_context(f"Not able to mark task failure - Topic: {topic}", task_id=task_id)
+            raise Exception(f"Not able to mark failure for task_id={task_id} "
+                            f"for topic={topic}, worker_id={self.worker_id}")
 
     async def _handle_task_bpmn_error(self, task_id, task_result, topic):
         bpmn_error_handled = await self.external_task_client.bpmn_failure(task_id, task_result.bpmn_error_code)
-        self._log_with_context(f"BPMN Error Handled: {bpmn_error_handled} "
-                               f"Topic: {topic} task_result: {task_result}")
+        if bpmn_error_handled:
+            self._log_with_context(f"BPMN Error Handled: {bpmn_error_handled} "
+                                   f"Topic: {topic} task_result: {task_result}")
+        else:
+            self._log_with_context(f"Not able to mark BPMN error - Topic: {topic}", task_id=task_id)
+            raise Exception(f"Not able to mark BPMN Error for task_id={task_id} "
+                            f"for topic={topic}, worker_id={self.worker_id}")
 
     def _log_with_context(self, msg, task_id=None, log_level='info', **kwargs):
         context = frozendict({"WORKER_ID": self.worker_id, "TASK_ID": task_id})
