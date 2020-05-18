@@ -62,6 +62,20 @@ class ExternalTaskExecutorTest(aiounittest.AsyncTestCase):
         actual_task_result = await executor.execute_task(task, self.task_bpmn_error_action)
         self.assertEqual(str(expected_task_result), str(actual_task_result))
 
+    async def task_result_not_complete_failure_bpmnerror(self, task):
+        return TaskResult.empty_task_result(task)
+
+    async def test_task_result_not_complete_failure_bpmnerror_raises_exception(self):
+        task = ExternalTask({"id": "1", "topicName": "my_topic"})
+        external_task_client = ExternalTaskClient(worker_id=1)
+        executor = ExternalTaskExecutor(worker_id=1, external_task_client=external_task_client)
+
+        with self.assertRaises(Exception) as exception_ctx:
+            await executor.execute_task(task, self.task_result_not_complete_failure_bpmnerror)
+
+        self.assertEqual("task result for task_id=1 must be either complete/failure/BPMNError",
+                         str(exception_ctx.exception))
+
     @aioresponses()
     async def test_execute_task_raises_exception_raised_when_updating_status_in_engine(self, http_mock):
         client = ExternalTaskClient(worker_id=1)
