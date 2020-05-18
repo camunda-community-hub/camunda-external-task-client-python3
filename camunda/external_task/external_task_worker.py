@@ -31,14 +31,8 @@ class ExternalTaskWorker:
 
     async def _fetch_and_execute(self, topic_names, action):
         response = await self._fetch_and_lock(topic_names)
-        resp_json = response and await response.json()
-        if resp_json:
-            self._log_with_context(f"External task(s) found for Topics: {topic_names}")
-            for context in resp_json:
-                task = ExternalTask(context)
-                await self.executor.execute_task(task, action)
-        else:
-            self._log_with_context(f"No external tasks found for Topics: {topic_names}")
+        tasks = await self._parse_response(response, topic_names)
+        await self._execute_tasks(tasks, action)
 
     async def _fetch_and_lock(self, topic_names):
         try:
@@ -49,9 +43,32 @@ class ExternalTaskWorker:
             logger.error(f'error fetching and locking tasks. retrying after {sleep_seconds} seconds', exc_info=True)
             await asyncio.sleep(sleep_seconds)
 
-    def _log_with_context(self, msg, task_id=None, log_level='info'):
+    async def _parse_response(self, response, topic_names):
+        tasks = []
+        resp_json = response and await response.json()
+        if resp_json:
+            for context in resp_json:
+                task = ExternalTask(context)
+                tasks.append(task)
+
+        tasks_count = len(tasks)
+        self._log_with_context(f"{tasks_count} External task(s) found for Topics: {topic_names}")
+        return tasks
+
+    async def _execute_tasks(self, tasks, action):
+        for task in tasks:
+            await self._execute_task(task, action)
+
+    async def _execute_task(self, task, action):
+        try:
+            await self.executor.execute_task(task, action)
+        except Exception as e:
+            self._log_with_context(f'error when executing task: topic={task.get_topic_name()}',
+                                   task_id=task.get_task_id(), log_level='error', exc_info=True)
+
+    def _log_with_context(self, msg, task_id=None, log_level='info', **kwargs):
         context = frozendict({"WORKER_ID": self.worker_id, "TASK_ID": task_id})
-        log_with_context(msg, context=context, log_level=log_level)
+        log_with_context(msg, context=context, log_level=log_level, **kwargs)
 
     def _get_sleep_seconds(self):
         return self.config.get("sleepSeconds", self.DEFAULT_SLEEP_SECONDS)
