@@ -2,7 +2,6 @@ import collections
 from http import HTTPStatus
 
 import aiounittest
-from aiohttp.http_exceptions import HttpProcessingError
 from aioresponses import aioresponses
 
 from camunda.client.external_task_client import ExternalTaskClient
@@ -101,12 +100,12 @@ class ExternalTaskExecutorTest(aiounittest.AsyncTestCase):
         for task_result_test in task_result_tests:
             with self.subTest(task_result_test.task_status):
                 http_mock.post(task_result_test.task_status_url,
-                               exception=HttpProcessingError(message=task_result_test.error_message))
+                               exception=Exception(task_result_test.error_message))
 
-                with self.assertRaises(HttpProcessingError) as exception_ctx:
+                with self.assertRaises(Exception) as exception_ctx:
                     await executor.execute_task(task, task_result_test.task_action)
 
-                self.assertEqual(task_result_test.error_message, exception_ctx.exception.message)
+                self.assertEqual(task_result_test.error_message, str(exception_ctx.exception))
 
     @aioresponses()
     async def test_execute_task_raises_exception_if_engine_returns_http_status_other_than_no_content_204(self,
