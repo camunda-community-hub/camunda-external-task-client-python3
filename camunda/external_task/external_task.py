@@ -5,7 +5,7 @@ class ExternalTask:
 
     def __init__(self, context):
         self._context = context
-        self._local_variables = Variables(context.get("variables", {}))
+        self._variables = Variables(context.get("variables", {}))
         self._task_result = TaskResult.empty_task_result(task=self)
 
     def get_worker_id(self):
@@ -17,8 +17,8 @@ class ExternalTask:
     def get_topic_name(self):
         return self._context["topicName"]
 
-    def get_local_variable(self, variable_name):
-        return self._local_variables.get_variable(variable_name)
+    def get_variable(self, variable_name):
+        return self._variables.get_variable(variable_name)
 
     def get_tenant_id(self):
         return self._context.get("tenantId", None)

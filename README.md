@@ -6,7 +6,7 @@ This repository contains Camunda External Task Client written in Pyhon3.
 
 Implement your [BPMN Service Task](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/) in Python3.
 
-> Python >= v3.x is required
+> Python >= 3.7 is required
 
 ## Installing
 Add following line to `requirements.txt` of your Python project.
@@ -125,14 +125,14 @@ async def handle_task(task: ExternalTask) -> TaskResult:
 ExternalTaskWorker().subscribe("topicName", handle_task)
 ```
 
-### Access Local Task Variables
+### Access Process Variables
 ```python
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 async def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     # get the process variable 'score'
-    score = task.get_local_variable("score")
+    score = task.get_variable("score")
     if int(score) >= 100:
         return task.complete(...)
     else:
