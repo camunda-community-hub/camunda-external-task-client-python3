@@ -21,7 +21,7 @@ class ExternalTaskWorker:
         self.client = ExternalTaskClient(self.worker_id, base_url, config)
         self.executor = ExternalTaskExecutor(self.worker_id, self.client)
         self.config = config
-        self._log_with_context(f"Created new External Task Worker")
+        self._log_with_context("Created new External Task Worker")
 
     async def subscribe(self, topic_names, action):
         while True:
@@ -40,7 +40,8 @@ class ExternalTaskWorker:
             return await self.client.fetch_and_lock(topic_names)
         except Exception as e:
             sleep_seconds = self._get_sleep_seconds()
-            logger.error(f'error fetching and locking tasks. retrying after {sleep_seconds} seconds', exc_info=True)
+            logger.error(f'error fetching and locking tasks: {str(e)}. '
+                         f'retrying after {sleep_seconds} seconds', exc_info=True)
             await asyncio.sleep(sleep_seconds)
 
     async def _parse_response(self, response, topic_names):
@@ -63,7 +64,7 @@ class ExternalTaskWorker:
         try:
             await self.executor.execute_task(task, action)
         except Exception as e:
-            self._log_with_context(f'error when executing task: topic={task.get_topic_name()}',
+            self._log_with_context(f'error when executing task: {str(e)}. topic={task.get_topic_name()}',
                                    task_id=task.get_task_id(), log_level='error', exc_info=True)
 
     def _log_with_context(self, msg, task_id=None, log_level='info', **kwargs):
