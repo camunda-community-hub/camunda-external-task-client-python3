@@ -4,12 +4,11 @@ from http import HTTPStatus
 from aiohttp_requests import requests as req
 from frozendict import frozendict
 
+from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
 from camunda.utils.utils import str_to_list
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
-
-ENGINE_LOCAL_BASE_URL = "http://localhost:8080/engine-rest"
 
 
 class ExternalTaskClient:
