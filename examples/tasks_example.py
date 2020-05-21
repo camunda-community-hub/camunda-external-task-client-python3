@@ -70,8 +70,8 @@ async def __handle_task_result(task, failure, bpmn_error):
 
 
 def random_true():
-    current_milli_time = lambda: int(round(time.time() * 1000))
-    return current_milli_time() % 2 == 0
+    current_milli_time = int(round(time.time() * 1000))
+    return current_milli_time % 2 == 0
 
 
 if __name__ == '__main__':
