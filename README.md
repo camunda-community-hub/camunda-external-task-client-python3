@@ -76,7 +76,10 @@ The execution works in a way that units of work are polled from the engine befor
 ## Features
 ### [Fetch and Lock](https://docs.camunda.org/manual/latest/reference/rest/external-task/fetch/)
 
-Done through [polling](/docs/Client.md#about-polling).
+`ExternalTaskWorker().subscribe("topicName", handle_task)` starts long polling of the Camunda engine for external tasks.
+
+* Polling tasks from the engine works by performing a fetch & lock operation of tasks that have subscriptions. It then calls the handler function passed to `subscribe()` function. i.e. `handle_task` in above example.
+* Long Polling is done periodically based on the `asyncResponseTimeout` configuration. Read more about [Long Polling](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/#long-polling-to-fetch-and-lock-external-tasks).
 
 ### [Complete](https://docs.camunda.org/manual/latest/reference/rest/external-task/post-complete/)
 ```python
