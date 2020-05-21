@@ -7,6 +7,7 @@ from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
 from camunda.utils.log_utils import log_with_context
+from camunda.utils.utils import get_exception_detail
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class ExternalTaskWorker:
             return await self.client.fetch_and_lock(topic_names)
         except Exception as e:
             sleep_seconds = self._get_sleep_seconds()
-            logger.error(f'error fetching and locking tasks: {str(e)}. '
+            logger.error(f'error fetching and locking tasks: {get_exception_detail(e)}. '
                          f'retrying after {sleep_seconds} seconds', exc_info=True)
             await asyncio.sleep(sleep_seconds)
 
@@ -64,11 +65,12 @@ class ExternalTaskWorker:
         try:
             await self.executor.execute_task(task, action)
         except Exception as e:
-            self._log_with_context(f'error when executing task: {str(e)}. topic={task.get_topic_name()}',
-                                   task_id=task.get_task_id(), log_level='error', exc_info=True)
+            self._log_with_context(f'error when executing task: {get_exception_detail(e)}',
+                                   topic=task.get_topic_name(), task_id=task.get_task_id(),
+                                   log_level='error', exc_info=True)
 
-    def _log_with_context(self, msg, task_id=None, log_level='info', **kwargs):
-        context = frozendict({"WORKER_ID": self.worker_id, "TASK_ID": task_id})
+    def _log_with_context(self, msg, topic=None, task_id=None, log_level='info', **kwargs):
+        context = frozendict({"WORKER_ID": self.worker_id, "TOPIC": topic, "TASK_ID": task_id})
         log_with_context(msg, context=context, log_level=log_level, **kwargs)
 
     def _get_sleep_seconds(self):

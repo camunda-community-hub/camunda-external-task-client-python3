@@ -1,0 +1,455 @@
+{
+	"info": {
+		"_postman_id": "0185a8d1-6a54-4a38-b5e6-6d3756a69430",
+		"name": "Camunda REST APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Process Definition",
+			"item": [
+				{
+					"name": "Start Instance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"variables\": {\n    \"uid\" : {\n        \"value\" : \"12345\",\n        \"type\": \"String\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/start",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"process-definition",
+								"key",
+								"{{key}}",
+								"start"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Start Instance - DIGITAL_CARD_ORIGINATION Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/start",
+									"host": [
+										"{{CAMUNDA_REST_URL}}"
+									],
+									"path": [
+										"process-definition",
+										"key",
+										"{{key}}",
+										"start"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 May 2020 14:07:53 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"fa512fed-8fa2-11ea-8743-0242ac110002\",\n    \"definitionId\": \"DIGITAL_CARD_ORIGINATION:2:b32d2bae-8fa1-11ea-8743-0242ac110002\",\n    \"businessKey\": null,\n    \"caseInstanceId\": null,\n    \"ended\": false,\n    \"suspended\": false,\n    \"tenantId\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Instance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"process-instance",
+								"fa512fed-8fa2-11ea-8743-0242ac110002"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Instance Response Example",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CAMUNDA_REST_URL}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
+									"host": [
+										"{{CAMUNDA_REST_URL}}"
+									],
+									"path": [
+										"process-instance",
+										"fa512fed-8fa2-11ea-8743-0242ac110002"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 May 2020 14:13:23 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [],\n    \"id\": \"fa512fed-8fa2-11ea-8743-0242ac110002\",\n    \"definitionId\": \"DIGITAL_CARD_ORIGINATION:2:b32d2bae-8fa1-11ea-8743-0242ac110002\",\n    \"businessKey\": null,\n    \"caseInstanceId\": null,\n    \"ended\": false,\n    \"suspended\": false,\n    \"tenantId\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/statistics",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"process-definition",
+								"key",
+								"{{key}}",
+								"statistics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Instance Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/process-definition/statistics",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"process-definition",
+								"statistics"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "External Task",
+			"item": [
+				{
+					"name": "Get External Task List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/external-task",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"external-task"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get External Task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/external-task/ad1b678a-96b6-11ea-8120-0242ac110002",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"external-task",
+								"ad1b678a-96b6-11ea-8120-0242ac110002"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "Get Task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/task",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"task"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "History",
+			"item": [
+				{
+					"name": "/history/activity-instance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/history/activity-instance",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"history",
+								"activity-instance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/history/task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/history/task",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"history",
+								"task"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Deployment",
+			"item": [
+				{
+					"name": "Create Deployment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "deployment-name",
+									"value": "parallel_steps_example",
+									"type": "text"
+								},
+								{
+									"key": "deploy-changed-only",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"type": "file",
+									"src": "/Users/yogeshnaik/Yogesh/workspace/camunda-external-task-client-python/bpmn_process/parallel_steps_example.bpmn"
+								},
+								{
+									"key": "deployment-source",
+									"value": "parallel steps example",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+							"host": [
+								"{{CAMUNDA_REST_URL}}"
+							],
+							"path": [
+								"deployment",
+								"create"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Deployment Success Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "deployment-name",
+											"value": "parallel_steps_example",
+											"type": "text"
+										},
+										{
+											"key": "deploy-changed-only",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "data",
+											"type": "file",
+											"src": "/Users/yogeshnaik/Yogesh/workspace/camunda-external-task-client-python/bpmn_process/parallel_steps_example.bpmn"
+										},
+										{
+											"key": "deployment-source",
+											"value": "parallel steps example",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+									"host": [
+										"{{CAMUNDA_REST_URL}}"
+									],
+									"path": [
+										"deployment",
+										"create"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 21 May 2020 14:24:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/deployment/d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n    \"name\": \"parallel_steps_example\",\n    \"source\": \"parallel steps example\",\n    \"deploymentTime\": \"2020-05-21T14:24:46.950+0000\",\n    \"tenantId\": null,\n    \"deployedProcessDefinitions\": {\n        \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\": {\n            \"id\": \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\",\n            \"key\": \"PARALLEL_STEPS_EXAMPLE\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Parallel Steps Process Example\",\n            \"version\": 1,\n            \"resource\": \"parallel_steps_example.bpmn\",\n            \"deploymentId\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": null,\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
