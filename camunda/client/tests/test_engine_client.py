@@ -63,3 +63,14 @@ class EngineClientTest(aiounittest.AsyncTestCase):
             await client.start_process("PARALLEL_STEPS_EXAMPLE", {"int_var": "1aa2345"})
 
         self.assertEqual(expected_message, str(exception_ctx.exception))
+
+    @aioresponses()
+    async def test_start_process_server_error_raises_exception(self, http_mock):
+        client = EngineClient()
+        http_mock.post(client.get_start_process_instance_url("PARALLEL_STEPS_EXAMPLE"),
+                       status=HTTPStatus.INTERNAL_SERVER_ERROR)
+        with self.assertRaises(Exception) as exception_ctx:
+            await client.start_process("PARALLEL_STEPS_EXAMPLE", {"int_var": "1aa2345"})
+
+        self.assertEqual("HTTPStatus.INTERNAL_SERVER_ERROR, message='Internal Server Error'",
+                         str(exception_ctx.exception))
