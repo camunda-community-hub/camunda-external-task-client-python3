@@ -9,7 +9,7 @@ from camunda.client.engine_client import EngineClient
 class EngineClientTest(aiounittest.AsyncTestCase):
 
     @aioresponses()
-    async def test_start_process_success_returns_id(self, http_mock):
+    async def test_start_process_success(self, http_mock):
         client = EngineClient()
         resp_payload = {
             "links": [
@@ -29,8 +29,8 @@ class EngineClientTest(aiounittest.AsyncTestCase):
         }
         http_mock.post(client.get_start_process_instance_url("PARALLEL_STEPS_EXAMPLE"),
                        status=HTTPStatus.OK, payload=resp_payload)
-        process_id = await client.start_process("PARALLEL_STEPS_EXAMPLE", {})
-        self.assertEqual("cb678be8-9b93-11ea-bad9-0242ac110002", process_id)
+        actual_resp_payload = await client.start_process("PARALLEL_STEPS_EXAMPLE", {})
+        self.assertDictEqual(resp_payload, actual_resp_payload)
 
     @aioresponses()
     async def test_start_process_not_found_raises_exception(self, http_mock):
