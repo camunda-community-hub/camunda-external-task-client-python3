@@ -27,7 +27,7 @@ class EngineClient:
         response = await req.post(url, headers=self._get_headers(), json=body)
         resp_json = await response.json()
         if response.status == HTTPStatus.OK:
-            return resp_json["id"]
+            return resp_json
         elif response.status == HTTPStatus.NOT_FOUND or response.status == HTTPStatus.BAD_REQUEST:
             raise Exception(resp_json["message"])
         else:
