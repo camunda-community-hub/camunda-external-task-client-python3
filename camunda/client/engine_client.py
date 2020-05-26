@@ -35,7 +35,7 @@ class EngineClient:
         else:
             response.raise_for_status()
 
-    async def get_process_instance(self, process_key, variables=frozenset([]), tenant_ids=frozenset([])):
+    async def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
         response = await req.get(url, headers=self._get_headers(), params=url_params)
@@ -48,7 +48,9 @@ class EngineClient:
             response.raise_for_status()
 
     def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
-        url_params = {"processDefinitionKey": process_key}
+        url_params = {}
+        if process_key:
+            url_params["processDefinitionKey"] = process_key
         var_filter = self.join(variables, ',')
         if var_filter:
             url_params["variables"] = var_filter
