@@ -1,7 +1,7 @@
-# camunda-external-task-client-python
-![camunda-external-task-client-python](https://github.com/yogeshrnaik/camunda-external-task-client-python/workflows/camunda-external-task-client-python/badge.svg?branch=master)
+# camunda-external-task-client-python3
+![camunda-external-task-client-python3](https://github.com/trustfactors/camunda-external-task-client-python3/workflows/camunda-external-task-client-python3/badge.svg)
 
-This repository contains Camunda External Task Client written in Pyhon3.
+This repository contains Camunda External Task Client written in Python3.
 
 
 Implement your [BPMN Service Task](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/) in Python3.
