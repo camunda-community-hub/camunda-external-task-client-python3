@@ -1,15 +1,16 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='camunda-external-task-client-python',
+    name='camunda-external-task-client-python3',
     version='1.1.1',
     author='Deserve Labs',
     author_email='devteam@deserve.com',
     packages=find_packages(exclude=("tests",)),
-    url='https://github.com/trustfactors/camunda-external-task-client-python',
+    url='https://github.com/trustfactors/camunda-external-task-client-python3',
     license='LICENSE.txt',
-    description='Camunda Exteranl Task Client for Python',
+    description='Camunda External Task Client for Python 3',
     long_description=open('README.md').read(),
+    long_description_content_type="text/markdown",
     include_package_data=True,
     classifiers=[
         'Intended Audience :: Developers',
