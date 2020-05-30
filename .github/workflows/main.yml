@@ -1,4 +1,4 @@
-name: camunda-external-task-client-python
+name: camunda-external-task-client-python3
 
 on: [push, pull_request]
 
