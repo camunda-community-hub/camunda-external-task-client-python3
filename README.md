@@ -1,7 +1,7 @@
-# camunda-external-task-client-python
-![camunda-external-task-client-python](https://github.com/yogeshrnaik/camunda-external-task-client-python/workflows/camunda-external-task-client-python/badge.svg?branch=master)
+# camunda-external-task-client-python3
+![camunda-external-task-client-python3](https://github.com/trustfactors/camunda-external-task-client-python3/workflows/camunda-external-task-client-python3/badge.svg)
 
-This repository contains Camunda External Task Client written in Pyhon3.
+This repository contains Camunda External Task Client written in Python3.
 
 
 Implement your [BPMN Service Task](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/) in Python3.
@@ -10,9 +10,14 @@ Implement your [BPMN Service Task](https://docs.camunda.org/manual/latest/user-g
 
 ## Installing
 Add following line to `requirements.txt` of your Python project.
+```
+git+https://github.com/trustfactors/camunda-external-task-client-python3.git/#egg=camunda-external-task-client-python3
+```
 
-`git+https://github.com/trustfactors/camunda-external-task-client-python.git/#egg=camunda-external-task-client-python`
-
+Or use pip to install as shown below:
+```
+pip install camunda-external-task-client-python3
+```
 
 ## Usage
 
@@ -23,7 +28,6 @@ Add following line to `requirements.txt` of your Python project.
 
 ```python
 import time
-import asyncio
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 
@@ -37,7 +41,7 @@ default_config = {
     "sleepSeconds": 30
 }
 
-async def handle_task(task: ExternalTask) -> TaskResult:
+def handle_task(task: ExternalTask) -> TaskResult:
     """
     This task handler you need to implement with your business logic.
     After completion of business logic call either task.complete() or task.failure() or task.bpmn_error() 
@@ -63,7 +67,7 @@ def random_true():
     return current_milli_time % 2 == 0
 
 if __name__ == '__main__':
-    asyncio.run(ExternalTaskWorker(config=default_config).subscribe("topicName", handle_task))
+   ExternalTaskWorker(config=default_config).subscribe("topicName", handle_task)
 ```
 
 ## About External Tasks
@@ -85,7 +89,7 @@ The execution works in a way that units of work are polled from the engine befor
 ```python
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
-async def handle_task(task: ExternalTask) -> TaskResult:
+def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     
     # Complete the task
@@ -99,7 +103,7 @@ ExternalTaskWorker().subscribe("topicName", handle_task)
 ```python
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
-async def handle_task(task: ExternalTask) -> TaskResult:
+def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     
     # Handle task Failure
@@ -116,7 +120,7 @@ ExternalTaskWorker().subscribe("topicName", handle_task)
 ```python
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
-async def handle_task(task: ExternalTask) -> TaskResult:
+def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     
     # Handle a BPMN Failure
@@ -129,7 +133,7 @@ ExternalTaskWorker().subscribe("topicName", handle_task)
 ```python
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
-async def handle_task(task: ExternalTask) -> TaskResult:
+def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     # get the process variable 'score'
     score = task.get_variable("score")

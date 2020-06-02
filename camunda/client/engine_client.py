@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from aiohttp_requests import requests as req
+import requests
 
 from camunda.variables.variables import Variables
 
@@ -20,30 +20,28 @@ class EngineClient:
             return f"{self.engine_base_url}/process-definition/key/{process_key}/tenant-id/{tenant_id}/start"
         return f"{self.engine_base_url}/process-definition/key/{process_key}/start"
 
-    async def start_process(self, process_key, variables, tenant_id=None):
+    def start_process(self, process_key, variables, tenant_id=None):
         url = self.get_start_process_instance_url(process_key, tenant_id)
         body = {
             "variables": Variables.format(variables)
         }
 
-        response = await req.post(url, headers=self._get_headers(), json=body)
-        resp_json = await response.json()
-        if response.status == HTTPStatus.OK:
-            return resp_json
-        elif response.status == HTTPStatus.NOT_FOUND or response.status == HTTPStatus.BAD_REQUEST:
-            raise Exception(resp_json["message"])
+        response = requests.post(url, headers=self._get_headers(), json=body)
+        if response.status_code == HTTPStatus.OK:
+            return response.json()
+        elif response.status_code == HTTPStatus.NOT_FOUND or response.status_code == HTTPStatus.BAD_REQUEST:
+            raise Exception(response.json()["message"])
         else:
             response.raise_for_status()
 
-    async def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
+    def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
-        response = await req.get(url, headers=self._get_headers(), params=url_params)
-        resp_json = await response.json()
-        if response.status == HTTPStatus.OK:
-            return resp_json
-        elif response.status == HTTPStatus.BAD_REQUEST:
-            raise Exception(resp_json["message"])
+        response = requests.get(url, headers=self._get_headers(), params=url_params)
+        if response.status_code == HTTPStatus.OK:
+            return response.json()
+        elif response.status_code == HTTPStatus.BAD_REQUEST:
+            raise Exception(response.json()["message"])
         else:
             response.raise_for_status()
 
