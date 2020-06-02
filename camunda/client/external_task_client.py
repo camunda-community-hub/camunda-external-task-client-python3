@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from aiohttp_requests import requests as req
+import requests
 from frozendict import frozendict
 
 from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class ExternalTaskClient:
     default_config = {
         "maxTasks": 1,
-        "lockDuration": 120000,
+        "lockDuration": 300000,  # in milliseconds
         "asyncResponseTimeout": 5000,
         "retries": 3,
         "retryTimeout": 300000,
@@ -29,7 +29,7 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    async def fetch_and_lock(self, topic_names):
+    def fetch_and_lock(self, topic_names):
         url = self.get_fetch_and_lock_url()
         body = {
             "workerId": self.worker_id,
@@ -38,7 +38,7 @@ class ExternalTaskClient:
             "asyncResponseTimeout": self.config["asyncResponseTimeout"]
         }
 
-        response = await req.post(url, headers=self._get_headers(), json=body)
+        response = requests.post(url, headers=self._get_headers(), json=body)
         response.raise_for_status()
         return response
 
@@ -51,7 +51,7 @@ class ExternalTaskClient:
             })
         return topics
 
-    async def complete(self, task_id, variables):
+    def complete(self, task_id, variables):
         url = self.get_task_complete_url(task_id)
 
         body = {
@@ -59,14 +59,14 @@ class ExternalTaskClient:
             "variables": Variables.format(variables),
         }
 
-        resp = await req.post(url, headers=self._get_headers(), json=body)
+        resp = requests.post(url, headers=self._get_headers(), json=body)
         resp.raise_for_status()
-        return resp.status == HTTPStatus.NO_CONTENT
+        return resp.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_complete_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/complete"
 
-    async def failure(self, task_id, error_message, error_details, retries, retry_timeout):
+    def failure(self, task_id, error_message, error_details, retries, retry_timeout):
         url = self.get_task_failure_url(task_id)
         logger.info(f"setting retries to: {retries} for task: {task_id}")
         body = {
@@ -78,14 +78,14 @@ class ExternalTaskClient:
         if error_details:
             body["errorDetails"] = error_details
 
-        resp = await req.post(url, headers=self._get_headers(), json=body)
+        resp = requests.post(url, headers=self._get_headers(), json=body)
         resp.raise_for_status()
-        return resp.status == HTTPStatus.NO_CONTENT
+        return resp.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"
 
-    async def bpmn_failure(self, task_id, error_code):
+    def bpmn_failure(self, task_id, error_code):
         url = self.get_task_bpmn_error_url(task_id)
 
         body = {
@@ -93,9 +93,9 @@ class ExternalTaskClient:
             "errorCode": error_code,
         }
 
-        resp = await req.post(url, headers=self._get_headers(), json=body)
+        resp = requests.post(url, headers=self._get_headers(), json=body)
         resp.raise_for_status()
-        return resp.status == HTTPStatus.NO_CONTENT
+        return resp.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_bpmn_error_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/bpmnError"
