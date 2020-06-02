@@ -1,5 +1,4 @@
-import asyncio
-import logging
+import time
 
 from frozendict import frozendict
 
@@ -8,8 +7,6 @@ from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
 from camunda.utils.log_utils import log_with_context
 from camunda.utils.utils import get_exception_detail
-
-logger = logging.getLogger(__name__)
 
 
 class ExternalTaskWorker:
@@ -24,30 +21,30 @@ class ExternalTaskWorker:
         self.config = config
         self._log_with_context("Created new External Task Worker")
 
-    async def subscribe(self, topic_names, action):
+    def subscribe(self, topic_names, action):
         while True:
-            await self.fetch_and_execute(topic_names, action)
+            self.fetch_and_execute(topic_names, action)
 
         self._log_with_context("Stopping worker")
 
-    async def fetch_and_execute(self, topic_names, action):
-        response = await self._fetch_and_lock(topic_names)
-        tasks = await self._parse_response(response, topic_names)
-        await self._execute_tasks(tasks, action)
+    def fetch_and_execute(self, topic_names, action):
+        response = self._fetch_and_lock(topic_names)
+        tasks = self._parse_response(response, topic_names)
+        self._execute_tasks(tasks, action)
 
-    async def _fetch_and_lock(self, topic_names):
+    def _fetch_and_lock(self, topic_names):
         try:
             self._log_with_context(f"Fetching and Locking external tasks for Topics: {topic_names}")
-            return await self.client.fetch_and_lock(topic_names)
+            return self.client.fetch_and_lock(topic_names)
         except Exception as e:
             sleep_seconds = self._get_sleep_seconds()
-            logger.error(f'error fetching and locking tasks: {get_exception_detail(e)}. '
-                         f'retrying after {sleep_seconds} seconds', exc_info=True)
-            await asyncio.sleep(sleep_seconds)
+            self._log_with_context(f'error fetching and locking tasks: {get_exception_detail(e)} '
+                                   f'for topic(s)={topic_names}. retrying after {sleep_seconds} seconds', exc_info=True)
+            time.sleep(sleep_seconds)
 
-    async def _parse_response(self, response, topic_names):
+    def _parse_response(self, response, topic_names):
         tasks = []
-        resp_json = response and await response.json()
+        resp_json = response and response.json()
         if resp_json:
             for context in resp_json:
                 task = ExternalTask(context)
@@ -57,13 +54,13 @@ class ExternalTaskWorker:
         self._log_with_context(f"{tasks_count} External task(s) found for Topics: {topic_names}")
         return tasks
 
-    async def _execute_tasks(self, tasks, action):
+    def _execute_tasks(self, tasks, action):
         for task in tasks:
-            await self._execute_task(task, action)
+            self._execute_task(task, action)
 
-    async def _execute_task(self, task, action):
+    def _execute_task(self, task, action):
         try:
-            await self.executor.execute_task(task, action)
+            self.executor.execute_task(task, action)
         except Exception as e:
             self._log_with_context(f'error when executing task: {get_exception_detail(e)}',
                                    topic=task.get_topic_name(), task_id=task.get_task_id(),

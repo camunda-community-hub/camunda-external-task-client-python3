@@ -1,9 +1,9 @@
-import asyncio
 import logging
+import time
+from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
 from random import randint
 
-import time
 from frozendict import frozendict
 
 from camunda.external_task.external_task import ExternalTask
@@ -22,16 +22,12 @@ default_config = frozendict({
 })
 
 
-async def main():
+def main():
     configure_logging()
-
-    loop = asyncio.get_event_loop()
-    tasks = []
-    for topic in ["PARALLEL_STEP_1", "PARALLEL_STEP_2", "COMBINE_STEP"]:
-        task = loop.create_task(ExternalTaskWorker(config=default_config).subscribe(topic, handle_task))
-        tasks.append(task)
-
-    await asyncio.gather(*tasks)
+    topics = ["PARALLEL_STEP_1", "PARALLEL_STEP_2", "COMBINE_STEP"]
+    executor = ThreadPoolExecutor(max_workers=len(topics))
+    for topic in topics:
+        executor.submit(ExternalTaskWorker(config=default_config).subscribe, topic, handle_task)
 
 
 def configure_logging():
@@ -39,7 +35,7 @@ def configure_logging():
                         handlers=[logging.StreamHandler()])
 
 
-async def handle_task(task: ExternalTask):
+def handle_task(task: ExternalTask):
     log_context = frozendict({"WORKER_ID": task.get_worker_id(), "TASK_ID": task.get_task_id(),
                               "TOPIC": task.get_topic_name()})
     log_with_context("handle_task started", log_context)
@@ -48,7 +44,7 @@ async def handle_task(task: ExternalTask):
     execution_time = randint(0, 10)
     log_with_context(f"handle_task - business logic execution started for task: "
                      f"it will execute for {execution_time} seconds", log_context)
-    await asyncio.sleep(execution_time)
+    time.sleep(execution_time)
 
     # simulate that task results randomly into failure/BPMN error/complete
     failure = random_true()
@@ -58,10 +54,10 @@ async def handle_task(task: ExternalTask):
     log_with_context(f"handle_task - business logic executed: failure: {failure}, bpmn_error: {bpmn_error}",
                      log_context)
 
-    return await __handle_task_result(task, failure, bpmn_error)
+    return __handle_task_result(task, failure, bpmn_error)
 
 
-async def __handle_task_result(task, failure, bpmn_error):
+def __handle_task_result(task, failure, bpmn_error):
     if failure:
         return task.failure("task failed", "failed task details", 3, 5000)
     elif bpmn_error:
@@ -75,4 +71,4 @@ def random_true():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
