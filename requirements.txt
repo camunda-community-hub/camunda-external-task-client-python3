@@ -1,4 +1,4 @@
-requests==2.7.0
+requests==2.20.0
 urllib3==1.25.9
 responses==0.10.14
 frozendict==1.2
