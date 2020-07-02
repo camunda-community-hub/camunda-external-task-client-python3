@@ -51,12 +51,13 @@ class ExternalTaskClient:
             })
         return topics
 
-    def complete(self, task_id, variables):
+    def complete(self, task_id, global_variables, local_variables={}):
         url = self.get_task_complete_url(task_id)
 
         body = {
             "workerId": self.worker_id,
-            "variables": Variables.format(variables),
+            "variables": Variables.format(global_variables),
+            "localVariables": Variables.format(local_variables)
         }
 
         resp = requests.post(url, headers=self._get_headers(), json=body)
