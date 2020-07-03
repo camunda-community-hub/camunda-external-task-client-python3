@@ -19,13 +19,17 @@ class ExternalTaskWorker:
         self.client = ExternalTaskClient(self.worker_id, base_url, config)
         self.executor = ExternalTaskExecutor(self.worker_id, self.client)
         self.config = config
+        self.cancelled = False
         self._log_with_context("Created new External Task Worker")
 
     def subscribe(self, topic_names, action):
-        while True:
+        while not self.cancelled:
             self.fetch_and_execute(topic_names, action)
 
         self._log_with_context("Stopping worker")
+
+    def cancel(self):
+        self.cancelled = True
 
     def fetch_and_execute(self, topic_names, action):
         response = self._fetch_and_lock(topic_names)
