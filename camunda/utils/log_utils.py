@@ -24,6 +24,7 @@ def __get_log_context_prefix(context):
 
 def __get_log_function(log_level):
     switcher = {
+        'debug': logging.debug,
         'info': logging.info,
         'warning': logging.warning,
         'error': logging.error

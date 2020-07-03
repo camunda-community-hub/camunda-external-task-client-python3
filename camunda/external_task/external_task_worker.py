@@ -38,7 +38,8 @@ class ExternalTaskWorker:
 
     def _fetch_and_lock(self, topic_names):
         try:
-            self._log_with_context(f"Fetching and Locking external tasks for Topics: {topic_names}")
+            self._log_with_context(
+                f"Fetching and Locking external tasks for Topics: {topic_names}")
             return self.client.fetch_and_lock(topic_names)
         except Exception as e:
             sleep_seconds = self._get_sleep_seconds()
@@ -70,7 +71,7 @@ class ExternalTaskWorker:
                                    topic=task.get_topic_name(), task_id=task.get_task_id(),
                                    log_level='error', exc_info=True)
 
-    def _log_with_context(self, msg, topic=None, task_id=None, log_level='info', **kwargs):
+    def _log_with_context(self, msg, topic=None, task_id=None, log_level='debug', **kwargs):
         context = frozendict({"WORKER_ID": self.worker_id, "TOPIC": topic, "TASK_ID": task_id})
         log_with_context(msg, context=context, log_level=log_level, **kwargs)
 
