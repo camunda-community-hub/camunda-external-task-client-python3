@@ -1,3 +1,6 @@
+import json
+
+
 class Variables:
     def __init__(self, variables={}):
         self.variables = variables
@@ -9,6 +12,15 @@ class Variables:
 
         return variable["value"]
 
+    def set_variable(self, name, value, value_type=None):
+        data = {'value': value}
+        if value_type:
+            if value_type == 'json':
+                data['value'] = json.dumps(value)
+            data['type'] = value_type
+            data['valueInfo'] = {}
+        self.variables[name] = data
+
     @classmethod
     def format(cls, variables):
         """
@@ -19,10 +31,13 @@ class Variables:
             ->
             {"var1": {"value": 1}, "var2": {"value": True}}
         """
-        formatted_vars = {}
-        if variables:
-            formatted_vars = {k: {"value": v} for k, v in variables.items()}
-        return formatted_vars
+        if isinstance(variables, Variables):
+            return variables.variables
+        else:
+            formatted_vars = {}
+            if variables:
+                formatted_vars = {k: {"value": v} for k, v in variables.items()}
+            return formatted_vars
 
     def to_dict(self):
         """
