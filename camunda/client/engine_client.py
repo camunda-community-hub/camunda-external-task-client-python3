@@ -1,4 +1,6 @@
 import logging
+import glob
+from os.path import basename, splitext
 from http import HTTPStatus
 
 import requests
@@ -25,7 +27,6 @@ class EngineClient:
         body = {
             "variables": Variables.format(variables)
         }
-
         response = requests.post(url, headers=self._get_headers(), json=body)
         if response.status_code == HTTPStatus.OK:
             return response.json()
@@ -44,6 +45,52 @@ class EngineClient:
             raise Exception(response.json()["message"])
         else:
             response.raise_for_status()
+
+    def upload_definition(self, path):
+        if "*" in path:
+            paths = glob.glob(path)
+        else:
+            paths = [path]
+
+        for p in paths:
+            base_name = basename(p)
+            no_ext, _ = splitext(base_name)
+            files =  {
+                base_name: (base_name, open(p, 'rb'), "text/xml")
+            }
+            body = {'deployment-name': no_ext, 'deployment-source': 'bconf', 'deploy-changed-only': 'true'}
+            response = requests.post(f"{self.engine_base_url}/deployment/create", files=files, data=body)
+            if response.status_code == HTTPStatus.BAD_REQUEST:
+                raise Exception(response.json()["message"])
+            elif response.status_code != HTTPStatus.OK:
+                response.raise_for_status()
+
+    def send_message(self, message_name, correlation_keys={}, process_variables={}):
+        body  = {
+            "messageName": message_name,
+            "correlationKeys": correlation_keys,
+            "processVariables": process_variables 
+        }
+        response = requests.post(f"{self.engine_base_url}/message", json=body)
+        if response.status_code == HTTPStatus.OK:
+            return response.json()
+        elif response.status_code == HTTPStatus.BAD_REQUEST:
+            raise Exception(response.json()["message"])
+        else:
+            response.raise_for_status()
+
+    def stop_processes(self, process_ids):
+        params = dict(cascade=True, skipCustomListeners=True, skipIoMappings=True)
+        process_instances_url = f"{self.engine_base_url}/process-instance"
+        if not process_ids:
+            r = requests.get(process_instances_url)
+            processes = [elem['id'] for elem in r.json()]
+        for process_id in processes:
+            response = requests.delete(f"{process_instances_url}/{process_id}", params=params)
+            if response.status_code == HTTPStatus.BAD_REQUEST:
+                raise Exception(response.json()["message"])
+            elif response.status_code != HTTPStatus.OK:
+                response.raise_for_status()
 
     def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
         url_params = {}
