@@ -29,8 +29,8 @@ class ExternalTask:
     def set_task_result(self, task_result):
         self._task_result = task_result
 
-    def complete(self, variables):
-        self._task_result = TaskResult.success(self, variables)
+    def complete(self, global_variables={}, local_variables={}):
+        self._task_result = TaskResult.success(self, global_variables, local_variables)
         return self._task_result
 
     def failure(self, error_message, error_details, max_retries, retry_timeout):
@@ -54,11 +54,12 @@ class ExternalTask:
 
 class TaskResult:
 
-    def __init__(self, task, success=False, variables={}, bpmn_error_code=None,
+    def __init__(self, task, success=False, global_variables={}, local_variables={}, bpmn_error_code=None,
                  error_message=None, error_details={}, retries=0, retry_timeout=300000):
         self.task = task
-        self.success = success
-        self.variables = variables
+        self.success_state = success
+        self.global_variables = global_variables
+        self.local_variables = local_variables
         self.bpmn_error_code = bpmn_error_code
         self.error_message = error_message
         self.error_details = error_details
@@ -66,8 +67,8 @@ class TaskResult:
         self.retry_timeout = retry_timeout
 
     @classmethod
-    def success(cls, task, variables):
-        return TaskResult(task, success=True, variables=variables)
+    def success(cls, task, global_variables, local_variables={}):
+        return TaskResult(task, success=True, global_variables=global_variables, local_variables=local_variables)
 
     @classmethod
     def failure(cls, task, error_message, error_details, retries, retry_timeout):
@@ -83,20 +84,20 @@ class TaskResult:
         return TaskResult(task, success=False)
 
     def is_success(self):
-        return self.success and self.bpmn_error_code is None and self.error_message is None
+        return self.success_state and self.bpmn_error_code is None and self.error_message is None
 
     def is_failure(self):
-        return not self.success and self.error_message is not None
+        return not self.success_state and self.error_message is not None
 
     def is_bpmn_error(self):
-        return not self.success and self.bpmn_error_code
+        return not self.success_state and self.bpmn_error_code
 
     def get_task(self):
         return self.task
 
     def __str__(self):
         if self.is_success():
-            return f"success: task_id={self.task.get_task_id()}, variable={self.variables}"
+            return f"success: task_id={self.task.get_task_id()}, global_variables={self.global_variables}, local_variables={self.local_variables}"
         elif self.is_failure():
             return f"failure: task_id={self.task.get_task_id()}, " \
                    f"error_message={self.error_message}, error_details={self.error_details}, " \
