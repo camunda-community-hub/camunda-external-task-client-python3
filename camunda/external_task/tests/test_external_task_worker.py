@@ -64,7 +64,7 @@ class ExternalTaskWorkerTest(TestCase):
         responses.add(responses.POST, external_task_client.get_fetch_and_lock_url(),
                       status=HTTPStatus.OK, json=resp_payload)
 
-        worker = ExternalTaskWorker()
+        worker = ExternalTaskWorker(worker_id=0)
         mock_action = mock.Mock()
         worker.fetch_and_execute("my_topic", mock_action)
         self.assertEqual(2, mock_action.call_count)
@@ -77,7 +77,7 @@ class ExternalTaskWorkerTest(TestCase):
                       status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
         sleep_seconds = 100
-        worker = ExternalTaskWorker(config={"sleepSeconds": sleep_seconds})
+        worker = ExternalTaskWorker(worker_id=0, config={"sleepSeconds": sleep_seconds})
         mock_action = mock.Mock()
 
         worker.fetch_and_execute("my_topic", mock_action)

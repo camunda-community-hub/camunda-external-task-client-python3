@@ -26,8 +26,9 @@ def main():
     configure_logging()
     topics = ["PARALLEL_STEP_1", "PARALLEL_STEP_2", "COMBINE_STEP"]
     executor = ThreadPoolExecutor(max_workers=len(topics))
-    for topic in topics:
-        executor.submit(ExternalTaskWorker(config=default_config).subscribe, topic, handle_task)
+    for index, topic in enumerate(topics):
+        executor.submit(ExternalTaskWorker(worker_id=index, config=default_config).subscribe, topic, handle_task,
+                        {"strVar": "hello"})
 
 
 def configure_logging():
