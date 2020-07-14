@@ -29,12 +29,12 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    def fetch_and_lock(self, topic_names):
+    def fetch_and_lock(self, topic_names, process_variables=None):
         url = self.get_fetch_and_lock_url()
         body = {
-            "workerId": self.worker_id,
+            "workerId": str(self.worker_id),  # convert to string to make it JSON serializable
             "maxTasks": self.config["maxTasks"],
-            "topics": self._get_topics(topic_names),
+            "topics": self._get_topics(topic_names, process_variables),
             "asyncResponseTimeout": self.config["asyncResponseTimeout"]
         }
 
@@ -42,12 +42,13 @@ class ExternalTaskClient:
         response.raise_for_status()
         return response
 
-    def _get_topics(self, topic_names):
+    def _get_topics(self, topic_names, process_variables):
         topics = []
         for topic in str_to_list(topic_names):
             topics.append({
                 "topicName": topic,
                 "lockDuration": self.config["lockDuration"],
+                "processVariables": process_variables if process_variables else {}
             })
         return topics
 
