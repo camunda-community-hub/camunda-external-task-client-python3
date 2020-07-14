@@ -1,5 +1,4 @@
 import logging
-from concurrent.futures.thread import ThreadPoolExecutor
 
 from frozendict import frozendict
 
@@ -11,20 +10,16 @@ logger = logging.getLogger(__name__)
 default_config = frozendict({
     "maxTasks": 1,
     "lockDuration": 10000,
-    "asyncResponseTimeout": 5000,
-    "retries": 3,
-    "retryTimeout": 5000,
-    "sleepSeconds": 30
+    "asyncResponseTimeout": 0,
 })
 
 
 def main():
     configure_logging()
     topics = ["PARALLEL_STEP_1", "PARALLEL_STEP_2", "COMBINE_STEP"]
-    executor = ThreadPoolExecutor(max_workers=len(topics))
     for index, topic in enumerate(topics):
-        executor.submit(ExternalTaskWorker(worker_id=index, config=default_config).subscribe, topic, handle_task,
-                        {"strVar": "hello"})
+        ExternalTaskWorker(worker_id=index, config=default_config) \
+            .fetch_and_execute(topic_names=topic, action=handle_task, process_variables={"strVar": "hello"})
 
 
 def configure_logging():
