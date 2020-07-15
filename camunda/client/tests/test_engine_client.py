@@ -48,7 +48,8 @@ class EngineClientTest(TestCase):
         with self.assertRaises(Exception) as exception_ctx:
             self.client.start_process("PROCESS_KEY_NOT_EXISTS", {}, self.tenant_id)
 
-        self.assertEqual("No matching process definition with key: PROCESS_KEY_NOT_EXISTS and tenant-id: tenant_123",
+        self.assertEqual("received 404 : RestException : "
+                         "No matching process definition with key: PROCESS_KEY_NOT_EXISTS and tenant-id: tenant_123",
                          str(exception_ctx.exception))
 
     @responses.activate
@@ -66,7 +67,7 @@ class EngineClientTest(TestCase):
         with self.assertRaises(Exception) as exception_ctx:
             client.start_process(self.process_key, {"int_var": "1aa2345"}, self.tenant_id)
 
-        self.assertEqual(expected_message, str(exception_ctx.exception))
+        self.assertEqual(f"received 400 : InvalidRequestException : {expected_message}", str(exception_ctx.exception))
 
     @responses.activate
     def test_start_process_server_error_raises_exception(self):
@@ -119,7 +120,7 @@ class EngineClientTest(TestCase):
                                              variables=["intVar_XXX_1", "strVar_eq_hello"],
                                              tenant_ids=[self.tenant_id])
 
-        self.assertEqual(expected_message, str(exception_ctx.exception))
+        self.assertEqual(f"received 400 : InvalidRequestException : {expected_message}", str(exception_ctx.exception))
 
     @responses.activate
     def test_get_process_instance_server_error_raises_exception(self):

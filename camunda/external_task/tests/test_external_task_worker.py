@@ -71,7 +71,7 @@ class ExternalTaskWorkerTest(TestCase):
 
     @responses.activate
     @patch('time.sleep', return_value=None)
-    def test_fetch_and_execute_raises_exception_sleep_is_called(self, mock_time_sleep):
+    def test_fetch_and_execute_safe_raises_exception_sleep_is_called(self, mock_time_sleep):
         external_task_client = ExternalTaskClient(worker_id=0)
         responses.add(responses.POST, external_task_client.get_fetch_and_lock_url(),
                       status=HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -80,7 +80,7 @@ class ExternalTaskWorkerTest(TestCase):
         worker = ExternalTaskWorker(worker_id=0, config={"sleepSeconds": sleep_seconds})
         mock_action = mock.Mock()
 
-        worker.fetch_and_execute("my_topic", mock_action)
+        worker._fetch_and_execute_safe("my_topic", mock_action)
 
         self.assertEqual(0, mock_action.call_count)
         self.assertEqual(1, mock_time_sleep.call_count)

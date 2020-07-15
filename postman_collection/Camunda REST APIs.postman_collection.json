@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0185a8d1-6a54-4a38-b5e6-6d3756a69430",
+		"_postman_id": "f51f6eac-54a3-489f-bfaf-8db168e1f69a",
 		"name": "Camunda REST APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -37,63 +37,7 @@
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Start Instance - DIGITAL_CARD_ORIGINATION Response",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/start",
-									"host": [
-										"{{CAMUNDA_REST_URL}}"
-									],
-									"path": [
-										"process-definition",
-										"key",
-										"{{key}}",
-										"start"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 06 May 2020 14:07:53 GMT"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=20"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"fa512fed-8fa2-11ea-8743-0242ac110002\",\n    \"definitionId\": \"DIGITAL_CARD_ORIGINATION:2:b32d2bae-8fa1-11ea-8743-0242ac110002\",\n    \"businessKey\": null,\n    \"caseInstanceId\": null,\n    \"ended\": false,\n    \"suspended\": false,\n    \"tenantId\": null\n}"
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Get Instance",
@@ -111,56 +55,7 @@
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Get Instance Response Example",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
-									"host": [
-										"{{CAMUNDA_REST_URL}}"
-									],
-									"path": [
-										"process-instance",
-										"fa512fed-8fa2-11ea-8743-0242ac110002"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Cache-Control",
-									"value": "no-cache"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 06 May 2020 14:13:23 GMT"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=20"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"links\": [],\n    \"id\": \"fa512fed-8fa2-11ea-8743-0242ac110002\",\n    \"definitionId\": \"DIGITAL_CARD_ORIGINATION:2:b32d2bae-8fa1-11ea-8743-0242ac110002\",\n    \"businessKey\": null,\n    \"caseInstanceId\": null,\n    \"ended\": false,\n    \"suspended\": false,\n    \"tenantId\": null\n}"
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "statistics",
@@ -206,14 +101,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{STAGE_CAMUNDA_REST_URL}}/process-definition/key/DIGITAL_FIRST_CARD_ORIGINATION/delete?cascade=true",
+							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/delete?cascade=true",
 							"host": [
-								"{{STAGE_CAMUNDA_REST_URL}}"
+								"{{CAMUNDA_REST_URL}}"
 							],
 							"path": [
 								"process-definition",
 								"key",
-								"DIGITAL_FIRST_CARD_ORIGINATION",
+								"{{key}}",
 								"delete"
 							],
 							"query": [
@@ -355,7 +250,7 @@
 							"formdata": [
 								{
 									"key": "deployment-name",
-									"value": "DIGITAL_FIRST_CARD_ORIGINATION",
+									"value": "PARALLEL_STEPS_EXAMPLE",
 									"type": "text"
 								},
 								{
@@ -366,16 +261,16 @@
 								{
 									"key": "data",
 									"type": "file",
-									"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-apply-service/bpmn_process/digital_first_card_origination.bpmn"
+									"src": []
 								},
 								{
 									"key": "deployment-source",
-									"value": "Digital First Card Origination",
+									"value": "PARALLEL_STEPS_EXAMPLE",
 									"type": "text"
 								},
 								{
 									"key": "tenant-id",
-									"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721",
+									"value": "4ab74cfc-5a4c-4666-80ab-3aa47e954721",
 									"type": "text"
 								}
 							],
@@ -386,111 +281,17 @@
 							}
 						},
 						"url": {
-							"raw": "https://stg-workflow-internal.deserve.com/engine-rest/deployment/create",
-							"protocol": "https",
+							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
 							"host": [
-								"stg-workflow-internal",
-								"deserve",
-								"com"
+								"{{CAMUNDA_REST_URL}}"
 							],
 							"path": [
-								"engine-rest",
 								"deployment",
 								"create"
 							]
 						}
 					},
 					"response": [
-						{
-							"name": "Create Deployment - Digital First Card Success Response Example",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-										"key": "Content-Type",
-										"value": "multipart/form-data",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "deployment-name",
-											"value": "DIGITAL_FIRST_CARD_ORIGINATION",
-											"type": "text"
-										},
-										{
-											"key": "deploy-changed-only",
-											"value": "true",
-											"type": "text"
-										},
-										{
-											"key": "data",
-											"type": "file",
-											"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-apply-service/bpmn_process/digital_first_card_origination.bpmn"
-										},
-										{
-											"key": "deployment-source",
-											"value": "Digital First Card Origination",
-											"type": "text"
-										},
-										{
-											"key": "tenant-id",
-											"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721",
-											"type": "text"
-										}
-									],
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://stg-workflow-internal.deserve.com/engine-rest/deployment/create",
-									"protocol": "https",
-									"host": [
-										"stg-workflow-internal",
-										"deserve",
-										"com"
-									],
-									"path": [
-										"engine-rest",
-										"deployment",
-										"create"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Date",
-									"value": "Tue, 26 May 2020 15:32:53 GMT"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=20"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://stg-workflow-internal.deserve.com/engine-rest/deployment/2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n    \"name\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n    \"source\": \"Digital First Card Origination\",\n    \"deploymentTime\": \"2020-05-26T15:32:53.724+0000\",\n    \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n    \"deployedProcessDefinitions\": {\n        \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\": {\n            \"id\": \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"key\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Digital First Card Origination\",\n            \"version\": 1,\n            \"resource\": \"digital_first_card_origination.bpmn\",\n            \"deploymentId\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
-						},
 						{
 							"name": "Create Deployment Success Example",
 							"originalRequest": {
@@ -580,9 +381,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{STAGE_CAMUNDA_REST_URL}}/deployment/b0191cec-9605-11ea-bfa3-0a58a9feac2a?cascade=true",
+							"raw": "{{CAMUNDA_REST_URL}}/deployment/b0191cec-9605-11ea-bfa3-0a58a9feac2a?cascade=true",
 							"host": [
-								"{{STAGE_CAMUNDA_REST_URL}}"
+								"{{CAMUNDA_REST_URL}}"
 							],
 							"path": [
 								"deployment",
@@ -604,9 +405,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{STAGE_CAMUNDA_REST_URL}}/deployment/7b16f3ed-9685-11ea-b29f-0a58a9feac2a",
+							"raw": "{{CAMUNDA_REST_URL}}/deployment/7b16f3ed-9685-11ea-b29f-0a58a9feac2a",
 							"host": [
-								"{{STAGE_CAMUNDA_REST_URL}}"
+								"{{CAMUNDA_REST_URL}}"
 							],
 							"path": [
 								"deployment",
