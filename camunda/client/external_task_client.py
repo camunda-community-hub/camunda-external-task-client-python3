@@ -5,6 +5,7 @@ import requests
 from frozendict import frozendict
 
 from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
+from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
 from camunda.variables.variables import Variables
 
@@ -29,25 +30,26 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    def fetch_and_lock(self, topic_names):
+    def fetch_and_lock(self, topic_names, process_variables=None):
         url = self.get_fetch_and_lock_url()
         body = {
-            "workerId": self.worker_id,
+            "workerId": str(self.worker_id),  # convert to string to make it JSON serializable
             "maxTasks": self.config["maxTasks"],
-            "topics": self._get_topics(topic_names),
+            "topics": self._get_topics(topic_names, process_variables),
             "asyncResponseTimeout": self.config["asyncResponseTimeout"]
         }
 
         response = requests.post(url, headers=self._get_headers(), json=body)
-        response.raise_for_status()
-        return response
+        raise_exception_if_not_ok(response)
+        return response.json()
 
-    def _get_topics(self, topic_names):
+    def _get_topics(self, topic_names, process_variables):
         topics = []
         for topic in str_to_list(topic_names):
             topics.append({
                 "topicName": topic,
                 "lockDuration": self.config["lockDuration"],
+                "processVariables": process_variables if process_variables else {}
             })
         return topics
 
@@ -60,9 +62,9 @@ class ExternalTaskClient:
             "localVariables": Variables.format(local_variables)
         }
 
-        resp = requests.post(url, headers=self._get_headers(), json=body)
-        resp.raise_for_status()
-        return resp.status_code == HTTPStatus.NO_CONTENT
+        response = requests.post(url, headers=self._get_headers(), json=body)
+        raise_exception_if_not_ok(response)
+        return response.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_complete_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/complete"
@@ -79,9 +81,9 @@ class ExternalTaskClient:
         if error_details:
             body["errorDetails"] = error_details
 
-        resp = requests.post(url, headers=self._get_headers(), json=body)
-        resp.raise_for_status()
-        return resp.status_code == HTTPStatus.NO_CONTENT
+        response = requests.post(url, headers=self._get_headers(), json=body)
+        raise_exception_if_not_ok(response)
+        return response.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"

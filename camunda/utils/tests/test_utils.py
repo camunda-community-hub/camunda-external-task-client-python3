@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from camunda.utils.utils import str_to_list
+from camunda.utils.utils import str_to_list, join
 
 
 class TestUtils(TestCase):
@@ -11,3 +11,11 @@ class TestUtils(TestCase):
 
     def test_str_to_list_returns_list_with_string_passed(self):
         self.assertEqual(["hello"], str_to_list("hello"))
+
+    def test_join_empty_list(self):
+        self.assertEqual("", join(None, ','))
+        self.assertEqual("", join([], ','))
+
+    def test_join_non_empty_list(self):
+        self.assertEqual("1", join([1], ','))
+        self.assertEqual("1,2,3", join([1, 2, 3], ','))
