@@ -5,6 +5,8 @@ from http import HTTPStatus
 
 import requests
 
+from camunda.utils.response_utils import raise_exception_if_not_ok
+from camunda.utils.utils import join
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -28,23 +30,15 @@ class EngineClient:
             "variables": Variables.format(variables)
         }
         response = requests.post(url, headers=self._get_headers(), json=body)
-        if response.status_code == HTTPStatus.OK:
-            return response.json()
-        elif response.status_code == HTTPStatus.NOT_FOUND or response.status_code == HTTPStatus.BAD_REQUEST:
-            raise Exception(response.json()["message"])
-        else:
-            response.raise_for_status()
+        raise_exception_if_not_ok(response)
+        return response.json()
 
     def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
         response = requests.get(url, headers=self._get_headers(), params=url_params)
-        if response.status_code == HTTPStatus.OK:
-            return response.json()
-        elif response.status_code == HTTPStatus.BAD_REQUEST:
-            raise Exception(response.json()["message"])
-        else:
-            response.raise_for_status()
+        raise_exception_if_not_ok(response)
+        return response.json()
 
     def upload_definition(self, path):
         if "*" in path:
@@ -96,10 +90,10 @@ class EngineClient:
         url_params = {}
         if process_key:
             url_params["processDefinitionKey"] = process_key
-        var_filter = self.join(variables, ',')
+        var_filter = join(variables, ',')
         if var_filter:
             url_params["variables"] = var_filter
-        tenant_ids_filter = self.join(tenant_ids, ',')
+        tenant_ids_filter = join(tenant_ids, ',')
         if tenant_ids_filter:
             url_params["tenantIdIn"] = tenant_ids_filter
         return url_params
@@ -108,6 +102,3 @@ class EngineClient:
         return {
             "Content-Type": "application/json"
         }
-
-    def join(self, list_of_values, separator):
-        return separator.join(str(v) for v in list_of_values)
