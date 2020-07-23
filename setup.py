@@ -11,6 +11,7 @@ setup(
     description='Camunda External Task Client for Python 3',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
+    install_requires=open('requirements.txt').read().splitlines(),
     include_package_data=True,
     classifiers=[
         'Intended Audience :: Developers',
