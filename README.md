@@ -32,6 +32,7 @@ from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 
 # configuration for the Client
+worker_id = "" # <bpmn:process id="{{ worker_id }}" ...> from .bpmn file
 default_config = {
     "maxTasks": 1,
     "lockDuration": 10000,
@@ -67,7 +68,7 @@ def random_true():
     return current_milli_time % 2 == 0
 
 if __name__ == '__main__':
-   ExternalTaskWorker(config=default_config).subscribe("topicName", handle_task)
+   ExternalTaskWorker(worker_id=worker_id, config=default_config).subscribe("topicName", handle_task)
 ```
 
 ## About External Tasks
