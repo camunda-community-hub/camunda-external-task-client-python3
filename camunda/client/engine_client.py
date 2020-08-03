@@ -78,8 +78,8 @@ class EngineClient:
         process_instances_url = f"{self.engine_base_url}/process-instance"
         if not process_ids:
             r = requests.get(process_instances_url)
-            processes = [elem['id'] for elem in r.json()]
-        for process_id in processes:
+            process_ids = [elem['id'] for elem in r.json()]
+        for process_id in process_ids:
             response = requests.delete(f"{process_instances_url}/{process_id}", params=params)
             if response.status_code == HTTPStatus.BAD_REQUEST:
                 raise Exception(response.json()["message"])
