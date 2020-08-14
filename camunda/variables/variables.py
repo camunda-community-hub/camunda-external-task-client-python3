@@ -1,7 +1,25 @@
 import json
+import enum
 
 
 class Variables:
+    class ValueType(enum.Enum):
+
+        BOOLEAN = "boolean"
+        DATE = "date"
+        FILE = "file"
+        FLOAT = "float"
+        INTEGER = "integer"
+        JSON = "json"
+        LONG = "long"
+        SHORT = "short"
+        STRING = "string"
+        XML = "XML"
+
+        @classmethod
+        def is_valid(cls, value):
+            return any(value == item.value for item in cls)
+
     def __init__(self, variables={}):
         self.variables = variables
 
@@ -13,12 +31,13 @@ class Variables:
         return variable["value"]
 
     def set_variable(self, name, value, value_type=None):
-        data = {'value': value}
-        if value_type:
-            if value_type == 'json':
-                data['value'] = json.dumps(value)
-            data['type'] = value_type
-            data['valueInfo'] = {}
+        # value_type could integer, long, string, boolean, json
+        data = {"value": value}
+        if self.ValueType.is_valid(value_type):
+            if value_type == self.ValueType.JSON:
+                data["value"] = json.dumps(value)
+            data["type"] = value_type
+            data["valueInfo"] = {}
         self.variables[name] = data
 
     @classmethod
