@@ -2,8 +2,11 @@ import logging
 
 from frozendict import frozendict
 
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
 
-def log_with_context(message, context=frozendict({}), log_level='info', **kwargs):
+
+def log_with_context(message, context=frozendict({}), log_level="info", **kwargs):
     log_function = __get_log_function(log_level)
 
     log_context_prefix = __get_log_context_prefix(context)
@@ -24,9 +27,9 @@ def __get_log_context_prefix(context):
 
 def __get_log_function(log_level):
     switcher = {
-        'debug': logging.debug,
-        'info': logging.info,
-        'warning': logging.warning,
-        'error': logging.error
+        "debug": _LOGGER.debug,
+        "info": _LOGGER.info,
+        "warning": _LOGGER.warning,
+        "error": _LOGGER.error,
     }
     return switcher.get(log_level, logging.info)
