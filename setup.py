@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='camunda-external-task-client-python3',
-    version='3.0.0',
+    version='3.1.0',
     author='Deserve Labs',
     author_email='devteam@deserve.com',
     packages=find_packages(exclude=("tests",)),
