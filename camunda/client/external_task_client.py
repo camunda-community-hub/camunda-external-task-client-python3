@@ -5,6 +5,7 @@ import requests
 from frozendict import frozendict
 
 from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
+from camunda.utils.log_utils import log_with_context
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
 from camunda.variables.variables import Variables
@@ -16,7 +17,7 @@ class ExternalTaskClient:
     default_config = {
         "maxTasks": 1,
         "lockDuration": 300000,  # in milliseconds
-        "asyncResponseTimeout": 5000,
+        "asyncResponseTimeout": 30000,
         "retries": 3,
         "retryTimeout": 300000,
     }
@@ -26,6 +27,7 @@ class ExternalTaskClient:
         self.external_task_base_url = engine_base_url + "/external-task"
         self.config = type(self).default_config
         self.config.update(config)
+        self._log_with_context(f"Created External Task client with config: {config}")
 
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
@@ -107,3 +109,7 @@ class ExternalTaskClient:
         return {
             "Content-Type": "application/json"
         }
+
+    def _log_with_context(self, msg, log_level='info', **kwargs):
+        context = frozendict({"WORKER_ID": self.worker_id})
+        log_with_context(msg, context=context, log_level=log_level, **kwargs)
