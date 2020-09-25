@@ -27,6 +27,7 @@ class ExternalTaskClient:
         self.external_task_base_url = engine_base_url + "/external-task"
         self.config = type(self).default_config
         self.config.update(config)
+        self.is_debug = config.get('isDebug', False)
         self._log_with_context(f"Created External Task client with config: {config}")
 
     def get_fetch_and_lock_url(self):
@@ -41,8 +42,15 @@ class ExternalTaskClient:
             "asyncResponseTimeout": self.config["asyncResponseTimeout"]
         }
 
+        if self.is_debug:
+            log_with_context(f"trying to fetch and lock with request payload: {body}")
+
         response = requests.post(url, headers=self._get_headers(), json=body)
         raise_exception_if_not_ok(response)
+
+        resp_json = response.json()
+        if self.is_debug:
+            log_with_context(f"fetch and lock response json: {resp_json} for request: {body}")
         return response.json()
 
     def _get_topics(self, topic_names, process_variables):
