@@ -17,7 +17,7 @@ def __get_log_context_prefix(context):
     log_context_prefix = ""
     if context:
         for k, v in context.items():
-            if v:
+            if v is not None:
                 log_context_prefix += f"[{k}:{v}]"
     return log_context_prefix
 
