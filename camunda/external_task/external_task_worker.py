@@ -16,7 +16,7 @@ class ExternalTaskWorker:
         self.client = ExternalTaskClient(self.worker_id, base_url, config)
         self.executor = ExternalTaskExecutor(self.worker_id, self.client)
         self.config = config
-        self._log_with_context(f"Created new External Task Worker with config: {config}")
+        self._log_with_context(f"Created new External Task Worker with config: {self.config}")
 
     def subscribe(self, topic_names, action, process_variables=None):
         while True:
