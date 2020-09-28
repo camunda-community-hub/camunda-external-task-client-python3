@@ -43,14 +43,14 @@ class ExternalTaskClient:
         }
 
         if self.is_debug:
-            log_with_context(f"trying to fetch and lock with request payload: {body}")
+            self._log_with_context(f"trying to fetch and lock with request payload: {body}")
 
         response = requests.post(url, headers=self._get_headers(), json=body)
         raise_exception_if_not_ok(response)
 
         resp_json = response.json()
         if self.is_debug:
-            log_with_context(f"fetch and lock response json: {resp_json} for request: {body}")
+            self._log_with_context(f"fetch and lock response json: {resp_json} for request: {body}")
         return response.json()
 
     def _get_topics(self, topic_names, process_variables):

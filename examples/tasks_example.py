@@ -14,7 +14,8 @@ default_config = frozendict({
     "asyncResponseTimeout": 5000,
     "retries": 3,
     "retryTimeout": 5000,
-    "sleepSeconds": 30
+    "sleepSeconds": 30,
+    "isDebug": True,
 })
 
 
