@@ -25,10 +25,10 @@ class ExternalTaskClient:
     def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=frozendict({})):
         self.worker_id = worker_id
         self.external_task_base_url = engine_base_url + "/external-task"
-        self.config = type(self).default_config
+        self.config = type(self).default_config.copy()
         self.config.update(config)
         self.is_debug = config.get('isDebug', False)
-        self._log_with_context(f"Created External Task client with config: {config}")
+        self._log_with_context(f"Created External Task client with config: {self.config}")
 
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
