@@ -15,7 +15,7 @@ class ExternalTaskClient:
     default_config = {
         "maxTasks": 1,
         "lockDuration": 300000,  # in milliseconds
-        "asyncResponseTimeout": 5000,
+        "asyncResponseTimeout": 30000,
         "retries": 3,
         "retryTimeout": 300000,
     }

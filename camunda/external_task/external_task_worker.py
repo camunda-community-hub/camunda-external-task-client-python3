@@ -79,7 +79,9 @@ class ExternalTaskWorker:
                 self.task_dict[task.get_task_id()] = asyncio.create_task(
                     self._execute_task(task, action)
                 )
-        await asyncio.sleep(5)
+        # if we got tasks to do don't request (probably the same) tasks again
+        if len(self.task_dict) > 0:
+            await asyncio.sleep(5)
 
     async def _execute_task(self, task, action):
         try:
