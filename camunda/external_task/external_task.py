@@ -2,7 +2,6 @@ from camunda.variables.variables import Variables
 
 
 class ExternalTask:
-
     def __init__(self, context):
         self._context = context
         self._variables = Variables(context.get("variables", {}))
@@ -35,8 +34,13 @@ class ExternalTask:
 
     def failure(self, error_message, error_details, max_retries, retry_timeout):
         retries = self._calculate_retries(max_retries)
-        self._task_result = TaskResult.failure(self, error_message=error_message, error_details=error_details,
-                                               retries=retries, retry_timeout=retry_timeout)
+        self._task_result = TaskResult.failure(
+            self,
+            error_message=error_message,
+            error_details=error_details,
+            retries=retries,
+            retry_timeout=retry_timeout,
+        )
         return self._task_result
 
     def _calculate_retries(self, max_retries):
@@ -53,9 +57,18 @@ class ExternalTask:
 
 
 class TaskResult:
-
-    def __init__(self, task, success=False, global_variables={}, local_variables={}, bpmn_error_code=None,
-                 error_message=None, error_details={}, retries=0, retry_timeout=300000):
+    def __init__(
+        self,
+        task,
+        success=False,
+        global_variables={},
+        local_variables={},
+        bpmn_error_code=None,
+        error_message=None,
+        error_details={},
+        retries=0,
+        retry_timeout=300000,
+    ):
         self.task = task
         self.success_state = success
         self.global_variables = global_variables
@@ -68,12 +81,23 @@ class TaskResult:
 
     @classmethod
     def success(cls, task, global_variables, local_variables={}):
-        return TaskResult(task, success=True, global_variables=global_variables, local_variables=local_variables)
+        return TaskResult(
+            task,
+            success=True,
+            global_variables=global_variables,
+            local_variables=local_variables,
+        )
 
     @classmethod
     def failure(cls, task, error_message, error_details, retries, retry_timeout):
-        return TaskResult(task, success=False, error_message=error_message, error_details=error_details,
-                          retries=retries, retry_timeout=retry_timeout)
+        return TaskResult(
+            task,
+            success=False,
+            error_message=error_message,
+            error_details=error_details,
+            retries=retries,
+            retry_timeout=retry_timeout,
+        )
 
     @classmethod
     def bpmn_error(cls, task, error_code):
@@ -84,7 +108,11 @@ class TaskResult:
         return TaskResult(task, success=False)
 
     def is_success(self):
-        return self.success_state and self.bpmn_error_code is None and self.error_message is None
+        return (
+            self.success_state
+            and self.bpmn_error_code is None
+            and self.error_message is None
+        )
 
     def is_failure(self):
         return not self.success_state and self.error_message is not None
@@ -99,9 +127,11 @@ class TaskResult:
         if self.is_success():
             return f"success: task_id={self.task.get_task_id()}, global_variables={self.global_variables}, local_variables={self.local_variables}"
         elif self.is_failure():
-            return f"failure: task_id={self.task.get_task_id()}, " \
-                   f"error_message={self.error_message}, error_details={self.error_details}, " \
-                   f"retries={self.retries}, retry_timeout={self.retry_timeout}"
+            return (
+                f"failure: task_id={self.task.get_task_id()}, "
+                f"error_message={self.error_message}, error_details={self.error_details}, "
+                f"retries={self.retries}, retry_timeout={self.retry_timeout}"
+            )
         elif self.is_bpmn_error():
             return f"bpmn_error: task_id={self.task.get_task_id()}, error_code={self.bpmn_error_code}"
 
