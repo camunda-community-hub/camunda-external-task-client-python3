@@ -133,3 +133,5 @@ dmypy.json
 
 # Mac
 .DS_Store
+
+postgres-data/

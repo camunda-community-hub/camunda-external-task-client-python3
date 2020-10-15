@@ -49,12 +49,12 @@ class ExternalTaskExecutorTest(TestCase):
         self.assertEqual(str(expected_task_result), str(actual_task_result))
 
     def task_bpmn_error_action(self, task):
-        return TaskResult.bpmn_error(task, error_code="bpmn_err_code_1")
+        return TaskResult.bpmn_error(task, error_code="bpmn_err_code_1", error_message="bpmn error")
 
     @responses.activate
     def test_task_bpmn_error(self):
         task = ExternalTask({"id": "1", "topicName": "my_topic"})
-        expected_task_result = TaskResult.bpmn_error(task, error_code="bpmn_err_code_1")
+        expected_task_result = TaskResult.bpmn_error(task, error_code="bpmn_err_code_1", error_message="bpmn error")
 
         external_task_client = ExternalTaskClient(worker_id=1)
         responses.add(responses.POST, external_task_client.get_task_bpmn_error_url(task.get_task_id()),

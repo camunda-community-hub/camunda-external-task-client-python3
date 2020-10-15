@@ -57,7 +57,8 @@ def handle_task(task: ExternalTask) -> TaskResult:
         return task.failure(error_message="task failed",  error_details="failed task details", 
                             max_retries=3, retry_timeout=5000)
     elif bpmn_error:
-        return task.bpmn_error(error_cide="BPMN_ERROR_CODE")
+        return task.bpmn_error(error_code="BPMN_ERROR_CODE", error_message="BPMN Error occurred", 
+                                variables={"var1": "value1", "success": False})
     
     # pass any output variables you may want to send to Camunda as dictionary to complete()
     return task.complete({"var1": 1, "var2": "value"}) 
@@ -67,7 +68,7 @@ def random_true():
     return current_milli_time % 2 == 0
 
 if __name__ == '__main__':
-   ExternalTaskWorker(config=default_config).subscribe("topicName", handle_task)
+   ExternalTaskWorker(worker_id="1", config=default_config).subscribe("topicName", handle_task)
 ```
 
 ## About External Tasks
@@ -80,7 +81,7 @@ The execution works in a way that units of work are polled from the engine befor
 ## Features
 ### [Fetch and Lock](https://docs.camunda.org/manual/latest/reference/rest/external-task/fetch/)
 
-`ExternalTaskWorker().subscribe("topicName", handle_task)` starts long polling of the Camunda engine for external tasks.
+`ExternalTaskWorker(worker_id="1").subscribe("topicName", handle_task)` starts long polling of the Camunda engine for external tasks.
 
 * Polling tasks from the engine works by performing a fetch & lock operation of tasks that have subscriptions. It then calls the handler function passed to `subscribe()` function. i.e. `handle_task` in above example.
 * Long Polling is done periodically based on the `asyncResponseTimeout` configuration. Read more about [Long Polling](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/#long-polling-to-fetch-and-lock-external-tasks).
@@ -96,7 +97,7 @@ def handle_task(task: ExternalTask) -> TaskResult:
     # pass any output variables you may want to send to Camunda as dictionary to complete()
     return task.complete({"var1": 1, "var2": "value"})
 
-ExternalTaskWorker().subscribe("topicName", handle_task)
+ExternalTaskWorker(worker_id="1").subscribe("topicName", handle_task)
 ```
 
 ### [Handle Failure](https://docs.camunda.org/manual/latest/reference/rest/external-task/post-failure/)
@@ -113,7 +114,7 @@ def handle_task(task: ExternalTask) -> TaskResult:
     # if retries are previously set then it just decrements that count by one before reporting failure to Camunda
     # when retries are zero, Camunda creates an incident which then manually needs to be looked into on Camunda Cockpit            
 
-ExternalTaskWorker().subscribe("topicName", handle_task)
+ExternalTaskWorker(worker_id="1").subscribe("topicName", handle_task)
 ```
 
 ### [Handle BPMN Error](https://docs.camunda.org/manual/latest/reference/rest/external-task/post-bpmn-error/)
@@ -124,9 +125,9 @@ def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     
     # Handle a BPMN Failure
-    return task.bpmn_error(error_code="BPMN_ERROR")
+    return task.bpmn_error(error_code="BPMN_ERROR", error_message="BPMN error occurred")
 
-ExternalTaskWorker().subscribe("topicName", handle_task)
+ExternalTaskWorker(worker_id="1" ).subscribe("topicName", handle_task)
 ```
 
 ### Access Process Variables
