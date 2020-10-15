@@ -98,13 +98,18 @@ class ExternalTaskClient:
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"
 
-    def bpmn_failure(self, task_id, error_code):
+    def bpmn_failure(self, task_id, error_code, error_message, variables={}):
         url = self.get_task_bpmn_error_url(task_id)
 
         body = {
             "workerId": self.worker_id,
             "errorCode": error_code,
+            "errorMessage": error_message,
+            "variables": Variables.format(variables),
         }
+
+        if self.is_debug:
+            self._log_with_context(f"trying to report bpmn error with request payload: {body}")
 
         resp = requests.post(url, headers=self._get_headers(), json=body)
         resp.raise_for_status()

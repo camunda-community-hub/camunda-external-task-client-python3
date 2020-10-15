@@ -44,7 +44,7 @@ class ExternalTaskTest(TestCase):
 
     def test_bpmn_error_returns_bpmn_error_task_result(self):
         task = ExternalTask(context={})
-        task_result = task.bpmn_error(error_code="bpmn_error_code_1")
+        task_result = task.bpmn_error(error_code="bpmn_error_code_1", error_message="bpmn error")
 
         self.assertEqual(task, task_result.get_task())
         self.assertEqual(task_result, task.get_task_result())

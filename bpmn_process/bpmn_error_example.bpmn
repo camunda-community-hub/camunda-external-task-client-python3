@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0puhxe6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.1">
+  <bpmn:process id="BPMN_ERROR_EXAMPLE" name="BPMN Error Handling Example" isExecutable="true">
+    <bpmn:startEvent id="IMAGE_UPLOADED" name="Image Uploaded">
+      <bpmn:outgoing>Flow_17jp3ze</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_17jp3ze" sourceRef="IMAGE_UPLOADED" targetRef="VALIDATE_IMAGE" />
+    <bpmn:serviceTask id="VALIDATE_IMAGE" name="Validate Image" camunda:type="external" camunda:topic="VALIDATE_IMAGE">
+      <bpmn:incoming>Flow_17jp3ze</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ztjtel</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="INVALID_IMAGE" name="Invalid Image" attachedToRef="VALIDATE_IMAGE">
+      <bpmn:outgoing>Flow_01jyni4</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0h1m6we" errorRef="Error_09b7ayq" camunda:errorCodeVariable="rejection_code" camunda:errorMessageVariable="rejection_reason" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_01jyni4" sourceRef="INVALID_IMAGE" targetRef="REJECT_IMAGE" />
+    <bpmn:serviceTask id="REJECT_IMAGE" name="Reject Image" camunda:type="external" camunda:topic="REJECT_IMAGE">
+      <bpmn:incoming>Flow_01jyni4</bpmn:incoming>
+      <bpmn:outgoing>Flow_19weksl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ztjtel" sourceRef="VALIDATE_IMAGE" targetRef="APPROVE_IMAGE" />
+    <bpmn:endEvent id="IMAGE_REJECTED" name="Image Rejected">
+      <bpmn:incoming>Flow_19weksl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_19weksl" sourceRef="REJECT_IMAGE" targetRef="IMAGE_REJECTED" />
+    <bpmn:serviceTask id="APPROVE_IMAGE" name="Approve Image" camunda:type="external" camunda:topic="APPROVE_IMAGE">
+      <bpmn:incoming>Flow_0ztjtel</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s54dcg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="IMAGE_APPROVED" name="Image Approved">
+      <bpmn:incoming>Flow_0s54dcg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0s54dcg" sourceRef="APPROVE_IMAGE" targetRef="IMAGE_APPROVED" />
+    <bpmn:boundaryEvent id="POOR_QUALITY_IMAGE" name="Poor Quality Image" attachedToRef="VALIDATE_IMAGE">
+      <bpmn:outgoing>Flow_05qyomt</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_11jxkw4" errorRef="Error_00e8ejv" camunda:errorCodeVariable="quality_code" camunda:errorMessageVariable="quality_description" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_05qyomt" sourceRef="POOR_QUALITY_IMAGE" targetRef="ENHANCE_IMAGE_QUALITY" />
+    <bpmn:serviceTask id="ENHANCE_IMAGE_QUALITY" name="Enhance Image Qualify" camunda:type="external" camunda:topic="ENHANCE_IMAGE_QUALITY">
+      <bpmn:incoming>Flow_05qyomt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e22qy7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="IMAGE_QUALITY_ENHANCED" name="Image Quality Enhanced">
+      <bpmn:incoming>Flow_0e22qy7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0e22qy7" sourceRef="ENHANCE_IMAGE_QUALITY" targetRef="IMAGE_QUALITY_ENHANCED" />
+  </bpmn:process>
+  <bpmn:error id="Error_09b7ayq" name="INVALID_IMAGE" errorCode="INVALID_IMAGE" />
+  <bpmn:error id="Error_00e8ejv" name="POOR_QUALITY_IMAGE" errorCode="POOR_QUALITY_IMAGE" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BPMN_ERROR_EXAMPLE">
+      <bpmndi:BPMNEdge id="Flow_17jp3ze_di" bpmnElement="Flow_17jp3ze">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="300" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01jyni4_di" bpmnElement="Flow_01jyni4">
+        <di:waypoint x="370" y="175" />
+        <di:waypoint x="370" y="240" />
+        <di:waypoint x="490" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ztjtel_di" bpmnElement="Flow_0ztjtel">
+        <di:waypoint x="400" y="117" />
+        <di:waypoint x="490" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19weksl_di" bpmnElement="Flow_19weksl">
+        <di:waypoint x="590" y="240" />
+        <di:waypoint x="692" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s54dcg_di" bpmnElement="Flow_0s54dcg">
+        <di:waypoint x="590" y="117" />
+        <di:waypoint x="692" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05qyomt_di" bpmnElement="Flow_05qyomt">
+        <di:waypoint x="320" y="175" />
+        <di:waypoint x="320" y="360" />
+        <di:waypoint x="490" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e22qy7_di" bpmnElement="Flow_0e22qy7">
+        <di:waypoint x="590" y="360" />
+        <di:waypoint x="692" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="IMAGE_UPLOADED">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="142" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qkke2l_di" bpmnElement="VALIDATE_IMAGE">
+        <dc:Bounds x="300" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jwxdpy_di" bpmnElement="REJECT_IMAGE">
+        <dc:Bounds x="490" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cyxisi_di" bpmnElement="IMAGE_REJECTED">
+        <dc:Bounds x="692" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="672" y="265" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wrqmxu_di" bpmnElement="APPROVE_IMAGE">
+        <dc:Bounds x="490" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ycmb40_di" bpmnElement="ENHANCE_IMAGE_QUALITY">
+        <dc:Bounds x="490" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o73toh_di" bpmnElement="IMAGE_QUALITY_ENHANCED">
+        <dc:Bounds x="692" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="678" y="385" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yymz90_di" bpmnElement="IMAGE_APPROVED">
+        <dc:Bounds x="692" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="142" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0l5ptoy_di" bpmnElement="INVALID_IMAGE">
+        <dc:Bounds x="352" y="139" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="407" y="223" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mmo7on_di" bpmnElement="POOR_QUALITY_IMAGE">
+        <dc:Bounds x="302" y="139" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="379" y="326" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -57,7 +57,8 @@ def handle_task(task: ExternalTask) -> TaskResult:
         return task.failure(error_message="task failed",  error_details="failed task details", 
                             max_retries=3, retry_timeout=5000)
     elif bpmn_error:
-        return task.bpmn_error(error_cide="BPMN_ERROR_CODE")
+        return task.bpmn_error(error_code="BPMN_ERROR_CODE", error_message="BPMN Error occurred", 
+                                variables={"var1": "value1", "success": False})
     
     # pass any output variables you may want to send to Camunda as dictionary to complete()
     return task.complete({"var1": 1, "var2": "value"}) 
@@ -124,7 +125,7 @@ def handle_task(task: ExternalTask) -> TaskResult:
     # add your business logic here
     
     # Handle a BPMN Failure
-    return task.bpmn_error(error_code="BPMN_ERROR")
+    return task.bpmn_error(error_code="BPMN_ERROR", error_message="BPMN error occurred")
 
 ExternalTaskWorker(worker_id="1" ).subscribe("topicName", handle_task)
 ```
