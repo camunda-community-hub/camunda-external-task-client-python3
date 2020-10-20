@@ -22,11 +22,13 @@ class EngineClient:
             return f"{self.engine_base_url}/process-definition/key/{process_key}/tenant-id/{tenant_id}/start"
         return f"{self.engine_base_url}/process-definition/key/{process_key}/start"
 
-    def start_process(self, process_key, variables, tenant_id=None):
+    def start_process(self, process_key, variables, tenant_id=None, business_key=None):
         url = self.get_start_process_instance_url(process_key, tenant_id)
         body = {
             "variables": Variables.format(variables)
         }
+        if business_key:
+            body["businessKey"] = business_key
 
         response = requests.post(url, headers=self._get_headers(), json=body)
         raise_exception_if_not_ok(response)

@@ -25,7 +25,7 @@ class EngineClientTest(TestCase):
             ],
             "id": "cb678be8-9b93-11ea-bad9-0242ac110002",
             "definitionId": "PARALLEL_STEPS_EXAMPLE:1:9b72da83-9b91-11ea-bad9-0242ac110002",
-            "businessKey": None,
+            "businessKey": "123456",
             "caseInstanceId": None,
             "ended": False,
             "suspended": False,
@@ -33,7 +33,7 @@ class EngineClientTest(TestCase):
         }
         responses.add(responses.POST, self.client.get_start_process_instance_url(self.process_key, self.tenant_id),
                       json=resp_payload, status=HTTPStatus.OK)
-        actual_resp_payload = self.client.start_process(self.process_key, {}, self.tenant_id)
+        actual_resp_payload = self.client.start_process(self.process_key, {}, self.tenant_id, "123456")
         self.assertDictEqual(resp_payload, actual_resp_payload)
 
     @responses.activate
