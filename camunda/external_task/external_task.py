@@ -14,6 +14,9 @@ class ExternalTask:
     def get_task_id(self):
         return self._context["id"]
 
+    def get_activity_id(self):
+        return self._context["activityId"]
+
     def get_topic_name(self):
         return self._context["topicName"]
 
@@ -22,6 +25,9 @@ class ExternalTask:
 
     def get_tenant_id(self):
         return self._context.get("tenantId", None)
+
+    def get_business_key(self):
+        return self._context.get("businessKey", None)
 
     def get_task_result(self):
         return self._task_result

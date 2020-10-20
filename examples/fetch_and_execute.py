@@ -11,6 +11,7 @@ default_config = frozendict({
     "maxTasks": 1,
     "lockDuration": 10000,
     "asyncResponseTimeout": 0,
+    "isDebug": True,
 })
 
 
