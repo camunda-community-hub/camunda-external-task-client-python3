@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0q4se87" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.1">
+  <bpmn:process id="CORRELATE_MESSAGE_EXAMPLE" name="Correlate Message Example" isExecutable="true">
+    <bpmn:startEvent id="START" name="Start">
+      <bpmn:outgoing>Flow_1i98wn5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1i98wn5" sourceRef="START" targetRef="STEP_1" />
+    <bpmn:serviceTask id="STEP_1" name="Step 1" camunda:type="external" camunda:topic="STEP_1">
+      <bpmn:incoming>Flow_1i98wn5</bpmn:incoming>
+      <bpmn:outgoing>Flow_04vqn7h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_04vqn7h" sourceRef="STEP_1" targetRef="STEP_2" />
+    <bpmn:serviceTask id="STEP_2" name="Step 2" camunda:type="external" camunda:topic="STEP_2">
+      <bpmn:incoming>Flow_04vqn7h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tnnj1f</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="END" name="End">
+      <bpmn:incoming>Flow_0tnnj1f</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0tnnj1f" sourceRef="STEP_2" targetRef="END" />
+    <bpmn:subProcess id="CANCEL_SUBPROCESS" name="Cancel Subprocess" triggeredByEvent="true">
+      <bpmn:startEvent id="START_CANCEL" name="Start Cancel">
+        <bpmn:outgoing>Flow_0lk019x</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_0u0mxko" messageRef="Message_0nbfe6r" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0lk019x" sourceRef="START_CANCEL" targetRef="CANCEL" />
+      <bpmn:serviceTask id="CANCEL" name="Cancel" camunda:type="external" camunda:topic="CANCEL">
+        <bpmn:incoming>Flow_0lk019x</bpmn:incoming>
+        <bpmn:outgoing>Flow_1tefi39</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="CANCELLED" name="Cancelled">
+        <bpmn:incoming>Flow_1tefi39</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1tefi39" sourceRef="CANCEL" targetRef="CANCELLED" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:message id="Message_0nbfe6r" name="CANCEL_MESSAGE" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CORRELATE_MESSAGE_EXAMPLE">
+      <bpmndi:BPMNEdge id="Flow_1i98wn5_di" bpmnElement="Flow_1i98wn5">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04vqn7h_di" bpmnElement="Flow_04vqn7h">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="430" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tnnj1f_di" bpmnElement="Flow_0tnnj1f">
+        <di:waypoint x="530" y="117" />
+        <di:waypoint x="592" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="START">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="142" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1a1p1e2_di" bpmnElement="STEP_1">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zstcqu_di" bpmnElement="STEP_2">
+        <dc:Bounds x="430" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xcs6x0_di" bpmnElement="END">
+        <dc:Bounds x="592" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="600" y="142" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v4vzpc_di" bpmnElement="CANCEL_SUBPROCESS" isExpanded="true">
+        <dc:Bounds x="190" y="210" width="430" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0lk019x_di" bpmnElement="Flow_0lk019x">
+        <di:waypoint x="266" y="310" />
+        <di:waypoint x="320" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tefi39_di" bpmnElement="Flow_1tefi39">
+        <di:waypoint x="420" y="310" />
+        <di:waypoint x="482" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1bpkjhj_di" bpmnElement="START_CANCEL">
+        <dc:Bounds x="230" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="218" y="335" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05uvy1k_di" bpmnElement="CANCEL">
+        <dc:Bounds x="320" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vhumom_di" bpmnElement="CANCELLED">
+        <dc:Bounds x="482" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="477" y="335" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
