@@ -146,5 +146,25 @@ def handle_task(task: ExternalTask) -> TaskResult:
 ExternalTaskWorker().subscribe("topicName", handle_task)
 ```
 
+## Correlate message
+Camunda provides functionality to send a message event to a running process instance.
+
+You can read more about the message events here: https://docs.camunda.org/manual/7.13/reference/bpmn20/events/message-events/
+
+In our to send a message event to a process instance, a new function called `correlate_message()` is added to [engine_client.py](./camunda/client/engine_client.py#L60)
+
+We can correlate the message by:
+- process_instance_id
+- tenant_id
+- business_key
+- process_variables
+
+You can find an usage example [here](./examples/correlate_message.py).
+
+```python
+client = EngineClient()
+resp_json = client.correlate_message("CANCEL_MESSAGE", business_key="b4a6f392-12ab-11eb-80ef-acde48001122")
+```
+
 ## License
 The source files in this repository are made available under the [Apache License Version 2.0](./LICENSE).
