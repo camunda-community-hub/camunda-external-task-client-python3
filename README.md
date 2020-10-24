@@ -19,6 +19,15 @@ Or use pip to install as shown below:
 pip install camunda-external-task-client-python3
 ```
 
+## Running Camunda with Docker
+To run the examples provided in [examples](./examples) folder, you need to have Camunda running locally or somewhere.
+
+To run Camunda locally with Postgres DB as backend, you can use [docker-compose.yml](./docker-compose.yml) file.
+
+```
+$> docker-compose -f docker-compose.yml up
+```
+
 ## Usage
 
 1.  Make sure to have [Camunda](https://camunda.com/download/) running.
