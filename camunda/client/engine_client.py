@@ -22,6 +22,14 @@ class EngineClient:
         return f"{self.engine_base_url}/process-definition/key/{process_key}/start"
 
     def start_process(self, process_key, variables, tenant_id=None, business_key=None):
+        """
+        Start a process instance with the process_key and variables passed.
+        :param process_key: Mandatory
+        :param variables: Mandatory - can be empty dict
+        :param tenant_id: Optional
+        :param business_key: Optional
+        :return: response json
+        """
         url = self.get_start_process_instance_url(process_key, tenant_id)
         body = {
             "variables": Variables.format(variables)
