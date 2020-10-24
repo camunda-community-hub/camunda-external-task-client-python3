@@ -79,6 +79,20 @@ The execution works in a way that units of work are polled from the engine befor
 **camunda-external-task-client-python** allows you to create easily such client in Python3.
 
 ## Features
+
+### [Start process](https://docs.camunda.org/manual/latest/reference/rest/process-definition/post-start-process-instance/)
+Camunda provides functionality to start a process instance for a given process definition.
+
+To start a process instance, we can use `start_process()` from [engine_client.py](./camunda/client/engine_client.py#L24)
+
+You can find an usage example [here](./examples/start_process.py).
+
+```python
+client = EngineClient()
+resp_json = client.start_process(process_key="PARALLEL_STEPS_EXAMPLE", variables={"intVar": "1", "strVar": "hello"},
+                                 tenant_id="6172cdf0-7b32-4460-9da0-ded5107aa977", business_key=str(uuid.uuid1()))
+```
+
 ### [Fetch and Lock](https://docs.camunda.org/manual/latest/reference/rest/external-task/fetch/)
 
 `ExternalTaskWorker(worker_id="1").subscribe("topicName", handle_task)` starts long polling of the Camunda engine for external tasks.
@@ -146,7 +160,7 @@ def handle_task(task: ExternalTask) -> TaskResult:
 ExternalTaskWorker().subscribe("topicName", handle_task)
 ```
 
-## Correlate message
+### [Correlate message](https://docs.camunda.org/manual/7.13/reference/bpmn20/events/message-events/)
 Camunda provides functionality to send a message event to a running process instance.
 
 You can read more about the message events here: https://docs.camunda.org/manual/7.13/reference/bpmn20/events/message-events/
