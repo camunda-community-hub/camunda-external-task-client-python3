@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from unittest import TestCase
+from unittest.mock import patch
 
 import responses
 
@@ -25,7 +26,7 @@ class EngineClientTest(TestCase):
             ],
             "id": "cb678be8-9b93-11ea-bad9-0242ac110002",
             "definitionId": "PARALLEL_STEPS_EXAMPLE:1:9b72da83-9b91-11ea-bad9-0242ac110002",
-            "businessKey": None,
+            "businessKey": "123456",
             "caseInstanceId": None,
             "ended": False,
             "suspended": False,
@@ -33,7 +34,7 @@ class EngineClientTest(TestCase):
         }
         responses.add(responses.POST, self.client.get_start_process_instance_url(self.process_key, self.tenant_id),
                       json=resp_payload, status=HTTPStatus.OK)
-        actual_resp_payload = self.client.start_process(self.process_key, {}, self.tenant_id)
+        actual_resp_payload = self.client.start_process(self.process_key, {}, self.tenant_id, "123456")
         self.assertDictEqual(resp_payload, actual_resp_payload)
 
     @responses.activate
@@ -136,3 +137,59 @@ class EngineClientTest(TestCase):
 
         self.assertTrue("HTTPStatus.INTERNAL_SERVER_ERROR Server Error: Internal Server Error"
                         in str(exception_ctx.exception))
+
+    @patch('requests.post')
+    def test_correlate_message_with_only_message_name(self, mock_post):
+        expected_request_payload = {
+            "messageName": "CANCEL_MESSAGE",
+            "withoutTenantId": True,
+            "resultEnabled": True
+        }
+
+        self.client.correlate_message("CANCEL_MESSAGE")
+        mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
+                                     json=expected_request_payload,
+                                     headers={'Content-Type': 'application/json'})
+
+    @patch('requests.post')
+    def test_correlate_message_with_business_key(self, mock_post):
+        expected_request_payload = {
+            "messageName": "CANCEL_MESSAGE",
+            "withoutTenantId": True,
+            "businessKey": "123456",
+            "resultEnabled": True
+        }
+
+        self.client.correlate_message("CANCEL_MESSAGE", business_key="123456")
+        mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
+                                     json=expected_request_payload,
+                                     headers={'Content-Type': 'application/json'})
+
+    @patch('requests.post')
+    def test_correlate_message_with_tenant_id(self, mock_post):
+        expected_request_payload = {
+            "messageName": "CANCEL_MESSAGE",
+            "withoutTenantId": False,
+            "tenantId": "123456",
+            "resultEnabled": True
+        }
+
+        self.client.correlate_message("CANCEL_MESSAGE", tenant_id="123456")
+        mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
+                                     json=expected_request_payload,
+                                     headers={'Content-Type': 'application/json'})
+
+    @responses.activate
+    def test_correlate_message_invalid_message_name_raises_exception(self):
+        expected_message = "org.camunda.bpm.engine.MismatchingMessageCorrelationException: " \
+                           "Cannot correlate message 'XXX': No process definition or execution matches the parameters"
+        resp_payload = {
+            "type": "RestException",
+            "message": expected_message
+        }
+        correlate_msg_url = f"{ENGINE_LOCAL_BASE_URL}/message"
+        responses.add(responses.POST, correlate_msg_url, status=HTTPStatus.BAD_REQUEST, json=resp_payload)
+        with self.assertRaises(Exception) as exception_ctx:
+            self.client.correlate_message(message_name="XXX")
+
+        self.assertEqual(f"received 400 : RestException : {expected_message}", str(exception_ctx.exception))

@@ -1,5 +1,4 @@
 import logging
-from http import HTTPStatus
 
 import requests
 
@@ -22,11 +21,13 @@ class EngineClient:
             return f"{self.engine_base_url}/process-definition/key/{process_key}/tenant-id/{tenant_id}/start"
         return f"{self.engine_base_url}/process-definition/key/{process_key}/start"
 
-    def start_process(self, process_key, variables, tenant_id=None):
+    def start_process(self, process_key, variables, tenant_id=None, business_key=None):
         url = self.get_start_process_instance_url(process_key, tenant_id)
         body = {
             "variables": Variables.format(variables)
         }
+        if business_key:
+            body["businessKey"] = business_key
 
         response = requests.post(url, headers=self._get_headers(), json=body)
         raise_exception_if_not_ok(response)
@@ -55,3 +56,32 @@ class EngineClient:
         return {
             "Content-Type": "application/json"
         }
+
+    def correlate_message(self, message_name, process_instance_id=None, tenant_id=None, business_key=None,
+                          process_variables=None):
+        """
+        Correlates a message to the process engine to either trigger a message start event or
+        an intermediate message catching event.
+        :param message_name:
+        :param process_instance_id:
+        :param tenant_id:
+        :param business_key:
+        :param process_variables:
+        :return: response json
+        """
+        url = f"{self.engine_base_url}/message"
+        body = {
+            "messageName": message_name,
+            "resultEnabled": True,
+            "processVariables": Variables.format(process_variables) if process_variables else None,
+            "processInstanceId": process_instance_id,
+            "tenantId": tenant_id,
+            "withoutTenantId": not tenant_id,
+            "businessKey": business_key,
+        }
+
+        body = {k: v for k, v in body.items() if v is not None}
+
+        response = requests.post(url, headers=self._get_headers(), json=body)
+        raise_exception_if_not_ok(response)
+        return response.json()

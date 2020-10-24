@@ -11,7 +11,7 @@ from camunda.utils.log_utils import log_with_context
 def handle_task(task: ExternalTask):
     log_context = frozendict({"WORKER_ID": task.get_worker_id(), "TASK_ID": task.get_task_id(),
                               "TOPIC": task.get_topic_name()})
-    log_with_context("handle_task started", log_context)
+    log_with_context(f"handle_task started: business key = {task.get_business_key()}", log_context)
 
     # simulate task execution
     execution_time = randint(0, 10)
