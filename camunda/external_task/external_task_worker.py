@@ -43,7 +43,7 @@ class ExternalTaskWorker:
                 f"error fetching and executing tasks: {get_exception_detail(e)} "
                 f"for topic(s)={topic_names} with Process variables: {process_variables}. "
                 f"retrying after {sleep_seconds} seconds",
-                exc_info=True,
+                exc_info=False,
             )
             await asyncio.sleep(sleep_seconds)
 
