@@ -6,12 +6,25 @@ from camunda.external_task.external_task import ExternalTask
 class ExternalTaskTest(TestCase):
 
     def test_external_task_creation_from_context(self):
-        task = ExternalTask(context={"id": "123", "workerId": "321", "topicName": "my_topic", "tenantId": "tenant1"})
+        context = {
+            "id": "123", "workerId": "321", "topicName": "my_topic", "tenantId": "tenant1",
+            "processInstanceId": "processInstanceId1",
+            "variables": {
+                "applicationId": {
+                    "type": "String",
+                    "value": "appId987",
+                    "valueInfo": {}
+                }
+            }
+        }
+        task = ExternalTask(context=context)
 
         self.assertEqual("123", task.get_task_id())
         self.assertEqual("321", task.get_worker_id())
         self.assertEqual("my_topic", task.get_topic_name())
         self.assertEqual("tenant1", task.get_tenant_id())
+        self.assertEqual("processInstanceId1", task.get_process_instance_id())
+        self.assertDictEqual({"applicationId": "appId987"}, task.get_variables())
         self.assertEqual("empty_task_result", str(task.get_task_result()))
 
     def test_complete_returns_success_task_result(self):
