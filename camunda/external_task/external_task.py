@@ -11,6 +11,12 @@ class ExternalTask:
     def get_worker_id(self):
         return self._context["workerId"]
 
+    def get_process_instance_id(self):
+        return self._context['processInstanceId']
+
+    def get_variables(self):
+        return self._variables.to_dict()
+
     def get_task_id(self):
         return self._context["id"]
 
