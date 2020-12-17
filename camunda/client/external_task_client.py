@@ -87,7 +87,7 @@ class ExternalTaskClient:
 
         async with self.session.post(url, headers=self._get_headers(), json=body) as response:
             await raise_exception_if_not_ok(response)
-            return response.statys == HTTPStatus.NO_CONTENT
+            return response.status == HTTPStatus.NO_CONTENT
 
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"
