@@ -4,7 +4,7 @@ async def raise_exception_if_not_ok(response):
 
     resp_json = await __get_json_or_raise_for_status(response)
 
-    raise Exception(get_response_error_message(response.status_code, resp_json))
+    raise Exception(get_response_error_message(response.status, resp_json))
 
 
 async def __get_json_or_raise_for_status(response):

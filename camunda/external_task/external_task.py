@@ -19,6 +19,9 @@ class ExternalTask:
     def get_variable(self, variable_name):
         return self._variables.get_variable(variable_name)
 
+    def set_variable(self, variable_name, variable_value, variable_type=None):
+        self._variables.set_variable(variable_name, variable_value, variable_type)
+
     def get_tenant_id(self):
         return self._context.get("tenantId", None)
 
