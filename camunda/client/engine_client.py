@@ -98,7 +98,7 @@ class EngineClient:
         # offset starts with zero
         # sort_order can be "asc" or "desc
 
-        url = f"{self.workflow_base_url}/job"
+        url = f"{self.engine_base_url}/job"
         params = {
             "firstResult": offset,
             "maxResults": limit,
