@@ -89,7 +89,7 @@ class EngineClient:
             ) as response:
                 if response.status == HTTPStatus.BAD_REQUEST:
                     raise Exception(await response.json()["message"])
-                elif response.status != HTTPStatus.OK:
+                elif response.status not in [HTTPStatus.OK, HTTPStatus.NOT_FOUND]:
                     response.raise_for_status()
 
     def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
