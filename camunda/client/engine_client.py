@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 import requests
 
@@ -100,6 +101,7 @@ class EngineClient:
                  tenant_ids=None,
                  with_failure=None,
                  process_instance_id=None,
+                 task_name=None,
                  sort_by="jobDueDate",
                  sort_order="desc"):
         # offset starts with zero
@@ -114,6 +116,8 @@ class EngineClient:
         }
         if process_instance_id:
             params["processInstanceId"] = process_instance_id
+        if task_name:
+            params["failedActivityId"] = task_name
         if with_failure:
             params["withException"] = "true"
         if tenant_ids:
@@ -121,3 +125,11 @@ class EngineClient:
         response = requests.get(url, params=params, headers=self._get_headers())
         raise_exception_if_not_ok(response)
         return response.json()
+
+    def set_job_retry(self, job_id, retries=1):
+        url = f"{self.engine_base_url}/job/{job_id}/retries"
+        body = {"retries": retries}
+
+        response = requests.put(url, headers=self._get_headers(), json=body)
+        raise_exception_if_not_ok(response)
+        return response.status_code == HTTPStatus.NO_CONTENT
