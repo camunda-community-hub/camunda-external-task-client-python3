@@ -94,7 +94,14 @@ class EngineClient:
         raise_exception_if_not_ok(response)
         return response.json()
 
-    def get_jobs(self, offset: int, limit, tenant_ids=None, with_failure=None, sort_by="jobDueDate", sort_order="desc"):
+    def get_jobs(self,
+                 offset: int,
+                 limit: int,
+                 tenant_ids=None,
+                 with_failure=None,
+                 process_instance_id=None,
+                 sort_by="jobDueDate",
+                 sort_order="desc"):
         # offset starts with zero
         # sort_order can be "asc" or "desc
 
@@ -105,6 +112,8 @@ class EngineClient:
             "sortBy": sort_by,
             "sortOrder": sort_order,
         }
+        if process_instance_id:
+            params["processInstanceId"] = process_instance_id
         if with_failure:
             params["withException"] = "true"
         if tenant_ids:
