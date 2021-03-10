@@ -15,9 +15,11 @@ class ProcessDefinitionClient(EngineClient):
     def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL):
         super().__init__(engine_base_url)
 
-    def get_process_definitions(self, process_key, version_tag, tenant_ids, sort_by="version", sort_order="desc"):
+    def get_process_definitions(self, process_key, version_tag, tenant_ids, sort_by="version", sort_order="desc",
+                                offset=0, limit=1):
         url = self.get_process_definitions_url()
-        url_params = self.get_process_definitions_url_params(process_key, version_tag, tenant_ids, sort_by, sort_order)
+        url_params = self.get_process_definitions_url_params(process_key, version_tag, tenant_ids,
+                                                             sort_by, sort_order, offset, limit)
         response = requests.get(url, headers=self._get_headers(), params=url_params)
         raise_exception_if_not_ok(response)
         return response.json()
@@ -26,17 +28,25 @@ class ProcessDefinitionClient(EngineClient):
         return f"{self.engine_base_url}/process-definition"
 
     def get_process_definitions_url_params(
-            self, process_key, version_tag=None, tenant_ids=None, sort_by="version", sort_order="desc"
+            self, process_key, version_tag=None, tenant_ids=None,
+            sort_by="version", sort_order="desc",
+            offset=0, limit=1
     ):
+        """
+        offset starts with zero
+        sort_order can be "asc" or "desc
+        """
         url_params = {
             "key": process_key,
-            "versionTag": version_tag,
+            "versionTagLike": f"{version_tag}%" if version_tag else None,
             "tenantIdIn": join(tenant_ids, ','),
             "sortBy": sort_by,
             "sortOrder": sort_order,
+            "firstResult": offset,
+            "maxResults": limit,
         }
 
-        url_params = {k: v for k, v in url_params.items() if v}
+        url_params = {k: v for k, v in url_params.items() if v is not None and v != ''}
 
         return url_params
 
@@ -53,7 +63,8 @@ class ProcessDefinitionClient(EngineClient):
         """
         tenant_ids = [tenant_id] if tenant_id else []
         process_definitions = self.get_process_definitions(process_key, version_tag, tenant_ids,
-                                                           sort_by="version", sort_order="desc")
+                                                           sort_by="version", sort_order="desc",
+                                                           offset=0, limit=1)
 
         if len(process_definitions) == 0:
             raise Exception(f"cannot start process because no process definitions found "
