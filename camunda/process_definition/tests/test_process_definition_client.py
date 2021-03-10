@@ -23,6 +23,8 @@ class ProcessDefinitionClientTest(TestCase):
             "key": 'PROCESS_KEY',
             "sortBy": "version",
             "sortOrder": "desc",
+            "firstResult": 0,
+            "maxResults": 1,
         }, url_params)
 
     def test_get_process_definitions_url_params_uses_all_specified_params(self):
@@ -35,10 +37,12 @@ class ProcessDefinitionClientTest(TestCase):
         )
         self.assertDictEqual({
             "key": "PROCESS_KEY",
-            "versionTag": "1.2.3",
+            "versionTagLike": "1.2.3%",
             "tenantIdIn": "tenant1",
             "sortBy": "version",
             "sortOrder": "asc",
+            "firstResult": 0,
+            "maxResults": 1,
         }, url_params)
 
     @responses.activate
