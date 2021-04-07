@@ -27,12 +27,20 @@ def generic_task_handler(task: ExternalTask):
     return task.complete()
 
 
+def fail_task_handler(task: ExternalTask):
+    log_context = {"WORKER_ID": task.get_worker_id(),
+                   "TASK_ID": task.get_task_id(),
+                   "TOPIC": task.get_topic_name()}
+
+    log_with_context("executing fail_task_handler", log_context)
+    return task.failure("task failed", "task failed forced", 0, 10)
+
+
 def main():
     configure_logging()
     topics = [
-        ("STEP_1", generic_task_handler),
-        # ("STEP_2", generic_task_handler),
-        # ("CLEAN_UP", generic_task_handler),
+        ("TASK_1", fail_task_handler),
+        ("TASK_2", fail_task_handler),
     ]
     executor = ThreadPoolExecutor(max_workers=len(topics))
     for index, topic_handler in enumerate(topics):

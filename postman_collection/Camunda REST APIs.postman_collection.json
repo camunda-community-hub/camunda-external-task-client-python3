@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0185a8d1-6a54-4a38-b5e6-6d3756a69430",
+		"_postman_id": "da4ee5c3-afad-4e38-a024-b3762a9d5c6a",
 		"name": "Camunda REST APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"businessKey\": \"1\",\n  \"withVariablesInReturn\": true,\n  \"variables\": {\n    \n  }\n}\n",
+							"raw": "{\n    \"businessKey\": \"9a1d2475-eabe-4a5a-91c4-c123ddea15ec\",\n    \"withVariablesInReturn\": true,\n    \"variables\": {\n        \"applicationId\": {\n            \"value\": \"9a1d2475-eabe-4a5a-91c4-c123ddea15ec\",\n            \"type\": \"String\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -23,9 +23,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/DIGITAL_FIRST_CARD_ORIGINATION/tenant-id/{{tenant_id}}/start",
+							"raw": "{{stage}}/process-definition/key/DIGITAL_FIRST_CARD_ORIGINATION/tenant-id/{{tenant_id}}/start",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{stage}}"
 							],
 							"path": [
 								"process-definition",
@@ -53,9 +53,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/start",
+									"raw": "{{local}}/process-definition/key/{{key}}/start",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"process-definition",
@@ -110,9 +110,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/SET_JOB_CONFIG_EXAMPLE/tenant-id/{{tenant_id}}/start",
+							"raw": "{{local}}/process-definition/key/SET_JOB_CONFIG_EXAMPLE/tenant-id/{{tenant_id}}/start",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"process-definition",
@@ -140,9 +140,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/start",
+									"raw": "{{local}}/process-definition/key/{{key}}/start",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"process-definition",
@@ -197,9 +197,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/MESSAGE_EXAMPLE/start",
+							"raw": "{{dev}}/process-definition/key/MESSAGE_EXAMPLE/start",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{dev}}"
 							],
 							"path": [
 								"process-definition",
@@ -225,9 +225,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/start",
+									"raw": "{{local}}/process-definition/key/{{key}}/start",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"process-definition",
@@ -268,14 +268,109 @@
 					]
 				},
 				{
+					"name": "Start Instance with Process Definition ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"withVariablesInReturn\": true,\n    \"businessKey\": \"30ea7b40-283b-4526-8979-371f4ffc9ee0\",\n    \"variables\": {\n        \"applicationId\" : {\n            \"value\" : \"30ea7b40-283b-4526-8979-371f4ffc9ee0\",\n            \"type\": \"String\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{dev}}/process-definition/:process_definition_id/start",
+							"host": [
+								"{{dev}}"
+							],
+							"path": [
+								"process-definition",
+								":process_definition_id",
+								"start"
+							],
+							"variable": [
+								{
+									"key": "process_definition_id",
+									"value": "89337817-75c9-11eb-84bb-0a58a9feac2a"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Start Instance - DIGITAL_CARD_ORIGINATION Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"businessKey\": \"1\",\n    \"variables\": {\n        \"applicationId\": {\n            \"value\": 1\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{dev}}/process-definition/:process_definition_id/start",
+									"host": [
+										"{{dev}}"
+									],
+									"path": [
+										"process-definition",
+										":process_definition_id",
+										"start"
+									],
+									"variable": [
+										{
+											"key": "process_definition_id",
+											"value": "89337817-75c9-11eb-84bb-0a58a9feac2a"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 May 2020 14:07:53 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"fa512fed-8fa2-11ea-8743-0242ac110002\",\n    \"definitionId\": \"DIGITAL_CARD_ORIGINATION:2:b32d2bae-8fa1-11ea-8743-0242ac110002\",\n    \"businessKey\": null,\n    \"caseInstanceId\": null,\n    \"ended\": false,\n    \"suspended\": false,\n    \"tenantId\": null\n}"
+						}
+					]
+				},
+				{
 					"name": "statistics",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/{{key}}/statistics",
+							"raw": "{{local}}/process-definition/key/{{key}}/statistics",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"process-definition",
@@ -293,9 +388,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/statistics",
+							"raw": "{{local}}/process-definition/statistics",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"process-definition",
@@ -311,9 +406,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/key/ESCALATION_HANDLER/delete?cascade=true",
+							"raw": "{{local}}/process-definition/key/ESCALATION_HANDLER/delete?cascade=true",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"process-definition",
@@ -337,9 +432,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition?key=DIGITAL_FIRST_CARD_ORIGINATION&latestVersion=true&suspended=true",
+							"raw": "{{dev}}/process-definition?key=DIGITAL_FIRST_CARD_ORIGINATION&tenantIds=2fb74cfc-5f4b-4666-80af-3aa47e954721",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{dev}}"
 							],
 							"path": [
 								"process-definition"
@@ -351,11 +446,46 @@
 								},
 								{
 									"key": "latestVersion",
-									"value": "true"
+									"value": "true",
+									"disabled": true
 								},
 								{
 									"key": "suspended",
-									"value": "true"
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "tenantIds",
+									"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721"
+								},
+								{
+									"key": "versionTag",
+									"value": "4.0.0",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Definition",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{stage}}/process-definition/:process_definition_id",
+							"host": [
+								"{{stage}}"
+							],
+							"path": [
+								"process-definition",
+								":process_definition_id"
+							],
+							"variable": [
+								{
+									"key": "process_definition_id",
+									"value": "e8bb9e68-75cc-11eb-8fe2-0a58a9feac2a"
 								}
 							]
 						}
@@ -375,9 +505,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/df786f87-3c89-11eb-b2b4-0a58a9feac2a/diagram",
+							"raw": "{{local}}/process-definition/df786f87-3c89-11eb-b2b4-0a58a9feac2a/diagram",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"process-definition",
@@ -395,7 +525,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"instructions\": [\n        {\n            \"type\": \"startBeforeActivity\",\n            \"activityId\": \"SCORING\"\n        }\n    ],\n    \"processInstanceIds\": [\n        \"e892150a-41d1-11eb-8e07-0242ac160003\"\n    ],\n    \"initialVariables\": true,\n    \"skipCustomListeners\": true,\n    \"withoutBusinessKey\": false\n}",
+							"raw": "{\n    \"instructions\": [\n        {\n            \"type\": \"startBeforeActivity\",\n            \"activityId\": \"SCORING\"\n        }\n    ],\n    \"processInstanceIds\": [\n        \"e892150a-41d1-11eb-8e07-0242ac160003\"\n    ],\n    \"initialVariables\": true,\n    \"skipCustomListeners\": false,\n    \"withoutBusinessKey\": false\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -403,9 +533,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-definition/c65213ad-41d1-11eb-b9dd-0242ac160003/restart",
+							"raw": "{{dev}}/process-definition/c65213ad-41d1-11eb-b9dd-0242ac160003/restart",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{dev}}"
 							],
 							"path": [
 								"process-definition",
@@ -427,9 +557,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task?processInstanceId=bb12aae4-137b-11eb-a9e3-0242ac130003",
+							"raw": "{{stage}}/external-task?activityId=CONFIRM_REJECTION",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{stage}}"
 							],
 							"path": [
 								"external-task"
@@ -437,7 +567,12 @@
 							"query": [
 								{
 									"key": "processInstanceId",
-									"value": "bb12aae4-137b-11eb-a9e3-0242ac130003"
+									"value": "bb12aae4-137b-11eb-a9e3-0242ac130003",
+									"disabled": true
+								},
+								{
+									"key": "activityId",
+									"value": "CONFIRM_REJECTION"
 								}
 							]
 						},
@@ -451,9 +586,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/6381a7dd-0e3c-11eb-aad9-0a58a9feac2a",
+							"raw": "{{local}}/external-task/6381a7dd-0e3c-11eb-aad9-0a58a9feac2a",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"external-task",
@@ -470,7 +605,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"workerId\": 1,\n    \"maxTasks\": 1,\n    \"topics\": [\n        {\n            \"topicName\": \"UPDATE_UNFREEZE_BUREAU\",\n            \"lockDuration\": 100000,\n            \"processVariables\": {}\n        }\n    ],\n    \"asyncResponseTimeout\": 5\n}",
+							"raw": "{\n    \"workerId\": 1,\n    \"maxTasks\": 1,\n    \"topics\": [\n        {\n            \"topicName\": \"UPDATE_IDV_DATA\",\n            \"lockDuration\": 100000,\n            \"processVariables\": {\n                \"applicationId\": \"c950a723-f04d-4013-a331-f1d839a29f44\"\n            }\n        }\n    ],\n    \"asyncResponseTimeout\": 5\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -478,9 +613,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/fetchAndLock",
+							"raw": "{{stage}}/external-task/fetchAndLock",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{stage}}"
 							],
 							"path": [
 								"external-task",
@@ -514,14 +649,20 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/e77ec4a4-4225-11eb-8f05-0242ac160003/complete",
+							"raw": "{{stage}}/external-task/:external_task_id/complete",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{stage}}"
 							],
 							"path": [
 								"external-task",
-								"e77ec4a4-4225-11eb-8f05-0242ac160003",
+								":external_task_id",
 								"complete"
+							],
+							"variable": [
+								{
+									"key": "external_task_id",
+									"value": "9f185972-7dce-11eb-82ac-0a58a9feac2a"
+								}
 							]
 						}
 					},
@@ -551,9 +692,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/bdadf0b6-1370-11eb-a9e3-0242ac130003/failure",
+							"raw": "{{local}}/external-task/bdadf0b6-1370-11eb-a9e3-0242ac130003/failure",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"external-task",
@@ -588,9 +729,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/f46496d1-137b-11eb-a9e3-0242ac130003/bpmnError",
+							"raw": "{{local}}/external-task/f46496d1-137b-11eb-a9e3-0242ac130003/bpmnError",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"external-task",
@@ -607,9 +748,9 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/4a7ba1db-0d46-11eb-aad9-0a58a9feac2a/unlock",
+							"raw": "{{local}}/external-task/4a7ba1db-0d46-11eb-aad9-0a58a9feac2a/unlock",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"external-task",
@@ -635,9 +776,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/6381a7dd-0e3c-11eb-aad9-0a58a9feac2a/retries",
+							"raw": "{{local}}/external-task/6381a7dd-0e3c-11eb-aad9-0a58a9feac2a/retries",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"external-task",
@@ -654,9 +795,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/external-task/9a1d8317-0e06-11eb-aad9-0a58a9feac2a/errorDetails",
+							"raw": "{{local}}/external-task/9a1d8317-0e06-11eb-aad9-0a58a9feac2a/errorDetails",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"external-task",
@@ -687,9 +828,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/task",
+							"raw": "{{local}}/task",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"task"
@@ -716,9 +857,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/task?processInstanceId=720cfb29-24d1-11eb-a4c5-0242ac120003",
+							"raw": "{{local}}/task?processInstanceId=720cfb29-24d1-11eb-a4c5-0242ac120003",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"task"
@@ -744,9 +885,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/history/activity-instance",
+							"raw": "{{local}}/history/activity-instance",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"history",
@@ -762,9 +903,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/history/task",
+							"raw": "{{local}}/history/task",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"history",
@@ -780,9 +921,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/history/external-task-log?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&processInstanceId=5b78f813-c1e4-11ea-8bfb-0a58a9feac2a&successLog=true",
+							"raw": "{{local}}/history/external-task-log?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&processInstanceId=5b78f813-c1e4-11ea-8bfb-0a58a9feac2a&successLog=true",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"history",
@@ -822,14 +963,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/history/process-instance/e03d0e1a-e929-11ea-abca-0a58a9feac2a",
+							"raw": "{{prod}}/history/process-instance/:process_instance_id",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{prod}}"
 							],
 							"path": [
 								"history",
 								"process-instance",
-								"e03d0e1a-e929-11ea-abca-0a58a9feac2a"
+								":process_instance_id"
+							],
+							"variable": [
+								{
+									"key": "process_instance_id",
+									"value": "4d378ab5-1293-11eb-8b06-0a58a9feac2a"
+								}
 							]
 						}
 					},
@@ -841,9 +988,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/history/process-instance?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&finished=true",
+							"raw": "{{local}}/history/process-instance?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&finished=true",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"history",
@@ -884,9 +1031,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/history/activity-instance?processInstanceId=43338afc-4688-11eb-bc2b-0a58a9feac2a&sortBy=startTime&sortOrder=asc",
+							"raw": "{{prod}}/history/activity-instance?processInstanceId=4d378ab5-1293-11eb-8b06-0a58a9feac2a&sortBy=startTime&sortOrder=asc",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{prod}}"
 							],
 							"path": [
 								"history",
@@ -895,7 +1042,7 @@
 							"query": [
 								{
 									"key": "processInstanceId",
-									"value": "43338afc-4688-11eb-bc2b-0a58a9feac2a"
+									"value": "4d378ab5-1293-11eb-8b06-0a58a9feac2a"
 								},
 								{
 									"key": "sortBy",
@@ -963,9 +1110,236 @@
 							]
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+							"raw": "{{local}}/deployment/create",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
+							],
+							"path": [
+								"deployment",
+								"create"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Deployment Success Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "deployment-name",
+											"value": "parallel_steps_example",
+											"type": "text"
+										},
+										{
+											"key": "deploy-changed-only",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "data",
+											"type": "file",
+											"src": "/Users/yogeshnaik/Yogesh/workspace/camunda-external-task-client-python/bpmn_process/parallel_steps_example.bpmn"
+										},
+										{
+											"key": "deployment-source",
+											"value": "parallel steps example",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local}}/deployment/create",
+									"host": [
+										"{{local}}"
+									],
+									"path": [
+										"deployment",
+										"create"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 21 May 2020 14:24:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/deployment/d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n    \"name\": \"parallel_steps_example\",\n    \"source\": \"parallel steps example\",\n    \"deploymentTime\": \"2020-05-21T14:24:46.950+0000\",\n    \"tenantId\": null,\n    \"deployedProcessDefinitions\": {\n        \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\": {\n            \"id\": \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\",\n            \"key\": \"PARALLEL_STEPS_EXAMPLE\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Parallel Steps Process Example\",\n            \"version\": 1,\n            \"resource\": \"parallel_steps_example.bpmn\",\n            \"deploymentId\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": null,\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
+						},
+						{
+							"name": "Create Deployment - Digital First Card Success Response Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "deployment-name",
+											"value": "DIGITAL_FIRST_CARD_ORIGINATION",
+											"type": "text"
+										},
+										{
+											"key": "deploy-changed-only",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "data",
+											"type": "file",
+											"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-apply-service/bpmn_process/digital_first_card_origination.bpmn"
+										},
+										{
+											"key": "deployment-source",
+											"value": "Digital First Card Origination",
+											"type": "text"
+										},
+										{
+											"key": "tenant-id",
+											"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://stg-workflow-internal.deserve.com/engine-rest/deployment/create",
+									"protocol": "https",
+									"host": [
+										"stg-workflow-internal",
+										"deserve",
+										"com"
+									],
+									"path": [
+										"engine-rest",
+										"deployment",
+										"create"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 15:32:53 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://stg-workflow-internal.deserve.com/engine-rest/deployment/2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n    \"name\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n    \"source\": \"Digital First Card Origination\",\n    \"deploymentTime\": \"2020-05-26T15:32:53.724+0000\",\n    \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n    \"deployedProcessDefinitions\": {\n        \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\": {\n            \"id\": \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"key\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Digital First Card Origination\",\n            \"version\": 1,\n            \"resource\": \"digital_first_card_origination.bpmn\",\n            \"deploymentId\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Deployment - Deserve Marqeta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "deployment-name",
+									"value": "DESERVE_MARQETA_ORIGINATION",
+									"type": "text"
+								},
+								{
+									"key": "deploy-changed-only",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "data",
+									"type": "file",
+									"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-workflow-service/src/main/resources/bpmn/deserve_marqeta/deserve_marqeta_origination.bpmn"
+								},
+								{
+									"key": "deployment-source",
+									"value": "DESERVE_MARQETA_ORIGINATION",
+									"type": "text"
+								},
+								{
+									"key": "tenant-id",
+									"value": "f05c5a1b-6474-4427-aa2b-7816c64ec9a5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/deployment/create",
+							"host": [
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -1107,9 +1481,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+									"raw": "{{local}}/deployment/create",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"deployment",
@@ -1185,9 +1559,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+							"raw": "{{local}}/deployment/create",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -1196,87 +1570,6 @@
 						}
 					},
 					"response": [
-						{
-							"name": "Create Deployment Success Example",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-										"key": "Content-Type",
-										"value": "multipart/form-data",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "deployment-name",
-											"value": "parallel_steps_example",
-											"type": "text"
-										},
-										{
-											"key": "deploy-changed-only",
-											"value": "true",
-											"type": "text"
-										},
-										{
-											"key": "data",
-											"type": "file",
-											"src": "/Users/yogeshnaik/Yogesh/workspace/camunda-external-task-client-python/bpmn_process/parallel_steps_example.bpmn"
-										},
-										{
-											"key": "deployment-source",
-											"value": "parallel steps example",
-											"type": "text"
-										}
-									],
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
-									"host": [
-										"{{CAMUNDA_REST_URL}}"
-									],
-									"path": [
-										"deployment",
-										"create"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 21 May 2020 14:24:46 GMT"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=20"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/deployment/d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n    \"name\": \"parallel_steps_example\",\n    \"source\": \"parallel steps example\",\n    \"deploymentTime\": \"2020-05-21T14:24:46.950+0000\",\n    \"tenantId\": null,\n    \"deployedProcessDefinitions\": {\n        \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\": {\n            \"id\": \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\",\n            \"key\": \"PARALLEL_STEPS_EXAMPLE\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Parallel Steps Process Example\",\n            \"version\": 1,\n            \"resource\": \"parallel_steps_example.bpmn\",\n            \"deploymentId\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": null,\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
-						},
 						{
 							"name": "Create Deployment - Digital First Card Success Response Example",
 							"originalRequest": {
@@ -1366,6 +1659,87 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://stg-workflow-internal.deserve.com/engine-rest/deployment/2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n    \"name\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n    \"source\": \"Digital First Card Origination\",\n    \"deploymentTime\": \"2020-05-26T15:32:53.724+0000\",\n    \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n    \"deployedProcessDefinitions\": {\n        \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\": {\n            \"id\": \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"key\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Digital First Card Origination\",\n            \"version\": 1,\n            \"resource\": \"digital_first_card_origination.bpmn\",\n            \"deploymentId\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
+						},
+						{
+							"name": "Create Deployment Success Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "deployment-name",
+											"value": "parallel_steps_example",
+											"type": "text"
+										},
+										{
+											"key": "deploy-changed-only",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "data",
+											"type": "file",
+											"src": "/Users/yogeshnaik/Yogesh/workspace/camunda-external-task-client-python/bpmn_process/parallel_steps_example.bpmn"
+										},
+										{
+											"key": "deployment-source",
+											"value": "parallel steps example",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local}}/deployment/create",
+									"host": [
+										"{{local}}"
+									],
+									"path": [
+										"deployment",
+										"create"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 21 May 2020 14:24:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/deployment/d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n    \"name\": \"parallel_steps_example\",\n    \"source\": \"parallel steps example\",\n    \"deploymentTime\": \"2020-05-21T14:24:46.950+0000\",\n    \"tenantId\": null,\n    \"deployedProcessDefinitions\": {\n        \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\": {\n            \"id\": \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\",\n            \"key\": \"PARALLEL_STEPS_EXAMPLE\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Parallel Steps Process Example\",\n            \"version\": 1,\n            \"resource\": \"parallel_steps_example.bpmn\",\n            \"deploymentId\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": null,\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
 						}
 					]
 				},
@@ -1407,9 +1781,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+							"raw": "{{local}}/deployment/create",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -1551,9 +1925,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+									"raw": "{{local}}/deployment/create",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"deployment",
@@ -1634,9 +2008,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+							"raw": "{{local}}/deployment/create",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -1645,6 +2019,96 @@
 						}
 					},
 					"response": [
+						{
+							"name": "Create Deployment - Digital First Card Success Response Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "deployment-name",
+											"value": "DIGITAL_FIRST_CARD_ORIGINATION",
+											"type": "text"
+										},
+										{
+											"key": "deploy-changed-only",
+											"value": "true",
+											"type": "text"
+										},
+										{
+											"key": "data",
+											"type": "file",
+											"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-apply-service/bpmn_process/digital_first_card_origination.bpmn"
+										},
+										{
+											"key": "deployment-source",
+											"value": "Digital First Card Origination",
+											"type": "text"
+										},
+										{
+											"key": "tenant-id",
+											"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://stg-workflow-internal.deserve.com/engine-rest/deployment/create",
+									"protocol": "https",
+									"host": [
+										"stg-workflow-internal",
+										"deserve",
+										"com"
+									],
+									"path": [
+										"engine-rest",
+										"deployment",
+										"create"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 15:32:53 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=20"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://stg-workflow-internal.deserve.com/engine-rest/deployment/2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n    \"name\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n    \"source\": \"Digital First Card Origination\",\n    \"deploymentTime\": \"2020-05-26T15:32:53.724+0000\",\n    \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n    \"deployedProcessDefinitions\": {\n        \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\": {\n            \"id\": \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"key\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Digital First Card Origination\",\n            \"version\": 1,\n            \"resource\": \"digital_first_card_origination.bpmn\",\n            \"deploymentId\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
+						},
 						{
 							"name": "Create Deployment Success Example",
 							"originalRequest": {
@@ -1688,9 +2152,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+									"raw": "{{local}}/deployment/create",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"deployment",
@@ -1725,96 +2189,6 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://localhost:8080/engine-rest/deployment/d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n    \"name\": \"parallel_steps_example\",\n    \"source\": \"parallel steps example\",\n    \"deploymentTime\": \"2020-05-21T14:24:46.950+0000\",\n    \"tenantId\": null,\n    \"deployedProcessDefinitions\": {\n        \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\": {\n            \"id\": \"PARALLEL_STEPS_EXAMPLE:1:d2924371-9b6e-11ea-9483-0242ac110002\",\n            \"key\": \"PARALLEL_STEPS_EXAMPLE\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Parallel Steps Process Example\",\n            \"version\": 1,\n            \"resource\": \"parallel_steps_example.bpmn\",\n            \"deploymentId\": \"d28f362f-9b6e-11ea-9483-0242ac110002\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": null,\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
-						},
-						{
-							"name": "Create Deployment - Digital First Card Success Response Example",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-										"key": "Content-Type",
-										"value": "multipart/form-data",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "deployment-name",
-											"value": "DIGITAL_FIRST_CARD_ORIGINATION",
-											"type": "text"
-										},
-										{
-											"key": "deploy-changed-only",
-											"value": "true",
-											"type": "text"
-										},
-										{
-											"key": "data",
-											"type": "file",
-											"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-apply-service/bpmn_process/digital_first_card_origination.bpmn"
-										},
-										{
-											"key": "deployment-source",
-											"value": "Digital First Card Origination",
-											"type": "text"
-										},
-										{
-											"key": "tenant-id",
-											"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721",
-											"type": "text"
-										}
-									],
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://stg-workflow-internal.deserve.com/engine-rest/deployment/create",
-									"protocol": "https",
-									"host": [
-										"stg-workflow-internal",
-										"deserve",
-										"com"
-									],
-									"path": [
-										"engine-rest",
-										"deployment",
-										"create"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Date",
-									"value": "Tue, 26 May 2020 15:32:53 GMT"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=20"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"links\": [\n        {\n            \"method\": \"GET\",\n            \"href\": \"http://stg-workflow-internal.deserve.com/engine-rest/deployment/2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"rel\": \"self\"\n        }\n    ],\n    \"id\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n    \"name\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n    \"source\": \"Digital First Card Origination\",\n    \"deploymentTime\": \"2020-05-26T15:32:53.724+0000\",\n    \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n    \"deployedProcessDefinitions\": {\n        \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\": {\n            \"id\": \"2a8a7964-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"key\": \"DIGITAL_FIRST_CARD_ORIGINATION\",\n            \"category\": \"http://bpmn.io/schema/bpmn\",\n            \"description\": null,\n            \"name\": \"Digital First Card Origination\",\n            \"version\": 1,\n            \"resource\": \"digital_first_card_origination.bpmn\",\n            \"deploymentId\": \"2a880862-9f66-11ea-ba6c-0a58a9feac2a\",\n            \"diagram\": null,\n            \"suspended\": false,\n            \"tenantId\": \"2fb74cfc-5f4b-4666-80af-3aa47e954721\",\n            \"versionTag\": null,\n            \"historyTimeToLive\": null,\n            \"startableInTasklist\": true\n        }\n    },\n    \"deployedCaseDefinitions\": null,\n    \"deployedDecisionDefinitions\": null,\n    \"deployedDecisionRequirementsDefinitions\": null\n}"
 						}
 					]
 				},
@@ -1846,7 +2220,7 @@
 								{
 									"key": "data",
 									"type": "file",
-									"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-workflow-service/src/main/resources/bpmn/digital_first_card_origination.bpmn"
+									"src": "/Users/yogeshnaik/Yogesh/workspace/deserve/origination-workflow-service/src/main/resources/bpmn/dfc/digital_first_card_origination.bpmn"
 								},
 								{
 									"key": "deployment-source",
@@ -1861,9 +2235,9 @@
 							]
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+							"raw": "{{local}}/deployment/create",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -2005,9 +2379,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/deployment/create",
+									"raw": "{{local}}/deployment/create",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"deployment",
@@ -2051,9 +2425,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/b0191cec-9605-11ea-bfa3-0a58a9feac2a?cascade=true",
+							"raw": "{{local}}/deployment/b0191cec-9605-11ea-bfa3-0a58a9feac2a?cascade=true",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -2075,9 +2449,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/deployment/2279ea0f-0eb0-11eb-aad9-0a58a9feac2a",
+							"raw": "{{local}}/deployment/2279ea0f-0eb0-11eb-aad9-0a58a9feac2a",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"deployment",
@@ -2098,9 +2472,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-instance?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&variables=applicationId_eq_e262c92e-24e0-4132-95af-8452a35020a3",
+							"raw": "{{prod}}/process-instance?variables=applicationId_eq_6cc7a677-5ae8-45a3-945a-be7bccc77614",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{prod}}"
 							],
 							"path": [
 								"process-instance"
@@ -2108,11 +2482,12 @@
 							"query": [
 								{
 									"key": "processDefinitionKey",
-									"value": "DIGITAL_FIRST_CARD_ORIGINATION"
+									"value": "DIGITAL_FIRST_CARD_ORIGINATION",
+									"disabled": true
 								},
 								{
 									"key": "variables",
-									"value": "applicationId_eq_e262c92e-24e0-4132-95af-8452a35020a3"
+									"value": "applicationId_eq_6cc7a677-5ae8-45a3-945a-be7bccc77614"
 								},
 								{
 									"key": "tenantIdIn",
@@ -2128,6 +2503,11 @@
 									"key": "active",
 									"value": "false",
 									"disabled": true
+								},
+								{
+									"key": "businessKey",
+									"value": "6ac5a107-0c3a-4b26-927f-d346ad8e1724",
+									"disabled": true
 								}
 							]
 						}
@@ -2135,22 +2515,22 @@
 					"response": []
 				},
 				{
-					"name": "/process-instance/{id}/activity-instances",
+					"name": "Get Current Activity Instances",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-instance/e892150a-41d1-11eb-8e07-0242ac160003/activity-instances",
+							"raw": "{{DEV_CAMUNDA_REST}}/process-instance/65087322-5635-11eb-92c9-0a58a9feac2a/activity-instances",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{DEV_CAMUNDA_REST}}"
 							],
 							"path": [
 								"process-instance",
-								"e892150a-41d1-11eb-8e07-0242ac160003",
+								"65087322-5635-11eb-92c9-0a58a9feac2a",
 								"activity-instances"
 							]
 						},
-						"description": "Get Activity Instance"
+						"description": "Get Current Activity Instances"
 					},
 					"response": [
 						{
@@ -2159,9 +2539,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-instance/9cdcdd8c-c06d-11ea-8bfb-0a58a9feac2a/activity-instances",
+									"raw": "{{local}}/process-instance/9cdcdd8c-c06d-11ea-8bfb-0a58a9feac2a/activity-instances",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"process-instance",
@@ -2210,13 +2590,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-instance/e892150a-41d1-11eb-8e07-0242ac160003",
+							"raw": "{{stage}}/process-instance/:process_instance_id",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{stage}}"
 							],
 							"path": [
 								"process-instance",
-								"e892150a-41d1-11eb-8e07-0242ac160003"
+								":process_instance_id"
+							],
+							"variable": [
+								{
+									"key": "process_instance_id",
+									"value": "7454ce5a-7b35-11eb-89e4-0a58a9feac2a"
+								}
 							]
 						}
 					},
@@ -2227,9 +2613,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
+									"raw": "{{local}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"process-instance",
@@ -2277,14 +2663,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-instance/e03d0e1a-e929-11ea-abca-0a58a9feac2a/variables",
+							"raw": "{{prod}}/process-instance/:process_instance_id/variables",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{prod}}"
 							],
 							"path": [
 								"process-instance",
-								"e03d0e1a-e929-11ea-abca-0a58a9feac2a",
+								":process_instance_id",
 								"variables"
+							],
+							"variable": [
+								{
+									"key": "process_instance_id",
+									"value": "e848378e-c39d-11ea-8b06-0a58a9feac2a"
+								}
 							]
 						}
 					},
@@ -2295,9 +2687,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CAMUNDA_REST_URL}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
+									"raw": "{{local}}/process-instance/fa512fed-8fa2-11ea-8743-0242ac110002",
 									"host": [
-										"{{CAMUNDA_REST_URL}}"
+										"{{local}}"
 									],
 									"path": [
 										"process-instance",
@@ -2346,7 +2738,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"skipCustomListeners\": true,\n    \"skipIoMappings\": true,\n    \"instructions\": [\n        {\n            \"type\": \"startAfterActivity\",\n            \"activityId\": \"SEND_REJECTION_EMAIL\"\n        },\n        {\n            \"type\": \"cancel\",\n            \"activityId\": \"CONFIRM_REJECTION\"\n        }\n    ]\n}",
+							"raw": "{\n    \"skipCustomListeners\": true,\n    \"skipIoMappings\": true,\n    \"instructions\": [\n        {\n            \"type\": \"startAfterActivity\",\n            \"activityId\": \"UPDATE_IDV_DATA\"\n        },\n        {\n            \"type\": \"cancel\",\n            \"activityId\": \"UPDATE_IDV_DATA\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2354,14 +2746,20 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-instance/e892150a-41d1-11eb-8e07-0242ac160003/modification",
+							"raw": "{{prod}}/process-instance/:process_instance_id/modification",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{prod}}"
 							],
 							"path": [
 								"process-instance",
-								"e892150a-41d1-11eb-8e07-0242ac160003",
+								":process_instance_id",
 								"modification"
+							],
+							"variable": [
+								{
+									"key": "process_instance_id",
+									"value": "23d9b0dd-7d40-11eb-9611-1229d6a3a9a3"
+								}
 							]
 						}
 					},
@@ -2382,9 +2780,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/process-instance",
+							"raw": "{{local}}/process-instance",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"process-instance"
@@ -2404,9 +2802,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/job-definition?activityIdIn=UPDATE_PLATFORM_USER",
+							"raw": "{{local}}/job-definition?activityIdIn=UPDATE_PLATFORM_USER",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"job-definition"
@@ -2432,9 +2830,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/execution?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&variables=applicationId_eq_c82076ec-ad2c-4fff-a1a6-e1a9851499d4",
+							"raw": "{{local}}/execution?processDefinitionKey=DIGITAL_FIRST_CARD_ORIGINATION&variables=applicationId_eq_c82076ec-ad2c-4fff-a1a6-e1a9851499d4",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"execution"
@@ -2459,9 +2857,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/execution/85c6e370-c1ca-11ea-8bfb-0a58a9feac2a",
+							"raw": "{{local}}/execution/85c6e370-c1ca-11ea-8bfb-0a58a9feac2a",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"execution",
@@ -2477,9 +2875,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/execution/88fbd83d-135b-11eb-a9e3-0242ac130003/messageSubscriptions/REJECT_APPLICATION",
+							"raw": "{{local}}/execution/88fbd83d-135b-11eb-a9e3-0242ac130003/messageSubscriptions/REJECT_APPLICATION",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"execution",
@@ -2502,9 +2900,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/incident?incidentType=failedJob&sortBy=incidentTimestamp&sortOrder=desc&failedActivityId=XPN_CREDIT_PULL",
+							"raw": "{{local}}/incident?incidentType=failedJob&sortBy=incidentTimestamp&sortOrder=desc",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"incident"
@@ -2529,7 +2927,8 @@
 								},
 								{
 									"key": "failedActivityId",
-									"value": "XPN_CREDIT_PULL"
+									"value": "XPN_CREDIT_PULL",
+									"disabled": true
 								}
 							]
 						}
@@ -2542,9 +2941,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/incident/017837e2-0bd4-11eb-b2b5-0242ac120003",
+							"raw": "{{local}}/incident/017837e2-0bd4-11eb-b2b5-0242ac120003",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"incident",
@@ -2569,9 +2968,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/execution/363d73b7-136a-11eb-a9e3-0242ac130003/create-incident",
+							"raw": "{{local}}/execution/363d73b7-136a-11eb-a9e3-0242ac130003/create-incident",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"execution",
@@ -2594,7 +2993,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"messageName\": \"ABANDONED_MESSAGE\",\n    \"processInstanceId\": \"3e9799c3-fe76-11ea-a323-0a58a9feac2a\"\n}",
+							"raw": "{\n    \"messageName\": \"ABANDONED_MESSAGE\",\n    \"businessKey\": \"ec35b9a1-9176-4e5f-9124-22ed5e393867\"\n}\n\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2602,9 +3001,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/message",
+							"raw": "{{stage}}/message",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{stage}}"
 							],
 							"path": [
 								"message"
@@ -2624,9 +3023,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/event-subscription?eventType=message&sortBy=created&sortOrder=asc",
+							"raw": "{{local}}/event-subscription?eventType=message&sortBy=created&sortOrder=asc",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"event-subscription"
@@ -2660,9 +3059,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/job?withException=true&firstResult=1&maxResults=2",
+							"raw": "{{local}}/job?withException=true&firstResult=0&maxResults=50&tenantIdIn=2fb74cfc-5f4b-4666-80af-3aa47e954721&sortBy=jobDueDate&sortOrder=desc",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"job"
@@ -2670,7 +3069,7 @@
 							"query": [
 								{
 									"key": "processInstanceId",
-									"value": "553fe1d5-4680-11eb-bc2b-0a58a9feac2a",
+									"value": "1be95e56-4687-11eb-bc2b-0a58a9feac2a",
 									"disabled": true
 								},
 								{
@@ -2684,11 +3083,23 @@
 								},
 								{
 									"key": "firstResult",
-									"value": "1"
+									"value": "0"
 								},
 								{
 									"key": "maxResults",
-									"value": "2"
+									"value": "50"
+								},
+								{
+									"key": "tenantIdIn",
+									"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721"
+								},
+								{
+									"key": "sortBy",
+									"value": "jobDueDate"
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc"
 								}
 							]
 						}
@@ -2701,13 +3112,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/job/c9a887e8-24c3-11eb-b1d5-0242ac120003",
+							"raw": "{{local}}/job/09cc115d-524d-11eb-aedd-0a58a9feac2a",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"job",
-								"c9a887e8-24c3-11eb-b1d5-0242ac120003"
+								"09cc115d-524d-11eb-aedd-0a58a9feac2a"
 							]
 						}
 					},
@@ -2728,13 +3139,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/job/37d89391-41d2-11eb-8e07-0242ac160003/retries",
+							"raw": "{{local}}/job/07d4bfc8-3dda-11eb-b2b4-0a58a9feac2a/retries",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"job",
-								"37d89391-41d2-11eb-8e07-0242ac160003",
+								"07d4bfc8-3dda-11eb-b2b4-0a58a9feac2a",
 								"retries"
 							]
 						}
@@ -2761,9 +3172,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/migration/generate",
+							"raw": "{{local}}/migration/generate",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"migration",
@@ -2788,9 +3199,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/migration/validate",
+							"raw": "{{local}}/migration/validate",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{local}}"
 							],
 							"path": [
 								"migration",
@@ -2807,7 +3218,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"migrationPlan\": {\n        \"sourceProcessDefinitionId\": \"c1c5df85-fe5f-11ea-a323-0a58a9feac2a\",\n        \"targetProcessDefinitionId\": \"817cd317-44db-11eb-bc2b-0a58a9feac2a\",\n        \"instructions\": [\n            {\n                \"sourceActivityIds\": [\n                    \"UPDATE_PLATFORM_USER\"\n                ],\n                \"targetActivityIds\": [\n                    \"UPDATE_PLATFORM_USER_EXTERNAL\"\n                ],\n                \"updateEventTrigger\": false\n            }\n        ]\n    },\n    \"processInstanceIds\": [\n        \"6c53dcb4-0e06-11eb-aad9-0a58a9feac2a\",\n        \"c788ea19-0d47-11eb-aad9-0a58a9feac2a\",\n        \"541e2fdf-0247-11eb-a13b-0a58a9feac2a\",\n        \"ad58f7ea-0245-11eb-a13b-0a58a9feac2a\",\n        \"c7d3ed27-ff2c-11ea-a13b-0a58a9feac2a\"\n    ],\n    \"skipCustomListeners\": true\n}",
+							"raw": "{\n    \"migrationPlan\": {\n        \"sourceProcessDefinitionId\": \"852b8d33-128b-11eb-8b06-0a58a9feac2a\",\n        \"targetProcessDefinitionId\": \"8fa08d2c-75eb-11eb-98cb-0a58a9feac2a\",\n        \"instructions\": [\n            {\n                \"sourceActivityIds\": [\n                    \"XPN_CREDIT_PULL\"\n                ],\n                \"targetActivityIds\": [\n                    \"BUREAU_HARD_PULL\"\n                ],\n                \"updateEventTrigger\": false\n            }\n        ]\n    },\n    \"processInstanceIds\": [\n        \"2118a4f1-3d16-11eb-b94e-0a58a9feac2a\"\n    ],\n    \"skipCustomListeners\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2815,9 +3226,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{CAMUNDA_REST_URL}}/migration/execute",
+							"raw": "{{prod}}/migration/execute",
 							"host": [
-								"{{CAMUNDA_REST_URL}}"
+								"{{prod}}"
 							],
 							"path": [
 								"migration",
@@ -2852,20 +3263,28 @@
 	],
 	"variable": [
 		{
-			"key": "DEV_CAMUNDA_REST",
+			"key": "dev",
 			"value": "https://dev-workflow-internal.deserve.com/engine-rest"
 		},
 		{
-			"key": "LOCAL_CAMUNDA_REST",
+			"key": "local",
 			"value": "http://localhost:8080/engine-rest"
 		},
 		{
-			"key": "CAMUNDA_REST_URL",
+			"key": "camunda",
 			"value": "http://localhost:8080/engine-rest"
 		},
 		{
-			"key": "PROD_CAMUNDA_REST",
+			"key": "prod",
 			"value": "https://prod-workflow-internal.deserve.com/engine-rest"
+		},
+		{
+			"key": "stage",
+			"value": "https://stg-workflow-internal.deserve.com/engine-rest"
+		},
+		{
+			"key": "tenant_id",
+			"value": "2fb74cfc-5f4b-4666-80af-3aa47e954721"
 		}
 	]
 }

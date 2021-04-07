@@ -1,14 +1,12 @@
 import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from frozendict import frozendict
-
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from examples.task_handler_example import handle_task
 
 logger = logging.getLogger(__name__)
 
-default_config = frozendict({
+default_config = {
     "maxTasks": 1,
     "lockDuration": 10000,
     "asyncResponseTimeout": 3000,
@@ -17,7 +15,7 @@ default_config = frozendict({
     "sleepSeconds": 30,
     "isDebug": True,
     "httpTimeoutMillis": 3000,
-})
+}
 
 
 def main():

@@ -1,9 +1,8 @@
 import logging
 
-from frozendict import frozendict
 
-
-def log_with_context(message, context=frozendict({}), log_level='info', **kwargs):
+def log_with_context(message, context=None, log_level='info', **kwargs):
+    context = context if context is not None else {}
     log_function = __get_log_function(log_level)
 
     log_context_prefix = __get_log_context_prefix(context)

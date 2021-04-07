@@ -1,18 +1,16 @@
 import logging
 
-from frozendict import frozendict
-
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from examples.task_handler_example import handle_task
 
 logger = logging.getLogger(__name__)
 
-default_config = frozendict({
+default_config = {
     "maxTasks": 1,
     "lockDuration": 10000,
     "asyncResponseTimeout": 0,
     "isDebug": True,
-})
+}
 
 
 def main():

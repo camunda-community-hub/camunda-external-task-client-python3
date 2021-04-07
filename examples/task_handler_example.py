@@ -2,15 +2,16 @@ from datetime import datetime
 from random import randint
 
 import time
-from frozendict import frozendict
 
 from camunda.external_task.external_task import ExternalTask
 from camunda.utils.log_utils import log_with_context
 
 
 def handle_task(task: ExternalTask):
-    log_context = frozendict({"WORKER_ID": task.get_worker_id(), "TASK_ID": task.get_task_id(),
-                              "TOPIC": task.get_topic_name()})
+    log_context = {"WORKER_ID": task.get_worker_id(),
+                   "TASK_ID": task.get_task_id(),
+                   "TOPIC": task.get_topic_name()}
+
     log_with_context(f"handle_task started: business key = {task.get_business_key()}", log_context)
 
     # simulate task execution
