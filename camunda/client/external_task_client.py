@@ -2,7 +2,6 @@ import logging
 from http import HTTPStatus
 
 import requests
-from frozendict import frozendict
 
 from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
 from camunda.utils.log_utils import log_with_context
@@ -24,7 +23,8 @@ class ExternalTaskClient:
         "timeoutDeltaMillis": 5000,
     }
 
-    def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=frozendict({})):
+    def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
+        config = config if config is not None else {}
         self.worker_id = worker_id
         self.external_task_base_url = engine_base_url + "/external-task"
         self.config = type(self).default_config.copy()
@@ -131,5 +131,5 @@ class ExternalTaskClient:
         }
 
     def _log_with_context(self, msg, log_level='info', **kwargs):
-        context = frozendict({"WORKER_ID": self.worker_id})
+        context = {"WORKER_ID": self.worker_id}
         log_with_context(msg, context=context, log_level=log_level, **kwargs)

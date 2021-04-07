@@ -1,7 +1,5 @@
 import logging
 
-from frozendict import frozendict
-
 from camunda.utils.log_utils import log_with_context
 
 logger = logging.getLogger(__name__)
@@ -74,5 +72,5 @@ class ExternalTaskExecutor:
                             f"for topic={topic}, worker_id={self.worker_id}")
 
     def _log_with_context(self, msg, task_id=None, log_level='info', **kwargs):
-        context = frozendict({"WORKER_ID": self.worker_id, "TASK_ID": task_id})
+        context = {"WORKER_ID": self.worker_id, "TASK_ID": task_id}
         log_with_context(msg, context=context, log_level=log_level, **kwargs)
