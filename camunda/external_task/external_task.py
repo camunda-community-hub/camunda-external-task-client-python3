@@ -35,6 +35,9 @@ class ExternalTask:
     def get_business_key(self):
         return self._context.get("businessKey", None)
 
+    def get_extension_properties(self):
+        return self._context.get("extensionProperties", None)
+
     def get_task_result(self):
         return self._task_result
 
