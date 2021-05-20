@@ -1,5 +1,8 @@
 class Variables:
-    def __init__(self, variables={}):
+    def __init__(self, variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        variables = {} if variables is None else variables
+
         self.variables = variables
 
     def get_variable(self, variable_name):

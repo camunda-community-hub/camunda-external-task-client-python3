@@ -44,7 +44,11 @@ class ExternalTask:
     def set_task_result(self, task_result):
         self._task_result = task_result
 
-    def complete(self, global_variables={}, local_variables={}):
+    def complete(self, global_variables=None, local_variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        global_variables = {} if global_variables is None else global_variables
+        local_variables = {} if local_variables is None else local_variables
+
         self._task_result = TaskResult.success(self, global_variables, local_variables)
         return self._task_result
 
@@ -59,7 +63,10 @@ class ExternalTask:
         retries = int(retries - 1) if retries and retries >= 1 else max_retries
         return retries
 
-    def bpmn_error(self, error_code, error_message, variables={}):
+    def bpmn_error(self, error_code, error_message, variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        variables = {} if variables is None else variables
+
         self._task_result = TaskResult.bpmn_error(self, error_code=error_code,
                                                   error_message=error_message,
                                                   variables=variables)
@@ -71,8 +78,13 @@ class ExternalTask:
 
 class TaskResult:
 
-    def __init__(self, task, success=False, global_variables={}, local_variables={}, bpmn_error_code=None,
-                 error_message=None, error_details={}, retries=0, retry_timeout=300000):
+    def __init__(self, task, success=False, global_variables=None, local_variables=None, bpmn_error_code=None,
+                 error_message=None, error_details=None, retries=0, retry_timeout=300000):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        global_variables = {} if global_variables is None else global_variables
+        local_variables = {} if local_variables is None else local_variables
+        error_details = {} if error_details is None else error_details
+
         self.task = task
         self.success_state = success
         self.global_variables = global_variables
@@ -84,7 +96,9 @@ class TaskResult:
         self.retry_timeout = retry_timeout
 
     @classmethod
-    def success(cls, task, global_variables, local_variables={}):
+    def success(cls, task, global_variables, local_variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        local_variables = {} if local_variables is None else local_variables
         return TaskResult(task, success=True, global_variables=global_variables, local_variables=local_variables)
 
     @classmethod
@@ -93,7 +107,10 @@ class TaskResult:
                           retries=retries, retry_timeout=retry_timeout)
 
     @classmethod
-    def bpmn_error(cls, task, error_code, error_message, variables={}):
+    def bpmn_error(cls, task, error_code, error_message, variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        variables = {} if variables is None else variables
+
         return TaskResult(task, success=False, bpmn_error_code=error_code, error_message=error_message,
                           global_variables=variables)
 
@@ -115,7 +132,9 @@ class TaskResult:
 
     def __str__(self):
         if self.is_success():
-            return f"success: task_id={self.task.get_task_id()}, global_variables={self.global_variables}, local_variables={self.local_variables}"
+            return f"success: task_id={self.task.get_task_id()}, " \
+                   f"global_variables={self.global_variables}, " \
+                   f"local_variables={self.local_variables}"
         elif self.is_failure():
             return f"failure: task_id={self.task.get_task_id()}, " \
                    f"error_message={self.error_message}, error_details={self.error_details}, " \
