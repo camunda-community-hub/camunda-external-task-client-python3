@@ -1,12 +1,16 @@
+
+import json
+
 class Variables:
     def __init__(self, variables={}):
         self.variables = variables
 
-    def get_variable(self, variable_name):
+    def get_variable(self, variable_name, withmeta=False):
         variable = self.variables.get(variable_name, None)
         if not variable:
             return None
-
+        if withmeta:
+            return variable
         return variable["value"]
 
     @classmethod
