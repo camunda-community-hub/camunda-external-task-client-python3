@@ -1,3 +1,4 @@
+import base64
 import collections
 from http import HTTPStatus
 from unittest import TestCase
@@ -141,3 +142,22 @@ class ExternalTaskExecutorTest(TestCase):
                     executor.execute_task(task, task_result_test.task_action)
 
                 self.assertEqual(task_result_test.expected_error_message, str(exception_ctx.exception))
+
+    def test_strip_long_variables(self):
+        variables = {
+            "var0": "string",
+            "var1": {"value": "string"}, 
+            "var2": {"value": 1}, 
+            "var3": {"value": "{\"key\": \"value\"}", "type": "Json"},
+            "var4": {"value": base64.encodebytes(b"string"), "type": "Bytes"},
+            "var5": {"value": "some file content", "type": "File"},
+        }
+        cleaned = ExternalTaskExecutor._strip_long_variables(None, variables)
+        self.assertEqual({
+            "var0": "string",
+            "var1": {"value": "string"}, 
+            "var2": {"value": 1}, 
+            "var3": {"value": "...", "type": "Json"},
+            "var4": {"value": "...", "type": "Bytes"},
+            "var5": {"value": "...", "type": "File"},
+        }, cleaned)
