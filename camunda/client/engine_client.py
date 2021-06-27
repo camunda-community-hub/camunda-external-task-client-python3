@@ -89,7 +89,7 @@ class EngineClient:
             "businessKey": business_key,
         }
 
-        if(process_instance_id is not None):
+        if process_instance_id:
             body.pop("tenantId")
             body.pop("withoutTenantId")
 
