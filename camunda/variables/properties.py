@@ -15,11 +15,7 @@ class Properties:
         """
         access a single property
         """
-        prop = self.properties.get(property_name, None)
-        if not prop:
-            return None
-
-        return prop
+        return self.properties.get(property_name, None)
 
     def to_dict(self) -> dict:
         """
