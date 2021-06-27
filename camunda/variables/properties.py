@@ -19,5 +19,5 @@ class Properties:
         """
         result = {}
         for k, v in self.properties.items():
-            result[k] = v["value"]
+            result[k] = v
         return result
