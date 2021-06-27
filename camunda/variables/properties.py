@@ -7,7 +7,7 @@ class Properties:
         if not prop:
             return None
 
-        return prop["value"]
+        return prop
 
     def to_dict(self):
         """
