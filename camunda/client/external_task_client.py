@@ -69,8 +69,7 @@ class ExternalTaskClient:
                 "lockDuration": self.config["lockDuration"],
                 "processVariables": process_variables if process_variables else {},
                 # enables Camunda Extension Properties
-                "includeExtensionProperties": self.config["includeExtensionProperties"]
-                if "includeExtensionProperties" in self.config else False
+                "includeExtensionProperties": self.config.get("includeExtensionProperties") or False
 
             })
         return topics
