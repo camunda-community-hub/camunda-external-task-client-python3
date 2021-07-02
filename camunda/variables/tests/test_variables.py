@@ -38,6 +38,14 @@ class VariablesTest(TestCase):
                               "var2": {"value": True},
                               "var3": {"value": "string"}}, formatted_vars)
 
+    def test_format_returns_formatted_variables_keeps_already_formatted(self):
+        variables = {"var1": 1, "var2": True, "var3": "string", "var4": {"value": 1}}
+        formatted_vars = Variables.format(variables)
+        self.assertDictEqual({"var1": {"value": 1},
+                              "var2": {"value": True},
+                              "var3": {"value": "string"},
+                              "var4": {"value": 1}}, formatted_vars)
+
     def test_to_dict_returns_variables_as_dict(self):
         variables = Variables({"var1": {"value": 1},
                                "var2": {"value": True},
