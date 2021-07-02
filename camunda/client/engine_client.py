@@ -81,6 +81,10 @@ class EngineClient:
             "businessKey": business_key,
         }
 
+        if process_instance_id:
+            body.pop("tenantId")
+            body.pop("withoutTenantId")
+
         body = {k: v for k, v in body.items() if v is not None}
 
         return self.transport.post(url, json=body)
@@ -132,4 +136,3 @@ class EngineClient:
         if with_meta:
             return dict(variable_meta, value=decoded_value)
         return decoded_value
-
