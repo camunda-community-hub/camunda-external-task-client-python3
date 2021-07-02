@@ -5,11 +5,11 @@ class Variables:
     def __init__(self, variables={}):
         self.variables = variables
 
-    def get_variable(self, variable_name, withmeta=False):
+    def get_variable(self, variable_name, with_meta=False):
         variable = self.variables.get(variable_name, None)
         if not variable:
             return None
-        if withmeta:
+        if with_meta:
             return variable
         return variable["value"]
 

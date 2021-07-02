@@ -26,8 +26,8 @@ class ExternalTask:
     def get_topic_name(self):
         return self._context["topicName"]
 
-    def get_variable(self, variable_name, withmeta=False):
-        return self._variables.get_variable(variable_name, withmeta=withmeta)
+    def get_variable(self, variable_name, with_meta=False):
+        return self._variables.get_variable(variable_name, with_meta=with_meta)
 
     def get_tenant_id(self):
         return self._context.get("tenantId", None)
