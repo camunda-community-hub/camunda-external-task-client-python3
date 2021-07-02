@@ -21,7 +21,10 @@ class Variables:
         """
         formatted_vars = {}
         if variables:
-            formatted_vars = {k: {"value": v} for k, v in variables.items()}
+            formatted_vars = {
+                k: v if isinstance(v, dict) else {"value": v}
+                for k, v in variables.items()
+            }
         return formatted_vars
 
     def to_dict(self):
