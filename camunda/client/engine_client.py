@@ -90,6 +90,10 @@ class EngineClient:
             "businessKey": business_key,
         }
 
+        if process_instance_id:
+            body.pop("tenantId")
+            body.pop("withoutTenantId")
+
         body = {k: v for k, v in body.items() if v is not None}
 
         response = requests.post(url, headers=self._get_headers(), json=body)
