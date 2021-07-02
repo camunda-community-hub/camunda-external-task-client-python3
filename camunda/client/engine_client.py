@@ -1,3 +1,4 @@
+import base64
 import logging
 from http import HTTPStatus
 
@@ -137,3 +138,19 @@ class EngineClient:
         response = requests.put(url, headers=self._get_headers(), json=body)
         raise_exception_if_not_ok(response)
         return response.status_code == HTTPStatus.NO_CONTENT
+
+    def get_process_instance_variable(self, process_instance_id, variable_name, with_meta=False):
+        url = f"{self.engine_base_url}/process-instance/{process_instance_id}/variables/{variable_name}"
+        response = requests.get(url, headers=self._get_headers())
+        raise_exception_if_not_ok(response)
+        resp_json = response.json()
+
+        url_with_data = f"{url}/data"
+        response = requests.get(url_with_data, headers=self._get_headers())
+        raise_exception_if_not_ok(response)
+
+        decoded_value = base64.encodebytes(response.content).decode("utf-8")
+
+        if with_meta:
+            return dict(resp_json, value=decoded_value)
+        return decoded_value
