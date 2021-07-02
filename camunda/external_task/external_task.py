@@ -1,3 +1,4 @@
+from camunda.variables.properties import Properties
 from camunda.variables.variables import Variables
 
 
@@ -7,6 +8,7 @@ class ExternalTask:
         self._context = context
         self._variables = Variables(context.get("variables", {}))
         self._task_result = TaskResult.empty_task_result(task=self)
+        self._extProperties = Properties(context.get("extensionProperties", {}))
 
     def get_worker_id(self):
         return self._context["workerId"]
@@ -16,6 +18,9 @@ class ExternalTask:
 
     def get_variables(self):
         return self._variables.to_dict()
+
+    def get_extension_properties(self) -> dict:
+        return self._extProperties.to_dict()
 
     def get_task_id(self):
         return self._context["id"]
@@ -28,6 +33,9 @@ class ExternalTask:
 
     def get_variable(self, variable_name):
         return self._variables.get_variable(variable_name)
+
+    def get_extension_property(self, property_name) -> str:
+        return self._extProperties.get_property(property_name)
 
     def get_tenant_id(self):
         return self._context.get("tenantId", None)
