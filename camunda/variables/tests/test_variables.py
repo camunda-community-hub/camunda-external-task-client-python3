@@ -13,6 +13,16 @@ class VariablesTest(TestCase):
         variables = Variables({"var1": {"value": 1}})
         self.assertEqual(1, variables.get_variable("var1"))
 
+    def test_get_variable_returns_with_meta(self):
+        var1_raw = {"value": 1}
+        variables = Variables({"var1": var1_raw})
+        self.assertEqual(var1_raw, variables.get_variable("var1", True))
+
+    def test_get_variable_returns_without_meta(self):
+        var1_raw = {"value": 1}
+        variables = Variables({"var1": var1_raw})
+        self.assertEqual(1, variables.get_variable("var1", False))
+
     def test_format_returns_empty_dict_when_none_is_passed(self):
         variables = None
         self.assertDictEqual({}, Variables.format(variables))

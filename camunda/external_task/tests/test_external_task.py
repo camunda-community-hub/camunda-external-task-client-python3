@@ -86,6 +86,16 @@ class ExternalTaskTest(TestCase):
         variable = task.get_variable("var_name")
         self.assertEqual(1, variable)
 
+    def test_get_variable_returns_with_meta(self):
+        task = ExternalTask(context={"variables": {"var_name": {"value": 1}}})
+        variable = task.get_variable("var_name", True)
+        self.assertEqual({"value": 1}, variable)
+
+    def test_get_variable_returns_without_meta(self):
+        task = ExternalTask(context={"variables": {"var_name": {"value": 1}}})
+        variable = task.get_variable("var_name", False)
+        self.assertEqual(1, variable)
+
     def test_get_property_returns_value_for_property_present(self):
         task = ExternalTask(context={"extensionProperties":  {"var1":"one","var2":"two"}})
         prop = task.get_extension_property("var1")
