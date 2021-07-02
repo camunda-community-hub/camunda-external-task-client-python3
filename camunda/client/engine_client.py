@@ -147,6 +147,6 @@ class EngineClient:
 
         decoded_value = base64.encodebytes(response.content).decode("utf-8")
 
-        if withmeta:
-            return dict(frame, value=decoded_value)
+        if with_meta:
+            return dict(resp_json, value=decoded_value)
         return decoded_value
