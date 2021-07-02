@@ -42,7 +42,7 @@ class ExternalTaskExecutor:
             return variables
         cleaned = {}
         for k, v in variables.items():
-            if isinstance(v, dict) and v.get("type", "") in ("File", "Bytes", "Json"):
+            if isinstance(v, dict) and v.get("type", "") in ("File", "Bytes"):
                 cleaned[k] = {**v, "value": "..."}
             else:
                 cleaned[k] = v
