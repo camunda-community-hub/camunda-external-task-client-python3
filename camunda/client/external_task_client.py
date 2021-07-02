@@ -21,6 +21,7 @@ class ExternalTaskClient:
         "retryTimeout": 300000,
         "httpTimeoutMillis": 30000,
         "timeoutDeltaMillis": 5000,
+        "includeExtensionProperties": True  # enables Camunda Extension Properties
     }
 
     def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
@@ -66,7 +67,10 @@ class ExternalTaskClient:
             topics.append({
                 "topicName": topic,
                 "lockDuration": self.config["lockDuration"],
-                "processVariables": process_variables if process_variables else {}
+                "processVariables": process_variables if process_variables else {},
+                # enables Camunda Extension Properties
+                "includeExtensionProperties": self.config.get("includeExtensionProperties") or False
+
             })
         return topics
 

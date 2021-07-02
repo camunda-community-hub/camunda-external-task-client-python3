@@ -196,7 +196,7 @@ class EngineClientTest(TestCase):
         self.assertEqual(f"received 400 : RestException : {expected_message}", str(exception_ctx.exception))
 
     @responses.activate
-    def test_get_process_instance_variable_without_withmeta(self):
+    def test_get_process_instance_variable_without_meta(self):
         process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
         variable_name = "var1"
         process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
@@ -211,7 +211,7 @@ class EngineClientTest(TestCase):
         self.assertEqual("hellocamunda\n", resp)
 
     @responses.activate
-    def test_get_process_instance_variable_without_withmeta(self):
+    def test_get_process_instance_variable_with_meta(self):
         process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
         variable_name = "var1"
         process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"

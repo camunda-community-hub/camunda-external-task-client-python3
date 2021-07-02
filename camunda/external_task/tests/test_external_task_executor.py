@@ -146,8 +146,8 @@ class ExternalTaskExecutorTest(TestCase):
     def test_strip_long_variables(self):
         variables = {
             "var0": "string",
-            "var1": {"value": "string"}, 
-            "var2": {"value": 1}, 
+            "var1": {"value": "string"},
+            "var2": {"value": 1},
             "var3": {"value": "{\"key\": \"value\"}", "type": "Json"},
             "var4": {"value": base64.encodebytes(b"string"), "type": "Bytes"},
             "var5": {"value": "some file content", "type": "File"},
@@ -155,9 +155,9 @@ class ExternalTaskExecutorTest(TestCase):
         cleaned = ExternalTaskExecutor._strip_long_variables(None, variables)
         self.assertEqual({
             "var0": "string",
-            "var1": {"value": "string"}, 
-            "var2": {"value": 1}, 
-            "var3": {"value": "...", "type": "Json"},
+            "var1": {"value": "string"},
+            "var2": {"value": 1},
+            "var3": {"value": "{\"key\": \"value\"}", "type": "Json"},
             "var4": {"value": "...", "type": "Bytes"},
             "var5": {"value": "...", "type": "File"},
         }, cleaned)
