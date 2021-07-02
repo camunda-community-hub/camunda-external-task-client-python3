@@ -139,8 +139,8 @@ class EngineClientTest(TestCase):
         self.assertTrue("HTTPStatus.INTERNAL_SERVER_ERROR Server Error: Internal Server Error"
                         in str(exception_ctx.exception))
 
-    @patch('requests.post')
-    def test_correlate_message_with_only_message_name(self, mock_post):
+    @patch('requests.request')
+    def test_correlate_message_with_only_message_name(self, mock_request):
         expected_request_payload = {
             "messageName": "CANCEL_MESSAGE",
             "withoutTenantId": True,
@@ -148,12 +148,13 @@ class EngineClientTest(TestCase):
         }
 
         self.client.correlate_message("CANCEL_MESSAGE")
-        mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
+        mock_request.assert_called_with("POST",
+                                     ENGINE_LOCAL_BASE_URL + "/message",
                                      json=expected_request_payload,
                                      headers={'Content-Type': 'application/json'})
 
-    @patch('requests.post')
-    def test_correlate_message_with_business_key(self, mock_post):
+    @patch('requests.request')
+    def test_correlate_message_with_business_key(self, mock_request):
         expected_request_payload = {
             "messageName": "CANCEL_MESSAGE",
             "withoutTenantId": True,
@@ -162,12 +163,13 @@ class EngineClientTest(TestCase):
         }
 
         self.client.correlate_message("CANCEL_MESSAGE", business_key="123456")
-        mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
-                                     json=expected_request_payload,
-                                     headers={'Content-Type': 'application/json'})
+        mock_request.assert_called_with("POST",
+                                        ENGINE_LOCAL_BASE_URL + "/message",
+                                        json=expected_request_payload,
+                                        headers={'Content-Type': 'application/json'})
 
-    @patch('requests.post')
-    def test_correlate_message_with_tenant_id(self, mock_post):
+    @patch('requests.request')
+    def test_correlate_message_with_tenant_id(self, mock_request):
         expected_request_payload = {
             "messageName": "CANCEL_MESSAGE",
             "withoutTenantId": False,
@@ -176,9 +178,10 @@ class EngineClientTest(TestCase):
         }
 
         self.client.correlate_message("CANCEL_MESSAGE", tenant_id="123456")
-        mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
-                                     json=expected_request_payload,
-                                     headers={'Content-Type': 'application/json'})
+        mock_request.assert_called_with("POST",
+                                        ENGINE_LOCAL_BASE_URL + "/message",
+                                        json=expected_request_payload,
+                                        headers={'Content-Type': 'application/json'})
 
     @responses.activate
     def test_correlate_message_invalid_message_name_raises_exception(self):

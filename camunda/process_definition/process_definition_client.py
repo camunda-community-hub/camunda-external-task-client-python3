@@ -1,9 +1,8 @@
 import logging
 
-import requests
+from camunda.client.transport.requests import RequestsTransport
 
 from camunda.client.engine_client import EngineClient, ENGINE_LOCAL_BASE_URL
-from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import join
 from camunda.variables.variables import Variables
 
@@ -12,17 +11,15 @@ logger = logging.getLogger(__name__)
 
 class ProcessDefinitionClient(EngineClient):
 
-    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL):
-        super().__init__(engine_base_url)
+    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL, **kwargs):
+        super().__init__(engine_base_url, **kwargs)
 
     def get_process_definitions(self, process_key, version_tag, tenant_ids, sort_by="version", sort_order="desc",
                                 offset=0, limit=1):
         url = self.get_process_definitions_url()
         url_params = self.get_process_definitions_url_params(process_key, version_tag, tenant_ids,
                                                              sort_by, sort_order, offset, limit)
-        response = requests.get(url, headers=self._get_headers(), params=url_params)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        return self.transport.get(url, params=url_params)
 
     def get_process_definitions_url(self):
         return f"{self.engine_base_url}/process-definition"
@@ -88,9 +85,7 @@ class ProcessDefinitionClient(EngineClient):
         if business_key:
             body["businessKey"] = business_key
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        return self.transport.post(url, json=body)
 
     def get_start_process_url(self, process_definition_id):
         return f"{self.engine_base_url}/process-definition/{process_definition_id}/start"

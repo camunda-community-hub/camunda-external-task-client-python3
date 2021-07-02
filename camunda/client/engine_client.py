@@ -1,10 +1,9 @@
 import base64
 import logging
-from http import HTTPStatus
 
-import requests
-
-from camunda.utils.response_utils import raise_exception_if_not_ok
+from camunda.client.transport.requests import RequestsTransport
+from camunda.client.transport.serializers import (RequestsBooleanSerializer,
+                                                  RequestsRawSerializer)
 from camunda.utils.utils import join
 from camunda.variables.variables import Variables
 
@@ -15,8 +14,9 @@ ENGINE_LOCAL_BASE_URL = "http://localhost:8080/engine-rest"
 
 class EngineClient:
 
-    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL):
+    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL, transport=None, transport_class=RequestsTransport, **kwargs):
         self.engine_base_url = engine_base_url
+        self.transport = transport or transport_class(**kwargs)
 
     def get_start_process_instance_url(self, process_key, tenant_id=None):
         if tenant_id:
@@ -39,16 +39,12 @@ class EngineClient:
         if business_key:
             body["businessKey"] = business_key
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        return self.transport.post(url, json=body)
 
     def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
-        response = requests.get(url, headers=self._get_headers(), params=url_params)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        return self.transport.get(url, params=url_params)
 
     def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
         url_params = {}
@@ -61,11 +57,6 @@ class EngineClient:
         if tenant_ids_filter:
             url_params["tenantIdIn"] = tenant_ids_filter
         return url_params
-
-    def _get_headers(self):
-        return {
-            "Content-Type": "application/json"
-        }
 
     def correlate_message(self, message_name, process_instance_id=None, tenant_id=None, business_key=None,
                           process_variables=None):
@@ -92,9 +83,7 @@ class EngineClient:
 
         body = {k: v for k, v in body.items() if v is not None}
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        return self.transport.post(url, json=body)
 
     def get_jobs(self,
                  offset: int,
@@ -123,31 +112,24 @@ class EngineClient:
             params["withException"] = "true"
         if tenant_ids:
             params["tenantIdIn"] = ','.join(tenant_ids)
-        response = requests.get(url, params=params, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
-        return response.json()
+        return self.transport.get(url, params=params)
 
     def set_job_retry(self, job_id, retries=1):
         url = f"{self.engine_base_url}/job/{job_id}/retries"
         body = {"retries": retries}
 
-        response = requests.put(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.status_code == HTTPStatus.NO_CONTENT
+        return self.transport.put(url, json=body, serializer_class=RequestsBooleanSerializer)
 
-    def get_process_instance_variable(self, process_instance_id, variable_name, withmeta=False):
+    def get_process_instance_variable(self, process_instance_id, variable_name, with_meta=False):
         url = f"{self.engine_base_url}/process-instance/{process_instance_id}/variables/{variable_name}"
-        response = requests.get(url, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
-        frame = response.json()
+        variable_meta = self.transport.get(url)
 
         url_with_data = f"{url}/data"
-        response = requests.get(url_with_data, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
+        data = self.transport.get(url_with_data, serializer_class=RequestsRawSerializer)
 
-        decoded_value = base64.encodebytes(response.content).decode("utf-8")
+        decoded_value = base64.encodebytes(data).decode("utf-8")
 
-        if withmeta:
-            return dict(frame, value=decoded_value)
+        if with_meta:
+            return dict(variable_meta, value=decoded_value)
         return decoded_value
 
