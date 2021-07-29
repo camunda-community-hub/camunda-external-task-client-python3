@@ -1,3 +1,5 @@
+[![Community Extension](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)[![Lifecycle: Stable](https://img.shields.io/badge/Lifecycle-Stable-brightgreen)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#stable-)
+
 # camunda-external-task-client-python3
 ![camunda-external-task-client-python3](https://github.com/trustfactors/camunda-external-task-client-python3/workflows/camunda-external-task-client-python3/badge.svg)
 
