@@ -37,12 +37,12 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    def fetch_and_lock(self, topic_names, process_variables=None):
+    def fetch_and_lock(self, topic_names, topics_properties=None):
         url = self.get_fetch_and_lock_url()
         body = {
             "workerId": str(self.worker_id),  # convert to string to make it JSON serializable
             "maxTasks": self.config["maxTasks"],
-            "topics": self._get_topics(topic_names, process_variables),
+            "topics": self._get_topics(topic_names, topics_properties),
             "asyncResponseTimeout": self.config["asyncResponseTimeout"]
         }
 
@@ -61,17 +61,19 @@ class ExternalTaskClient:
         # use HTTP timeout slightly more than async Response / long polling timeout
         return (self.config["timeoutDeltaMillis"] + self.config["asyncResponseTimeout"]) / 1000
 
-    def _get_topics(self, topic_names, process_variables):
+    def _get_topics(self, topic_names, topics_properties):
         topics = []
         for topic in str_to_list(topic_names):
-            topics.append({
+            topics_dict = {
                 "topicName": topic,
                 "lockDuration": self.config["lockDuration"],
-                "processVariables": process_variables if process_variables else {},
                 # enables Camunda Extension Properties
                 "includeExtensionProperties": self.config.get("includeExtensionProperties") or False
-
-            })
+            }
+            if isinstance(topics_properties, dict):
+                for key, value in topics_properties.items():
+                    topics_dict[key] = value
+            topics.append(topics_dict)
         return topics
 
     def complete(self, task_id, global_variables, local_variables={}):
