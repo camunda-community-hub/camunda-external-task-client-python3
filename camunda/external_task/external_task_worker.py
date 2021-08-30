@@ -6,8 +6,6 @@ from camunda.external_task.external_task_executor import ExternalTaskExecutor
 from camunda.utils.log_utils import log_with_context
 from camunda.utils.utils import get_exception_detail
 
-print("test")
-
 
 class ExternalTaskWorker:
     DEFAULT_SLEEP_SECONDS = 300
