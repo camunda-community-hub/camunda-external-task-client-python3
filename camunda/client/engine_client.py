@@ -11,12 +11,14 @@ from camunda.variables.variables import Variables
 logger = logging.getLogger(__name__)
 
 ENGINE_LOCAL_BASE_URL = "http://localhost:8080/engine-rest"
+ENGINE_REST_AUTH = None
 
 
 class EngineClient:
 
-    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL):
+    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL, engine_rest_auth=ENGINE_REST_AUTH):
         self.engine_base_url = engine_base_url
+        self.rest_auth = engine_rest_auth
 
     def get_start_process_instance_url(self, process_key, tenant_id=None):
         if tenant_id:
@@ -39,15 +41,24 @@ class EngineClient:
         if business_key:
             body["businessKey"] = business_key
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
+        if self.rest_auth:
+            response = requests.post(url, auth=self.rest_auth, headers=self._get_headers(), json=body)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.post(url, headers=self._get_headers(), json=body)
+            raise_exception_if_not_ok(response)
         return response.json()
 
     def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
-        response = requests.get(url, headers=self._get_headers(), params=url_params)
-        raise_exception_if_not_ok(response)
+        
+        if self.rest_auth:
+            response = requests.get(url, auth=self.rest_auth, headers=self._get_headers(), params=url_params)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.get(url, headers=self._get_headers(), params=url_params)
+            raise_exception_if_not_ok(response)
         return response.json()
 
     def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
@@ -96,8 +107,12 @@ class EngineClient:
 
         body = {k: v for k, v in body.items() if v is not None}
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
+        if self.rest_auth:
+            response = requests.post(url, auth=self.rest_auth, headers=self._get_headers(), json=body)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.post(url, headers=self._get_headers(), json=body)
+            raise_exception_if_not_ok(response)
         return response.json()
 
     def get_jobs(self,
@@ -127,16 +142,25 @@ class EngineClient:
             params["withException"] = "true"
         if tenant_ids:
             params["tenantIdIn"] = ','.join(tenant_ids)
-        response = requests.get(url, params=params, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
+            
+        if self.rest_auth:
+            response = requests.get(url, auth=self.rest_auth, params=params, headers=self._get_headers())
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.get(url, params=params, headers=self._get_headers())
+            raise_exception_if_not_ok(response)
         return response.json()
 
     def set_job_retry(self, job_id, retries=1):
         url = f"{self.engine_base_url}/job/{job_id}/retries"
         body = {"retries": retries}
 
-        response = requests.put(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
+        if self.rest_auth:
+            response = requests.put(url, auth=self.rest_auth, headers=self._get_headers(), json=body)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.put(url, headers=self._get_headers(), json=body)
+            raise_exception_if_not_ok(response)
         return response.status_code == HTTPStatus.NO_CONTENT
 
     def get_process_instance_variable(self, process_instance_id, variable_name, with_meta=False):

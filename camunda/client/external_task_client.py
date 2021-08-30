@@ -4,6 +4,7 @@ from http import HTTPStatus
 import requests
 
 from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
+from camunda.client.engine_client import ENGINE_REST_AUTH
 from camunda.utils.log_utils import log_with_context
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
@@ -24,7 +25,7 @@ class ExternalTaskClient:
         "includeExtensionProperties": True  # enables Camunda Extension Properties
     }
 
-    def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
+    def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, engine_rest_auth=ENGINE_REST_AUTH, config=None):
         config = config if config is not None else {}
         self.worker_id = worker_id
         self.external_task_base_url = engine_base_url + "/external-task"
@@ -33,6 +34,7 @@ class ExternalTaskClient:
         self.is_debug = config.get('isDebug', False)
         self.http_timeout_seconds = self.config.get('httpTimeoutMillis') / 1000
         self._log_with_context(f"Created External Task client with config: {self.config}")
+        self.rest_auth = engine_rest_auth
 
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
@@ -49,8 +51,13 @@ class ExternalTaskClient:
         if self.is_debug:
             self._log_with_context(f"trying to fetch and lock with request payload: {body}")
         http_timeout_seconds = self.__get_fetch_and_lock_http_timeout_seconds()
-        response = requests.post(url, headers=self._get_headers(), json=body, timeout=http_timeout_seconds)
-        raise_exception_if_not_ok(response)
+        
+        if self.rest_auth:
+            response = requests.post(url, auth=self.rest_auth, headers=self._get_headers(), json=body, timeout=http_timeout_seconds)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.post(url, headers=self._get_headers(), json=body, timeout=http_timeout_seconds)
+            raise_exception_if_not_ok(response)
 
         resp_json = response.json()
         if self.is_debug:
@@ -83,8 +90,12 @@ class ExternalTaskClient:
             "localVariables": Variables.format(local_variables)
         }
 
-        response = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        raise_exception_if_not_ok(response)
+        if self.rest_auth:
+            response = requests.post(url, auth=self.rest_auth, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+            raise_exception_if_not_ok(response)
         return response.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_complete_url(self, task_id):
@@ -102,8 +113,13 @@ class ExternalTaskClient:
         if error_details:
             body["errorDetails"] = error_details
 
-        response = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        raise_exception_if_not_ok(response)
+        if self.rest_auth:
+            response = requests.post(url, auth=self.rest_auth, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+            raise_exception_if_not_ok(response)
+        else:
+            response = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+            raise_exception_if_not_ok(response)
+        
         return response.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_failure_url(self, task_id):
@@ -122,8 +138,13 @@ class ExternalTaskClient:
         if self.is_debug:
             self._log_with_context(f"trying to report bpmn error with request payload: {body}")
 
-        resp = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        resp.raise_for_status()
+        if self.rest_auth:
+            resp = requests.post(url, auth=self.rest_auth, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+            resp.raise_for_status()
+        else:
+            resp = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+            resp.raise_for_status()
+         
         return resp.status_code == HTTPStatus.NO_CONTENT
 
     def get_task_bpmn_error_url(self, task_id):
