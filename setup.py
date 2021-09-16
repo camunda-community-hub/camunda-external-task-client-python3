@@ -21,6 +21,6 @@ setup(
     ],
     python_requires='>=3.7',
     install_requires=[
-        'requests==2.24.0'
+        'requests>=2.24.0'
     ]
 )
