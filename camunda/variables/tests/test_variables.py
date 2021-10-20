@@ -51,3 +51,11 @@ class VariablesTest(TestCase):
                                "var2": {"value": True},
                                "var3": {"value": "string"}})
         self.assertDictEqual({"var1": 1, "var2": True, "var3": "string"}, variables.to_dict())
+
+    def test_json_returns_variables_as_json(self):
+        variables = {"list": ["a", "b", "c"], "obj": [{"z":2, "h":3}, {"t":5, "s":9}], "zobj": {"az": [0, 1, 2], "zot": [True, False, False]}}
+        formatted_vars = Variables.format(variables)
+        self.assertDictEqual({"list": {"type": "json", "value": "[\"a\", \"b\", \"c\"]"},
+                              "obj":  {"type": "json", "value": "[{\"z\": 2, \"h\": 3}, {\"t\": 5, \"s\": 9}]"},
+                              "zobj": {"type": "json", "value": "{\"az\": [0, 1, 2], \"zot\": [true, false, false]}"}}, formatted_vars)
+
