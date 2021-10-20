@@ -42,9 +42,6 @@ class Variables:
             ->
             {"var1": 1, "var2": True}
         """
-        print("#######################################")
-        print(self.variables)
-        print("---------------------------------------")
         result = {}
         for k, v in self.variables.items():
             if 'type' in v and v['type'] == "Json":
