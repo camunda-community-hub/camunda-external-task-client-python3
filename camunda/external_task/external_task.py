@@ -42,13 +42,20 @@ class ExternalTask:
     def get_business_key(self):
         return self._context.get("businessKey", None)
 
+    def get_extension_properties(self):
+        return self._context.get("extensionProperties", None)
+
     def get_task_result(self):
         return self._task_result
 
     def set_task_result(self, task_result):
         self._task_result = task_result
 
-    def complete(self, global_variables={}, local_variables={}):
+    def complete(self, global_variables=None, local_variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        global_variables = {} if global_variables is None else global_variables
+        local_variables = {} if local_variables is None else local_variables
+
         self._task_result = TaskResult.success(self, global_variables, local_variables)
         return self._task_result
 
@@ -105,7 +112,9 @@ class TaskResult:
         self.retry_timeout = retry_timeout
 
     @classmethod
-    def success(cls, task, global_variables, local_variables={}):
+    def success(cls, task, global_variables, local_variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        local_variables = {} if local_variables is None else local_variables
         return TaskResult(
             task,
             success=True,
@@ -125,7 +134,9 @@ class TaskResult:
         )
 
     @classmethod
-    def bpmn_error(cls, task, error_code, error_message, variables={}):
+    def bpmn_error(cls, task, error_code, error_message, variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        variables = {} if variables is None else variables
         return TaskResult(
             task,
             success=False,
@@ -160,7 +171,9 @@ class TaskResult:
 
     def __str__(self):
         if self.is_success():
-            return f"success: task_id={self.task.get_task_id()}, global_variables={self.global_variables}, local_variables={self.local_variables}"
+            return f"success: task_id={self.task.get_task_id()}, " \
+                   f"global_variables={self.global_variables}, " \
+                   f"local_variables={self.local_variables}"
         elif self.is_failure():
             return (
                 f"failure: task_id={self.task.get_task_id()}, "

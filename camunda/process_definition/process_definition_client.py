@@ -35,6 +35,7 @@ class ProcessDefinitionClient(EngineClient):
     def get_process_definitions_url(self):
         return f"{self.engine_base_url}/process-definition"
 
+    @staticmethod
     def get_process_definitions_url_params(
         self,
         process_key,

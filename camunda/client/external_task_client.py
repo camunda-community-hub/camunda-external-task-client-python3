@@ -70,11 +70,13 @@ class ExternalTaskClient:
                 "processVariables": process_variables if process_variables else {},
                 # enables Camunda Extension Properties
                 "includeExtensionProperties": self.config.get("includeExtensionProperties") or False
-
             })
         return topics
 
-    def complete(self, task_id, global_variables, local_variables={}):
+    def complete(self, task_id, global_variables, local_variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        local_variables = {} if local_variables is None else local_variables
+
         url = self.get_task_complete_url(task_id)
 
         body = {
@@ -109,7 +111,10 @@ class ExternalTaskClient:
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"
 
-    def bpmn_failure(self, task_id, error_code, error_message, variables={}):
+    def bpmn_failure(self, task_id, error_code, error_message, variables=None):
+        # Set a default value of "{}" right in the method interface would lead to a mutable default value
+        variables = {} if variables is None else variables
+
         url = self.get_task_bpmn_error_url(task_id)
 
         body = {
@@ -129,7 +134,8 @@ class ExternalTaskClient:
     def get_task_bpmn_error_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/bpmnError"
 
-    def _get_headers(self):
+    @staticmethod
+    def _get_headers():
         return {
             "Content-Type": "application/json"
         }
