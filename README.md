@@ -96,7 +96,7 @@ Camunda provides functionality to start a process instance for a given process d
 
 To start a process instance, we can use `start_process()` from [engine_client.py](./camunda/client/engine_client.py#L24)
 
-You can find an usage example [here](./examples/start_process.py).
+You can find a usage example [here](./examples/start_process.py).
 
 ```python
 client = EngineClient()
@@ -184,7 +184,7 @@ We can correlate the message by:
 - business_key
 - process_variables
 
-You can find an usage example [here](./examples/correlate_message.py).
+You can find a usage example [here](./examples/correlate_message.py).
 
 ```python
 client = EngineClient()
