@@ -1,3 +1,4 @@
+import base64
 from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import patch
@@ -193,3 +194,33 @@ class EngineClientTest(TestCase):
             self.client.correlate_message(message_name="XXX")
 
         self.assertEqual(f"received 400 : RestException : {expected_message}", str(exception_ctx.exception))
+
+    @responses.activate
+    def test_get_process_instance_variable_without_meta(self):
+        process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
+        variable_name = "var1"
+        process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
+        resp_frame_payload = {"value": None, "valueInfo": {}, "type": ""}
+        resp_data_payload = base64.decodebytes(b"hellocamunda")
+        process_instance_var_data_url = f"{process_instance_var_url}/data"
+
+        responses.add(responses.GET, process_instance_var_url, status=HTTPStatus.OK, json=resp_frame_payload)
+        responses.add(responses.GET, process_instance_var_data_url, status=HTTPStatus.OK, body=resp_data_payload)
+
+        resp = self.client.get_process_instance_variable(process_instance_id, variable_name)
+        self.assertEqual("hellocamunda\n", resp)
+
+    @responses.activate
+    def test_get_process_instance_variable_with_meta(self):
+        process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
+        variable_name = "var1"
+        process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
+        resp_frame_payload = {"value": None, "valueInfo": {}, "type": ""}
+        resp_data_payload = base64.decodebytes(b"hellocamunda")
+        process_instance_var_data_url = f"{process_instance_var_url}/data"
+
+        responses.add(responses.GET, process_instance_var_url, status=HTTPStatus.OK, json=resp_frame_payload)
+        responses.add(responses.GET, process_instance_var_data_url, status=HTTPStatus.OK, body=resp_data_payload)
+
+        resp = self.client.get_process_instance_variable(process_instance_id, variable_name, True)
+        self.assertEqual({"value": "hellocamunda\n", "valueInfo": {}, "type": ""}, resp)

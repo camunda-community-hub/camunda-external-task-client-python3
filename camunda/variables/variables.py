@@ -1,3 +1,6 @@
+
+import json
+
 class Variables:
     def __init__(self, variables=None):
         # Set a default value of "{}" right in the method interface would lead to a mutable default value
@@ -5,11 +8,12 @@ class Variables:
 
         self.variables = variables
 
-    def get_variable(self, variable_name):
+    def get_variable(self, variable_name, with_meta=False):
         variable = self.variables.get(variable_name, None)
         if not variable:
             return None
-
+        if with_meta:
+            return variable
         return variable["value"]
 
     @classmethod
@@ -24,7 +28,10 @@ class Variables:
         """
         formatted_vars = {}
         if variables:
-            formatted_vars = {k: {"value": v} for k, v in variables.items()}
+            formatted_vars = {
+                k: v if isinstance(v, dict) else {"value": v}
+                for k, v in variables.items()
+            }
         return formatted_vars
 
     def to_dict(self):

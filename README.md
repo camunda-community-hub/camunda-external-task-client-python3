@@ -1,3 +1,5 @@
+[![Community Extension](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)[![Lifecycle: Stable](https://img.shields.io/badge/Lifecycle-Stable-brightgreen)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#stable-)
+
 # camunda-external-task-client-python3
 ![camunda-external-task-client-python3](https://github.com/trustfactors/camunda-external-task-client-python3/workflows/camunda-external-task-client-python3/badge.svg)
 
@@ -94,7 +96,7 @@ Camunda provides functionality to start a process instance for a given process d
 
 To start a process instance, we can use `start_process()` from [engine_client.py](./camunda/client/engine_client.py#L24)
 
-You can find an usage example [here](./examples/start_process.py).
+You can find a usage example [here](./examples/start_process.py).
 
 ```python
 client = EngineClient()
@@ -182,7 +184,7 @@ We can correlate the message by:
 - business_key
 - process_variables
 
-You can find an usage example [here](./examples/correlate_message.py).
+You can find a usage example [here](./examples/correlate_message.py).
 
 ```python
 client = EngineClient()
