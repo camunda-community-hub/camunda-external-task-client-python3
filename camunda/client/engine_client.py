@@ -50,7 +50,8 @@ class EngineClient:
         raise_exception_if_not_ok(response)
         return response.json()
 
-    def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
+    @staticmethod
+    def __get_process_instance_url_params(process_key, tenant_ids, variables):
         url_params = {}
         if process_key:
             url_params["processDefinitionKey"] = process_key
@@ -62,7 +63,8 @@ class EngineClient:
             url_params["tenantIdIn"] = tenant_ids_filter
         return url_params
 
-    def _get_headers(self):
+    @staticmethod
+    def _get_headers():
         return {
             "Content-Type": "application/json"
         }
