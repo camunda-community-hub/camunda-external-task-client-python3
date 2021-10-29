@@ -201,7 +201,7 @@ class EngineClientTest(TestCase):
         variable_name = "var1"
         process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
         resp_frame_payload = {"value": None, "valueInfo": {}, "type": ""}
-        resp_data_payload = base64.decodebytes("hellocamunda".encode())
+        resp_data_payload = base64.decodebytes(b"hellocamunda")
         process_instance_var_data_url = f"{process_instance_var_url}/data"
 
         responses.add(responses.GET, process_instance_var_url, status=HTTPStatus.OK, json=resp_frame_payload)
@@ -216,7 +216,7 @@ class EngineClientTest(TestCase):
         variable_name = "var1"
         process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
         resp_frame_payload = {"value": None, "valueInfo": {}, "type": ""}
-        resp_data_payload = base64.decodebytes("hellocamunda".encode())
+        resp_data_payload = base64.decodebytes(b"hellocamunda")
         process_instance_var_data_url = f"{process_instance_var_url}/data"
 
         responses.add(responses.GET, process_instance_var_url, status=HTTPStatus.OK, json=resp_frame_payload)
