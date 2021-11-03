@@ -25,10 +25,13 @@ class Variables:
         """
         formatted_vars = {}
         if variables:
-            formatted_vars = {
-                k: v if isinstance(v, dict) else {"value": v}
-                for k, v in variables.items()
-            }
+            for i in variables.keys():
+                if type(variables[i]) in [bool, int, float, str]:
+                    formatted_vars[i] = {"value": variables[i]}
+                elif type(variables[i]) == dict and "value" in variables[i] and type(variables[i]['value']) in [bool, int, float, str]:
+                    formatted_vars[i] = variables[i]
+                else:
+                    formatted_vars[i] = {"value": json.dumps(variables[i]), "type": "json"}
         return formatted_vars
 
     def to_dict(self):
@@ -41,5 +44,8 @@ class Variables:
         """
         result = {}
         for k, v in self.variables.items():
-            result[k] = v["value"]
+            if 'type' in v and v['type'] == "Json":
+                result[k] = json.loads(v["value"])
+            else:
+                result[k] = v["value"]
         return result

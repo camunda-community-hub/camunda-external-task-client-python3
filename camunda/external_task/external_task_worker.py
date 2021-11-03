@@ -1,6 +1,6 @@
 import time
 
-from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL_BASE_URL
+from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL_BASE_URL, ENGINE_REST_AUTH
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
 from camunda.utils.log_utils import log_with_context
@@ -10,10 +10,10 @@ from camunda.utils.utils import get_exception_detail
 class ExternalTaskWorker:
     DEFAULT_SLEEP_SECONDS = 300
 
-    def __init__(self, worker_id, base_url=ENGINE_LOCAL_BASE_URL, config=None):
+    def __init__(self, worker_id, base_url=ENGINE_LOCAL_BASE_URL, rest_auth=ENGINE_REST_AUTH, config=None):
         config = config if config is not None else {}  # To avoid to have a mutable default for a parameter
         self.worker_id = worker_id
-        self.client = ExternalTaskClient(self.worker_id, base_url, config)
+        self.client = ExternalTaskClient(self.worker_id, base_url, rest_auth, config)
         self.executor = ExternalTaskExecutor(self.worker_id, self.client)
         self.config = config
         self._log_with_context(f"Created new External Task Worker with config: {self.config}")
