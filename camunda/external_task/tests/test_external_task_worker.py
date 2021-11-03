@@ -13,7 +13,7 @@ class ExternalTaskWorkerTest(TestCase):
 
     @responses.activate
     @patch('camunda.client.external_task_client.ExternalTaskClient.complete')
-    def test_fetch_and_execute_calls_task_action_for_each_task_fetched(self, mock_client):
+    def test_fetch_and_execute_calls_task_action_for_each_task_fetched(self, _):
         external_task_client = ExternalTaskClient(worker_id=0)
         resp_payload = [{
             "activityId": "anActivityId",

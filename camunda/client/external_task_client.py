@@ -81,7 +81,7 @@ class ExternalTaskClient:
             })
         return topics
 
-    def complete(self, task_id, global_variables, local_variables={}):
+    def complete(self, task_id, global_variables, local_variables=None):
         url = self.get_task_complete_url(task_id)
 
         body = {
@@ -125,7 +125,7 @@ class ExternalTaskClient:
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"
 
-    def bpmn_failure(self, task_id, error_code, error_message, variables={}):
+    def bpmn_failure(self, task_id, error_code, error_message, variables=None):
         url = self.get_task_bpmn_error_url(task_id)
 
         body = {
@@ -150,7 +150,8 @@ class ExternalTaskClient:
     def get_task_bpmn_error_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/bpmnError"
 
-    def _get_headers(self):
+    @staticmethod
+    def _get_headers():
         return {
             "Content-Type": "application/json"
         }
