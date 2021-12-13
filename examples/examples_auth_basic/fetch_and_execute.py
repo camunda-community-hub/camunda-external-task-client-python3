@@ -1,7 +1,7 @@
 import logging
 
 from camunda.external_task.external_task_worker import ExternalTaskWorker
-from examples.task_handler_example import handle_task
+from task_handler_example import handle_task
 
 logger = logging.getLogger(__name__)
 

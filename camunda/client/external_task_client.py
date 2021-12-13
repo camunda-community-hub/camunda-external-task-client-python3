@@ -134,7 +134,7 @@ class ExternalTaskClient:
     def auth_basic(self) -> dict:
         if not self.config.get("auth_basic") or not isinstance(self.config.get("auth_basic"), dict):
             return {}
-        token = AuthBasic(**self.config.get("basic_auth").copy()).token
+        token = AuthBasic(**self.config.get("auth_basic").copy()).token
         return {"Authorization": token}
 
     def _get_headers(self):
