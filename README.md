@@ -29,6 +29,15 @@ To run Camunda locally with Postgres DB as backend, you can use [docker-compose.
 ```
 $> docker-compose -f docker-compose.yml up
 ```
+### Auth Basic Examples
+
+To run the examples with Auth Basic provided in [examples/examples_auth_basic](./examples/examples_auth_basic) folder, you need to have Camunda with AuthBasic, running locally or somewhere.
+
+To run Camunda with AuthBasic locally with Postgres DB as backend, you can use [docker-compose-auth.yml](./docker-compose-auth.yml) file.
+
+```
+$> docker-compose -f docker-compose-auth.yml up
+```
 
 ## Usage
 
@@ -189,6 +198,33 @@ You can find a usage example [here](./examples/correlate_message.py).
 ```python
 client = EngineClient()
 resp_json = client.correlate_message("CANCEL_MESSAGE", business_key="b4a6f392-12ab-11eb-80ef-acde48001122")
+```
+## AuthBasic Usage
+
+To create an EngineClient wirh AuthBasic simple
+
+```python
+client = EngineClient(config={"auth_basic": {"username": "demo", "password": "demo"}})
+resp_json = client.start_process(process_key="PARALLEL_STEPS_EXAMPLE", variables={"intVar": "1", "strVar": "hello"},
+                                 tenant_id="6172cdf0-7b32-4460-9da0-ded5107aa977", business_key=str(uuid.uuid1()))
+```
+
+To create an ExternalTaskWorker wirh AuthBasic simple
+
+```python
+from camunda.external_task.external_task import ExternalTask, TaskResult
+from camunda.external_task.external_task_worker import ExternalTaskWorker
+
+config = {"auth_basic": {"username": "demo", "password": "demo"}}
+
+def handle_task(task: ExternalTask) -> TaskResult:
+    # add your business logic here
+    
+    # Complete the task
+    # pass any output variables you may want to send to Camunda as dictionary to complete()
+    return task.complete({"var1": 1, "var2": "value"})
+
+ExternalTaskWorker(worker_id="1", config=config).subscribe("topicName", handle_task)
 ```
 
 ## License

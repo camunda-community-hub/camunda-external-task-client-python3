@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_PASSWORD=password
     ports:
-      - "5450:5432"
+      - "5432:5432"
 
   camunda_workflow:
     image: camunda/camunda-bpm-platform:7.13.0
@@ -17,4 +17,4 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8090:8080"
+      - "8080:8080"
