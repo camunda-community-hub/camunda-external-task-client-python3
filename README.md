@@ -201,7 +201,7 @@ resp_json = client.correlate_message("CANCEL_MESSAGE", business_key="b4a6f392-12
 ```
 ## AuthBasic Usage
 
-To create an EngineClient wirh AuthBasic simple
+To create an EngineClient with AuthBasic simple
 
 ```python
 client = EngineClient(config={"auth_basic": {"username": "demo", "password": "demo"}})
