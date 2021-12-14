@@ -7,6 +7,7 @@ from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
 from camunda.utils.log_utils import log_with_context
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
+from camunda.utils.auth_basic import AuthBasic
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -129,11 +130,20 @@ class ExternalTaskClient:
     def get_task_bpmn_error_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/bpmnError"
 
-    @staticmethod
-    def _get_headers():
-        return {
+    @property
+    def auth_basic(self) -> dict:
+        if not self.config.get("auth_basic") or not isinstance(self.config.get("auth_basic"), dict):
+            return {}
+        token = AuthBasic(**self.config.get("auth_basic").copy()).token
+        return {"Authorization": token}
+
+    def _get_headers(self):
+        headers = {
             "Content-Type": "application/json"
         }
+        if self.auth_basic:
+            headers.update(self.auth_basic)
+        return headers
 
     def _log_with_context(self, msg, log_level='info', **kwargs):
         context = {"WORKER_ID": self.worker_id}

@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class ProcessDefinitionClient(EngineClient):
-    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL):
-        super().__init__(engine_base_url)
+    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
+        super().__init__(engine_base_url, config=config)
 
     def get_process_definitions(
         self,
