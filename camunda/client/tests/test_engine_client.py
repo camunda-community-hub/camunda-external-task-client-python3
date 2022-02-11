@@ -199,7 +199,8 @@ class EngineClientTest(TestCase):
     def test_get_process_instance_variable_without_meta(self):
         process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
         variable_name = "var1"
-        process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
+        process_instance_var_url = \
+            f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
         resp_frame_payload = {"value": None, "valueInfo": {}, "type": ""}
         resp_data_payload = base64.decodebytes(b"hellocamunda")
         process_instance_var_data_url = f"{process_instance_var_url}/data"
@@ -214,7 +215,8 @@ class EngineClientTest(TestCase):
     def test_get_process_instance_variable_with_meta(self):
         process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
         variable_name = "var1"
-        process_instance_var_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
+        process_instance_var_url = \
+            f"{ENGINE_LOCAL_BASE_URL}/process-instance/{process_instance_id}/variables/{variable_name}"
         resp_frame_payload = {"value": None, "valueInfo": {}, "type": ""}
         resp_data_payload = base64.decodebytes(b"hellocamunda")
         process_instance_var_data_url = f"{process_instance_var_url}/data"
