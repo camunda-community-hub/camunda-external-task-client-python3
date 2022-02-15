@@ -4,6 +4,7 @@ from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
 from camunda.utils.log_utils import log_with_context
+from camunda.utils.auth_basic import obfuscate_password
 from camunda.utils.utils import get_exception_detail
 
 
@@ -16,7 +17,7 @@ class ExternalTaskWorker:
         self.client = ExternalTaskClient(self.worker_id, base_url, config)
         self.executor = ExternalTaskExecutor(self.worker_id, self.client)
         self.config = config
-        self._log_with_context(f"Created new External Task Worker with config: {self.config}")
+        self._log_with_context(f"Created new External Task Worker with config: {obfuscate_password(self.config)}")
 
     def subscribe(self, topic_names, action, process_variables=None):
         while True:
