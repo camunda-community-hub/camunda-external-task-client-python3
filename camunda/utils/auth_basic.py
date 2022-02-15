@@ -11,7 +11,7 @@ def obfuscate_password(config: dict) -> dict:
     """
     _config = copy.deepcopy(config)
     _auth = _config.get('auth_basic')
-    if 'password' in _auth.keys():
+    if _auth is not None and 'password' in _auth.keys():
         _auth['password'] = '***'
     return _config
 
