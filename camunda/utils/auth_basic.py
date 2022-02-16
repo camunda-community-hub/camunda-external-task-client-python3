@@ -1,6 +1,19 @@
 import base64
+import copy
 from pydantic import BaseModel
 
+
+def obfuscate_password(config: dict) -> dict:
+    """Obfuscate password value in auth_basic config
+
+    :param config: config from ExternalTaskWorker or ExternalTaskClient
+    :returns: _config with obfuscated password
+    """
+    _config = copy.deepcopy(config)
+    _auth = _config.get('auth_basic')
+    if _auth is not None and 'password' in _auth.keys():
+        _auth['password'] = '***'
+    return _config
 
 class AuthBasic(BaseModel):
     username: str

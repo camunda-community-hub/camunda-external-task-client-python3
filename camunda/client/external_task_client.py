@@ -7,7 +7,7 @@ from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
 from camunda.utils.log_utils import log_with_context
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
-from camunda.utils.auth_basic import AuthBasic
+from camunda.utils.auth_basic import AuthBasic, obfuscate_password
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class ExternalTaskClient:
         self.config.update(config)
         self.is_debug = config.get('isDebug', False)
         self.http_timeout_seconds = self.config.get('httpTimeoutMillis') / 1000
-        self._log_with_context(f"Created External Task client with config: {self.config}")
+        self._log_with_context(f"Created External Task client with config: {obfuscate_password(self.config)}")
 
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
