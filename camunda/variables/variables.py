@@ -26,7 +26,7 @@ class Variables:
         formatted_vars = {}
         if variables:
             formatted_vars = {
-                k: v if isinstance(v, dict) else {"value": v}
+                k: v if (isinstance(v, dict) and "value" in v.keys()) else {"value": v}
                 for k, v in variables.items()
             }
         return formatted_vars
