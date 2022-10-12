@@ -8,15 +8,15 @@ import responses
 from camunda.client.engine_client import EngineClient, ENGINE_LOCAL_BASE_URL
 
 
-class EngineClientTest(TestCase):
+class EngineClientAuthTest(TestCase):
     tenant_id = "6172cdf0-7b32-4460-9da0-ded5107aa977"
     process_key = "PARALLEL_STEPS_EXAMPLE"
 
     def setUp(self):
-        self.client = EngineClient()
+        self.client = EngineClient(config={"auth_basic": {"username": "demo", "password": "demo"}})
 
     @responses.activate
-    def test_start_process_success(self):
+    def test_auth_basic_start_process_success(self):
         resp_payload = {
             "links": [
                 {
@@ -39,7 +39,7 @@ class EngineClientTest(TestCase):
         self.assertDictEqual(resp_payload, actual_resp_payload)
 
     @responses.activate
-    def test_start_process_not_found_raises_exception(self):
+    def test_auth_basic_start_process_not_found_raises_exception(self):
         resp_payload = {
             "type": "RestException",
             "message": "No matching process definition with key: PROCESS_KEY_NOT_EXISTS and tenant-id: tenant_123"
@@ -55,7 +55,7 @@ class EngineClientTest(TestCase):
                          str(exception_ctx.exception))
 
     @responses.activate
-    def test_start_process_bad_request_raises_exception(self):
+    def test_auth_basic_start_process_bad_request_raises_exception(self):
         client = EngineClient()
         expected_message = "Cannot instantiate process definition " \
                            "PARALLEL_STEPS_EXAMPLE:1:9b72da83-9b91-11ea-bad9-0242ac110002: " \
@@ -72,7 +72,7 @@ class EngineClientTest(TestCase):
         self.assertEqual(f"received 400 : InvalidRequestException : {expected_message}", str(exception_ctx.exception))
 
     @responses.activate
-    def test_start_process_server_error_raises_exception(self):
+    def test_auth_basic_start_process_server_error_raises_exception(self):
         responses.add(responses.POST, self.client.get_start_process_instance_url(self.process_key, self.tenant_id),
                       status=HTTPStatus.INTERNAL_SERVER_ERROR)
         with self.assertRaises(Exception) as exception_ctx:
@@ -82,7 +82,7 @@ class EngineClientTest(TestCase):
                         in str(exception_ctx.exception))
 
     @responses.activate
-    def test_get_process_instance_success(self):
+    def test_auth_basic_get_process_instance_success(self):
         resp_payload = [
             {
                 "links": [],
@@ -106,7 +106,7 @@ class EngineClientTest(TestCase):
         self.assertListEqual(resp_payload, actual_resp_payload)
 
     @responses.activate
-    def test_get_process_instance_bad_request_raises_exception(self):
+    def test_auth_basic_get_process_instance_bad_request_raises_exception(self):
         expected_message = "Invalid variable comparator specified: XXX"
         resp_payload = {
             "type": "InvalidRequestException",
@@ -125,7 +125,7 @@ class EngineClientTest(TestCase):
         self.assertEqual(f"received 400 : InvalidRequestException : {expected_message}", str(exception_ctx.exception))
 
     @responses.activate
-    def test_get_process_instance_server_error_raises_exception(self):
+    def test_auth_basic_get_process_instance_server_error_raises_exception(self):
         get_process_instance_url = f"{ENGINE_LOCAL_BASE_URL}/process-instance" \
                                    f"?processDefinitionKey={self.process_key}" \
                                    f"&tenantIdIn={self.tenant_id}" \
@@ -140,7 +140,7 @@ class EngineClientTest(TestCase):
                         in str(exception_ctx.exception))
 
     @patch('requests.post')
-    def test_correlate_message_with_only_message_name(self, mock_post):
+    def test_auth_basic_correlate_message_with_only_message_name(self, mock_post):
         expected_request_payload = {
             "messageName": "CANCEL_MESSAGE",
             "withoutTenantId": True,
@@ -150,10 +150,11 @@ class EngineClientTest(TestCase):
         self.client.correlate_message("CANCEL_MESSAGE")
         mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
                                      json=expected_request_payload,
-                                     headers={'Content-Type': 'application/json'})
+                                     headers={'Content-Type': 'application/json',
+                                              'Authorization': 'Basic ZGVtbzpkZW1v'})
 
     @patch('requests.post')
-    def test_correlate_message_with_business_key(self, mock_post):
+    def test_auth_basic_correlate_message_with_business_key(self, mock_post):
         expected_request_payload = {
             "messageName": "CANCEL_MESSAGE",
             "withoutTenantId": True,
@@ -164,10 +165,11 @@ class EngineClientTest(TestCase):
         self.client.correlate_message("CANCEL_MESSAGE", business_key="123456")
         mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
                                      json=expected_request_payload,
-                                     headers={'Content-Type': 'application/json'})
+                                     headers={'Content-Type': 'application/json',
+                                              'Authorization': 'Basic ZGVtbzpkZW1v'})
 
     @patch('requests.post')
-    def test_correlate_message_with_tenant_id(self, mock_post):
+    def test_auth_basic_correlate_message_with_tenant_id(self, mock_post):
         expected_request_payload = {
             "messageName": "CANCEL_MESSAGE",
             "withoutTenantId": False,
@@ -178,10 +180,11 @@ class EngineClientTest(TestCase):
         self.client.correlate_message("CANCEL_MESSAGE", tenant_id="123456")
         mock_post.assert_called_with(ENGINE_LOCAL_BASE_URL + "/message",
                                      json=expected_request_payload,
-                                     headers={'Content-Type': 'application/json'})
+                                     headers={'Content-Type': 'application/json',
+                                              'Authorization': 'Basic ZGVtbzpkZW1v'})
 
     @responses.activate
-    def test_correlate_message_invalid_message_name_raises_exception(self):
+    def test_auth_basic_correlate_message_invalid_message_name_raises_exception(self):
         expected_message = "org.camunda.bpm.engine.MismatchingMessageCorrelationException: " \
                            "Cannot correlate message 'XXX': No process definition or execution matches the parameters"
         resp_payload = {
@@ -196,7 +199,7 @@ class EngineClientTest(TestCase):
         self.assertEqual(f"received 400 : RestException : {expected_message}", str(exception_ctx.exception))
 
     @responses.activate
-    def test_get_process_instance_variable_without_meta(self):
+    def test_auth_basic_get_process_instance_variable_without_meta(self):
         process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
         variable_name = "var1"
         process_instance_var_url = \
@@ -212,7 +215,7 @@ class EngineClientTest(TestCase):
         self.assertEqual("hellocamunda\n", resp)
 
     @responses.activate
-    def test_get_process_instance_variable_with_meta(self):
+    def test_auth_basic_get_process_instance_variable_with_meta(self):
         process_instance_id = "c2c68785-9f42-11ea-a841-0242ac1c0004"
         variable_name = "var1"
         process_instance_var_url = \

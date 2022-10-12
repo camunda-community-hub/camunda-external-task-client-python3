@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:11
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+
+  camunda_workflow:
+    build:
+      context: .
+    container_name: camunda_workflow_example_auth
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"

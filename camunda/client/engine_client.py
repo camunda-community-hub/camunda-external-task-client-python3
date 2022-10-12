@@ -6,6 +6,7 @@ import requests
 
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import join
+from camunda.utils.auth_basic import AuthBasic
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -15,7 +16,9 @@ ENGINE_LOCAL_BASE_URL = "http://localhost:8080/engine-rest"
 
 class EngineClient:
 
-    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL):
+    def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
+        config = config if config is not None else {}
+        self.config = config.copy()
         self.engine_base_url = engine_base_url
 
     def get_start_process_instance_url(self, process_key, tenant_id=None):
@@ -50,7 +53,8 @@ class EngineClient:
         raise_exception_if_not_ok(response)
         return response.json()
 
-    def __get_process_instance_url_params(self, process_key, tenant_ids, variables):
+    @staticmethod
+    def __get_process_instance_url_params(process_key, tenant_ids, variables):
         url_params = {}
         if process_key:
             url_params["processDefinitionKey"] = process_key
@@ -62,10 +66,20 @@ class EngineClient:
             url_params["tenantIdIn"] = tenant_ids_filter
         return url_params
 
+    @property
+    def auth_basic(self) -> dict:
+        if not self.config.get("auth_basic") or not isinstance(self.config.get("auth_basic"), dict):
+            return {}
+        token = AuthBasic(**self.config.get("auth_basic").copy()).token
+        return {"Authorization": token}
+
     def _get_headers(self):
-        return {
+        headers = {
             "Content-Type": "application/json"
         }
+        if self.auth_basic:
+            headers.update(self.auth_basic)
+        return headers
 
     def correlate_message(self, message_name, process_instance_id=None, tenant_id=None, business_key=None,
                           process_variables=None):
