@@ -13,7 +13,10 @@ class AuthBearer(BaseModel):
             return value
         if not isinstance(value, dict):
             raise ValueError('token should be dict or str')
-        return value.get('access_token')
+        if not value.get('access_token'):
+            raise KeyError(
+                'you should pass the token inside "access_token" key')
+        return value['access_token']
 
     @validator('access_token')
     @classmethod
