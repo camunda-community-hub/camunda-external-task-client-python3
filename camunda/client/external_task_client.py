@@ -142,7 +142,7 @@ class ExternalTaskClient:
     def auth_bearer(self) -> dict:
         if not self.config.get("auth_bearer") or not isinstance(self.config.get("auth_bearer"), dict):
             return {}
-        token = AuthBearer(access_token=self.config.get("auth_bearer")).access_token
+        token = AuthBearer(access_token=self.config["auth_bearer"]).access_token
         return {"Authorization": token}
 
     def _get_headers(self):
