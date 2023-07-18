@@ -8,6 +8,7 @@ from camunda.utils.log_utils import log_with_context
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
 from camunda.utils.auth_basic import AuthBasic, obfuscate_password
+from camunda.utils.auth_bearer import AuthBearer
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -137,12 +138,21 @@ class ExternalTaskClient:
         token = AuthBasic(**self.config.get("auth_basic").copy()).token
         return {"Authorization": token}
 
+    @property
+    def auth_bearer(self) -> dict:
+        if not self.config.get("auth_bearer") or not isinstance(self.config.get("auth_bearer"), dict):
+            return {}
+        token = AuthBearer(access_token=self.config.get("auth_bearer")).access_token
+        return {"Authorization": token}
+
     def _get_headers(self):
         headers = {
             "Content-Type": "application/json"
         }
         if self.auth_basic:
             headers.update(self.auth_basic)
+        if self.auth_bearer:
+            headers.update(self.auth_bearer)
         return headers
 
     def _log_with_context(self, msg, log_level='info', **kwargs):
