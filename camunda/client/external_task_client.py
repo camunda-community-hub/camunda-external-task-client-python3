@@ -46,7 +46,8 @@ class ExternalTaskClient:
             "maxTasks": self.config["maxTasks"],
             "topics": self._get_topics(topic_names, process_variables, variables),
             "asyncResponseTimeout": self.config["asyncResponseTimeout"],
-            "usePriority": str(bool(use_priority)).lower()
+            "usePriority": str(bool(use_priority)).lower() # convert to string to make it JSON serializable
+                                                           # this value should be in lower case
         }
 
         if self.is_debug:
