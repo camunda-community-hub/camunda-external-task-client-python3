@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Dict, Union
 
 from pydantic import BaseModel, validator
 
@@ -8,7 +8,7 @@ class AuthBearer(BaseModel):
 
     @validator('access_token', pre=True)
     @classmethod
-    def get_token_from_dict(cls, value: Union[str, dict[str, Any]]) -> str:
+    def get_token_from_dict(cls, value: Union[str, Dict[str, Any]]) -> str:
         if isinstance(value, str):
             return value
         if not isinstance(value, dict):
