@@ -23,7 +23,9 @@ class ExternalTaskClient:
         "retryTimeout": 300000,
         "httpTimeoutMillis": 30000,
         "timeoutDeltaMillis": 5000,
-        "includeExtensionProperties": True  # enables Camunda Extension Properties
+        "includeExtensionProperties": True,  # enables Camunda Extension Properties
+        "deserializeValues": True,  # deserialize values when fetch a task by default
+        "usePriority": False
     }
 
     def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
@@ -39,15 +41,14 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    def fetch_and_lock(self, topic_names, process_variables=None, variables=None, use_priority=False):
+    def fetch_and_lock(self, topic_names, process_variables=None, variables=None):
         url = self.get_fetch_and_lock_url()
         body = {
             "workerId": str(self.worker_id),  # convert to string to make it JSON serializable
             "maxTasks": self.config["maxTasks"],
             "topics": self._get_topics(topic_names, process_variables, variables),
             "asyncResponseTimeout": self.config["asyncResponseTimeout"],
-            "usePriority": str(bool(use_priority)).lower() # convert to string to make it JSON serializable
-                                                           # this value should be in lower case
+            "usePriority": self.config["usePriority"]
         }
 
         if self.is_debug:
@@ -74,6 +75,7 @@ class ExternalTaskClient:
                 "processVariables": process_variables if process_variables else {},
                 # enables Camunda Extension Properties
                 "includeExtensionProperties": self.config.get("includeExtensionProperties") or False,
+                "deserializeValues": self.config["deserializeValues"],
                 "variables": variables
             })
         return topics
