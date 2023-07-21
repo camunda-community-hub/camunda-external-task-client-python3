@@ -19,15 +19,17 @@ class ExternalTaskWorker:
         self.config = config
         self._log_with_context(f"Created new External Task Worker with config: {obfuscate_password(self.config)}")
 
-    def subscribe(self, topic_names, action, process_variables=None):
+    def subscribe(self, topic_names, action, process_variables=None, variables=None):
         while True:
-            self._fetch_and_execute_safe(topic_names, action, process_variables)
+            self._fetch_and_execute_safe(topic_names, action, process_variables, variables)
 
         self._log_with_context("Stopping worker")  # Fixme: This code seems to be unreachable?
 
-    def _fetch_and_execute_safe(self, topic_names, action, process_variables=None):
+    def _fetch_and_execute_safe(
+        self, topic_names, action, process_variables=None, variables=None
+    ):
         try:
-            self.fetch_and_execute(topic_names, action, process_variables)
+            self.fetch_and_execute(topic_names, action, process_variables, variables)
         except NoExternalTaskFound:
             self._log_with_context(f"no External Task found for Topics: {topic_names}, "
                                    f"Process variables: {process_variables}", topic=topic_names)
@@ -38,20 +40,20 @@ class ExternalTaskWorker:
                                    f'retrying after {sleep_seconds} seconds', exc_info=True)
             time.sleep(sleep_seconds)
 
-    def fetch_and_execute(self, topic_names, action, process_variables=None):
+    def fetch_and_execute(self, topic_names, action, process_variables=None, variables=None):
         self._log_with_context(f"Fetching and Executing external tasks for Topics: {topic_names} "
                                f"with Process variables: {process_variables}")
-        resp_json = self._fetch_and_lock(topic_names, process_variables)
+        resp_json = self._fetch_and_lock(topic_names, process_variables, variables)
         tasks = self._parse_response(resp_json, topic_names, process_variables)
         if len(tasks) == 0:
             raise NoExternalTaskFound(f"no External Task found for Topics: {topic_names}, "
                                       f"Process variables: {process_variables}")
         self._execute_tasks(tasks, action)
 
-    def _fetch_and_lock(self, topic_names, process_variables=None):
+    def _fetch_and_lock(self, topic_names, process_variables=None, variables=None):
         self._log_with_context(f"Fetching and Locking external tasks for Topics: {topic_names} "
                                f"with Process variables: {process_variables}")
-        return self.client.fetch_and_lock(topic_names, process_variables)
+        return self.client.fetch_and_lock(topic_names, process_variables, variables)
 
     def _parse_response(self, resp_json, topic_names, process_variables):
         tasks = []

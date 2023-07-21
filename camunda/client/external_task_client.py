@@ -23,7 +23,9 @@ class ExternalTaskClient:
         "retryTimeout": 300000,
         "httpTimeoutMillis": 30000,
         "timeoutDeltaMillis": 5000,
-        "includeExtensionProperties": True  # enables Camunda Extension Properties
+        "includeExtensionProperties": True,  # enables Camunda Extension Properties
+        "deserializeValues": True,  # deserialize values when fetch a task by default
+        "usePriority": False
     }
 
     def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
@@ -39,13 +41,14 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    def fetch_and_lock(self, topic_names, process_variables=None):
+    def fetch_and_lock(self, topic_names, process_variables=None, variables=None):
         url = self.get_fetch_and_lock_url()
         body = {
             "workerId": str(self.worker_id),  # convert to string to make it JSON serializable
             "maxTasks": self.config["maxTasks"],
-            "topics": self._get_topics(topic_names, process_variables),
-            "asyncResponseTimeout": self.config["asyncResponseTimeout"]
+            "topics": self._get_topics(topic_names, process_variables, variables),
+            "asyncResponseTimeout": self.config["asyncResponseTimeout"],
+            "usePriority": self.config["usePriority"]
         }
 
         if self.is_debug:
@@ -63,7 +66,7 @@ class ExternalTaskClient:
         # use HTTP timeout slightly more than async Response / long polling timeout
         return (self.config["timeoutDeltaMillis"] + self.config["asyncResponseTimeout"]) / 1000
 
-    def _get_topics(self, topic_names, process_variables):
+    def _get_topics(self, topic_names, process_variables, variables):
         topics = []
         for topic in str_to_list(topic_names):
             topics.append({
@@ -71,8 +74,9 @@ class ExternalTaskClient:
                 "lockDuration": self.config["lockDuration"],
                 "processVariables": process_variables if process_variables else {},
                 # enables Camunda Extension Properties
-                "includeExtensionProperties": self.config.get("includeExtensionProperties") or False
-
+                "includeExtensionProperties": self.config.get("includeExtensionProperties") or False,
+                "deserializeValues": self.config["deserializeValues"],
+                "variables": variables
             })
         return topics
 
