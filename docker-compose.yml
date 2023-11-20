@@ -12,7 +12,7 @@ services:
       - "5432:5432"
 
   camunda_workflow:
-    image: camunda/camunda-bpm-platform:7.13.0
+    image: camunda/camunda-bpm-platform:7.20.0
     container_name: camunda_workflow_example
     depends_on:
       - postgres
