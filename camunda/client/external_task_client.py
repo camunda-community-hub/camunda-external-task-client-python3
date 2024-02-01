@@ -56,9 +56,8 @@ class ExternalTaskClient:
         http_timeout_seconds = self.__get_fetch_and_lock_http_timeout_seconds()
         async with aiohttp.ClientSession() as session:
             response = await session.post(url, headers=self._get_headers(), json=body, timeout=http_timeout_seconds)
-        await raise_exception_if_not_ok(response)
-
-        resp_json = await response.json()
+            await raise_exception_if_not_ok(response)
+            resp_json = await response.json()
         if self.is_debug:
             self._log_with_context(f"fetch and lock response json: {resp_json} for request: {body}")
         return resp_json
@@ -92,7 +91,7 @@ class ExternalTaskClient:
 
         async with aiohttp.ClientSession() as session:
             response = await session.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        await raise_exception_if_not_ok(response)
+            await raise_exception_if_not_ok(response)
         return response.status == HTTPStatus.NO_CONTENT
 
     def get_task_complete_url(self, task_id):
@@ -112,7 +111,7 @@ class ExternalTaskClient:
 
         async with aiohttp.ClientSession() as session:
             response = await session.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        await raise_exception_if_not_ok(response)
+            await raise_exception_if_not_ok(response)
         return response.status == HTTPStatus.NO_CONTENT
 
     def get_task_failure_url(self, task_id):
@@ -133,7 +132,7 @@ class ExternalTaskClient:
 
         async with aiohttp.ClientSession() as session:
             resp = await session.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        resp.raise_for_status()
+            resp.raise_for_status()
         return resp.status == HTTPStatus.NO_CONTENT
 
     def get_task_bpmn_error_url(self, task_id):

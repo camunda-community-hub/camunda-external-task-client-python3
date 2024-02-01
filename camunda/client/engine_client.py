@@ -45,16 +45,16 @@ class EngineClient:
 
         async with aiohttp.ClientSession() as session:
             response = await session.post(url, headers=self._get_headers(), json=body)
-        await raise_exception_if_not_ok(response)
-        return await response.json()
+            await raise_exception_if_not_ok(response)
+            return await response.json()
 
     async def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers=self._get_headers(), params=url_params)
-        await raise_exception_if_not_ok(response)
-        return await response.json()
+            await raise_exception_if_not_ok(response)
+            return await response.json()
 
     @staticmethod
     def __get_process_instance_url_params(process_key, tenant_ids, variables):
@@ -124,8 +124,8 @@ class EngineClient:
 
         async with aiohttp.ClientSession() as session:
             response = await session.post(url, headers=self._get_headers(), json=body)
-        await raise_exception_if_not_ok(response)
-        return await response.json()
+            await raise_exception_if_not_ok(response)
+            return await response.json()
 
     async def get_jobs(self,
                        offset: int,
@@ -156,8 +156,8 @@ class EngineClient:
             params["tenantIdIn"] = ','.join(tenant_ids)
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, params=params, headers=self._get_headers())
-        await raise_exception_if_not_ok(response)
-        return await response.json()
+            await raise_exception_if_not_ok(response)
+            return await response.json()
 
     async def set_job_retry(self, job_id, retries=1):
         url = f"{self.engine_base_url}/job/{job_id}/retries"
@@ -165,22 +165,20 @@ class EngineClient:
 
         async with aiohttp.ClientSession() as session:
             response = await session.put(url, headers=self._get_headers(), json=body)
-        await raise_exception_if_not_ok(response)
+            await raise_exception_if_not_ok(response)
         return response.status == HTTPStatus.NO_CONTENT
 
     async def get_process_instance_variable(self, process_instance_id, variable_name, with_meta=False):
         url = f"{self.engine_base_url}/process-instance/{process_instance_id}/variables/{variable_name}"
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers=self._get_headers())
-        await raise_exception_if_not_ok(response)
-        resp_json = await response.json()
+            await raise_exception_if_not_ok(response)
+            resp_json = await response.json()
 
-        url_with_data = f"{url}/data"
-        async with aiohttp.ClientSession() as session:
+            url_with_data = f"{url}/data"
             response = await session.get(url_with_data, headers=self._get_headers())
-        await raise_exception_if_not_ok(response)
-
-        decoded_value = base64.encodebytes(await response.content.read()).decode("utf-8")
+            await raise_exception_if_not_ok(response)
+            decoded_value = base64.encodebytes(await response.content.read()).decode("utf-8")
 
         if with_meta:
             return dict(resp_json, value=decoded_value)
