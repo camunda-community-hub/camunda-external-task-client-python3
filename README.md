@@ -1,24 +1,25 @@
 [![Community Extension](https://img.shields.io/badge/Community%20Extension-An%20open%20source%20community%20maintained%20project-FF4700)](https://github.com/camunda-community-hub/community)[![Lifecycle: Stable](https://img.shields.io/badge/Lifecycle-Stable-brightgreen)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#stable-)
 
-# camunda-external-task-client-python3
-![camunda-external-task-client-python3](https://github.com/trustfactors/camunda-external-task-client-python3/workflows/camunda-external-task-client-python3/badge.svg)
+# camunda-external-task-client-python3-asyncio
+![camunda-external-task-client-python3-asyncio](https://github.com/dstny-gis/camunda-external-task-client-python3-asyncio/workflows/camunda-external-task-client-python3-asyncio/badge.svg)
 
 This repository contains Camunda External Task Client written in Python3.
 
+This fork of [camunda-community-hub/camunda-external-task-client-python3](https://github.com/camunda-community-hub/camunda-external-task-client-python3) makes use of `async/await` and operates workers asynchronously rather than threaded.
 
 Implement your [BPMN Service Task](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/) in Python3.
 
-> Python >= 3.7 is required
+> Python >= 3.10 is required
 
 ## Installing
 Add following line to `requirements.txt` of your Python project.
 ```
-git+https://github.com/trustfactors/camunda-external-task-client-python3.git/#egg=camunda-external-task-client-python3
+git+https://github.com/dstny-gis/camunda-external-task-client-python3-asyncio.git/#egg=camunda-external-task-client-python3-asyncio
 ```
 
 Or use pip to install as shown below:
 ```
-pip install camunda-external-task-client-python3
+pip install camunda-external-task-client-python3-asyncio
 ```
 
 ## Running Camunda with Docker

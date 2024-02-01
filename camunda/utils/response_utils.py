@@ -1,15 +1,18 @@
-def raise_exception_if_not_ok(response):
+from aiohttp import ClientResponse
+
+
+async def raise_exception_if_not_ok(response: ClientResponse):
     if response.ok:
         return
 
-    resp_json = __get_json_or_raise_for_status(response)
+    resp_json = await __get_json_or_raise_for_status(response)
 
-    raise Exception(get_response_error_message(response.status_code, resp_json))
+    raise Exception(get_response_error_message(response.status, resp_json or {}))
 
 
-def __get_json_or_raise_for_status(response):
+async def __get_json_or_raise_for_status(response: ClientResponse):
     try:
-        return response.json()
+        return await response.json()
     except ValueError as e:
         # if no json available in response then use raise_for_status() to raise exception
         response.raise_for_status()

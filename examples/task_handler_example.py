@@ -7,7 +7,7 @@ from camunda.external_task.external_task import ExternalTask
 from camunda.utils.log_utils import log_with_context
 
 
-def handle_task(task: ExternalTask):
+async def handle_task(task: ExternalTask):
     log_context = {"WORKER_ID": task.get_worker_id(),
                    "TASK_ID": task.get_task_id(),
                    "TOPIC": task.get_topic_name()}
@@ -28,7 +28,7 @@ def handle_task(task: ExternalTask):
     log_with_context(f"handle_task - business logic executed: failure: {failure}, bpmn_error: {bpmn_error}",
                      log_context)
 
-    return __handle_task_result(task, failure, bpmn_error)
+    return await __handle_task_result(task, failure, bpmn_error)
 
 
 def __handle_task_result(task, failure, bpmn_error):

@@ -1,6 +1,6 @@
 import logging
 
-import requests
+import aiohttp
 
 from camunda.client.engine_client import EngineClient, ENGINE_LOCAL_BASE_URL
 from camunda.utils.response_utils import raise_exception_if_not_ok
@@ -14,36 +14,37 @@ class ProcessDefinitionClient(EngineClient):
     def __init__(self, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
         super().__init__(engine_base_url, config=config)
 
-    def get_process_definitions(
-        self,
-        process_key,
-        version_tag,
-        tenant_ids,
-        sort_by="version",
-        sort_order="desc",
-        offset=0,
-        limit=1,
+    async def get_process_definitions(
+            self,
+            process_key,
+            version_tag,
+            tenant_ids,
+            sort_by="version",
+            sort_order="desc",
+            offset=0,
+            limit=1,
     ):
         url = self.get_process_definitions_url()
         url_params = self.get_process_definitions_url_params(
             process_key, version_tag, tenant_ids, sort_by, sort_order, offset, limit
         )
-        response = requests.get(url, headers=self._get_headers(), params=url_params)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=self._get_headers(), params=url_params)
+        await raise_exception_if_not_ok(response)
+        return await response.json()
 
     def get_process_definitions_url(self):
         return f"{self.engine_base_url}/process-definition"
 
     def get_process_definitions_url_params(
-        self,
-        process_key,
-        version_tag=None,
-        tenant_ids=None,
-        sort_by="version",
-        sort_order="desc",
-        offset=0,
-        limit=1,
+            self,
+            process_key,
+            version_tag=None,
+            tenant_ids=None,
+            sort_by="version",
+            sort_order="desc",
+            offset=0,
+            limit=1,
     ):
         """
         offset starts with zero
@@ -63,8 +64,8 @@ class ProcessDefinitionClient(EngineClient):
 
         return url_params
 
-    def start_process_by_version(
-        self, process_key, version_tag, variables, tenant_id=None, business_key=None
+    async def start_process_by_version(
+            self, process_key, version_tag, variables, tenant_id=None, business_key=None
     ):
         """
         Start a process instance with the process_key and specified version tag and variables passed.
@@ -77,7 +78,7 @@ class ProcessDefinitionClient(EngineClient):
         :return: response json
         """
         tenant_ids = [tenant_id] if tenant_id else []
-        process_definitions = self.get_process_definitions(
+        process_definitions = await self.get_process_definitions(
             process_key,
             version_tag,
             tenant_ids,
@@ -113,9 +114,10 @@ class ProcessDefinitionClient(EngineClient):
         if business_key:
             body["businessKey"] = business_key
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(url, headers=self._get_headers(), json=body)
+        await raise_exception_if_not_ok(response)
+        return await response.json()
 
     def get_start_process_url(self, process_definition_id):
         return (
