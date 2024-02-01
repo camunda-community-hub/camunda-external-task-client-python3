@@ -1,5 +1,6 @@
 import logging
 
+from camunda.external_task.external_task import ExternalTask
 from camunda.utils.log_utils import log_with_context
 
 logger = logging.getLogger(__name__)
@@ -11,13 +12,19 @@ class ExternalTaskExecutor:
         self.worker_id = worker_id
         self.external_task_client = external_task_client
 
-    async def execute_task(self, task, action):
+    async def execute_task(self, task: ExternalTask, action):
         topic = task.get_topic_name()
         task_id = task.get_task_id()
         self._log_with_context(f"Executing external task for Topic: {topic}", task_id=task_id)
-        task_result = await action(task)
-        # in case task result is not set inside action function, set it in task here
-        task.set_task_result(task_result)
+        try:
+            task_result = await action(task)
+            # in case task result is not set inside action function, set it in task here
+            task.set_task_result(task_result)
+        except Exception as e:
+            self._log_with_context(f"Error executing external task for Topic: {topic}", task_id=task_id, exc_info=True)
+            task_result = task.failure(str(e), "", 0, 0)
+            return task_result
+
         await self._handle_task_result(task_result)
         return task_result
 

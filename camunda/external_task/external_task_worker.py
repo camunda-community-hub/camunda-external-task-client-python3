@@ -1,4 +1,6 @@
 import asyncio
+from asyncio import Task
+from typing import Dict
 
 from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL_BASE_URL
 from camunda.external_task.external_task import ExternalTask
@@ -17,6 +19,7 @@ class ExternalTaskWorker:
         self.client = ExternalTaskClient(self.worker_id, base_url, config)
         self.executor = ExternalTaskExecutor(self.worker_id, self.client)
         self.config = config
+        self.task_dict: Dict[str, Task] = {}
         self._log_with_context(f"Created new External Task Worker with config: {obfuscate_password(self.config)}")
 
     async def subscribe(self, topic_names, action, process_variables=None, variables=None):
@@ -72,13 +75,19 @@ class ExternalTaskWorker:
                                f"Topics: {topic_names}, Process variables: {process_variables}")
         return tasks
 
-    async def _execute_tasks(self, tasks, action):
+    async def _execute_tasks(self, tasks: list[ExternalTask], action):
         for task in tasks:
-            await self._execute_task(task, action)
+            if task.get_task_id() in self.task_dict:
+                # Cancel a running task when it is offered again
+                self.task_dict[task.get_task_id()].cancel()
+            self.task_dict[task.get_task_id()] = asyncio.create_task(
+                self._execute_task(task, action)
+            )
 
-    async def _execute_task(self, task, action):
+    async def _execute_task(self, task: ExternalTask, action):
         try:
             await self.executor.execute_task(task, action)
+            del self.task_dict[task.get_task_id()]
         except Exception as e:
             self._log_with_context(f'error when executing task: {get_exception_detail(e)}',
                                    topic=task.get_topic_name(), task_id=task.get_task_id(),
