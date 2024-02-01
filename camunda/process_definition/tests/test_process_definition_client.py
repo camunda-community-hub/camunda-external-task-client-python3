@@ -1,12 +1,13 @@
+import re
 from http import HTTPStatus
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 
-import responses
+from aioresponses import aioresponses
 
 from camunda.process_definition.process_definition_client import ProcessDefinitionClient
 
 
-class ProcessDefinitionClientTest(TestCase):
+class ProcessDefinitionClientTest(IsolatedAsyncioTestCase):
 
     def setUp(self):
         self.process_client = ProcessDefinitionClient()
@@ -45,21 +46,20 @@ class ProcessDefinitionClientTest(TestCase):
             "maxResults": 1,
         }, url_params)
 
-    @responses.activate
-    def test_start_process_by_version_raises_exception_if_no_process_definitions_found(self):
+    @aioresponses()
+    async def test_start_process_by_version_raises_exception_if_no_process_definitions_found(self, mocked: aioresponses):
         get_process_definitions_resp = []
-        responses.add(responses.GET, self.process_client.get_process_definitions_url(),
-                      status=HTTPStatus.OK, json=get_process_definitions_resp)
+        mocked.get(re.compile("^" + self.process_client.get_process_definitions_url()), status=HTTPStatus.OK, payload=get_process_definitions_resp)
 
         with self.assertRaises(Exception) as context:
-            self.process_client.start_process_by_version("ORIGINATION", "3.8.3", {}, "tenant1")
+            await self.process_client.start_process_by_version("ORIGINATION", "3.8.3", {}, "tenant1")
 
         self.assertEqual(f"cannot start process because no process definitions found "
                          f"for process_key: ORIGINATION, version_tag: 3.8.3 and tenant_id: tenant1",
                          str(context.exception))
 
-    @responses.activate
-    def test_start_process_by_version_uses_first_process_definition_id_if_more_than_one_found(self):
+    @aioresponses()
+    async def test_start_process_by_version_uses_first_process_definition_id_if_more_than_one_found(self, mocked: aioresponses):
         get_process_definitions_resp = [
             {
                 "id": "process_definition_id_2",
@@ -94,8 +94,7 @@ class ProcessDefinitionClientTest(TestCase):
                 "startableInTasklist": True
             },
         ]
-        responses.add(responses.GET, self.process_client.get_process_definitions_url(),
-                      status=HTTPStatus.OK, json=get_process_definitions_resp)
+        mocked.get(re.compile("^" + self.process_client.get_process_definitions_url()), status=HTTPStatus.OK, payload=get_process_definitions_resp)
 
         start_process_resp = {
             "links": [
@@ -120,15 +119,15 @@ class ProcessDefinitionClientTest(TestCase):
                 }
             }
         }
-        responses.add(responses.POST, self.process_client.get_start_process_url('process_definition_id_2'),
-                      status=HTTPStatus.OK, json=start_process_resp)
+        mocked.post(self.process_client.get_start_process_url('process_definition_id_2'),
+                    status=HTTPStatus.OK, payload=start_process_resp)
 
-        resp_json = self.process_client.start_process_by_version("ORIGINATION", "3.8.3", {}, "tenant1")
+        resp_json = await self.process_client.start_process_by_version("ORIGINATION", "3.8.3", {}, "tenant1")
 
         self.assertDictEqual(start_process_resp, resp_json)
 
-    @responses.activate
-    def test_start_process_by_version_returns_process_details_if_started_successfully(self):
+    @aioresponses()
+    async def test_start_process_by_version_returns_process_details_if_started_successfully(self, mocked: aioresponses):
         get_process_definitions_resp = [
             {
                 "id": "process_definition_id",
@@ -147,8 +146,7 @@ class ProcessDefinitionClientTest(TestCase):
                 "startableInTasklist": True
             }
         ]
-        responses.add(responses.GET, self.process_client.get_process_definitions_url(),
-                      status=HTTPStatus.OK, json=get_process_definitions_resp)
+        mocked.get(re.compile("^" + self.process_client.get_process_definitions_url()), status=HTTPStatus.OK, payload=get_process_definitions_resp)
 
         start_process_resp = {
             "links": [
@@ -173,9 +171,8 @@ class ProcessDefinitionClientTest(TestCase):
                 }
             }
         }
-        responses.add(responses.POST, self.process_client.get_start_process_url('process_definition_id'),
-                      status=HTTPStatus.OK, json=start_process_resp)
+        mocked.post(self.process_client.get_start_process_url('process_definition_id'), status=HTTPStatus.OK, payload=start_process_resp)
 
-        resp_json = self.process_client.start_process_by_version("ORIGINATION", "3.8.3", {}, "tenant1")
+        resp_json = await self.process_client.start_process_by_version("ORIGINATION", "3.8.3", {}, "tenant1")
 
         self.assertDictEqual(start_process_resp, resp_json)

@@ -1,5 +1,6 @@
 import logging
-from concurrent.futures.thread import ThreadPoolExecutor
+
+import asyncio
 
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_worker import ExternalTaskWorker
@@ -52,19 +53,22 @@ def generic_task_handler(task: ExternalTask):
     return task.complete()
 
 
-def main():
+async def main():
+    loop = asyncio.get_event_loop()
+
     configure_logging()
     topics = [("VALIDATE_IMAGE", validate_image),
               # ("APPROVE_IMAGE", generic_task_handler),
               # ("REJECT_IMAGE", generic_task_handler),
               # ("ENHANCE_IMAGE_QUALITY", generic_task_handler),
               ]
-    executor = ThreadPoolExecutor(max_workers=len(topics))
+    tasks = []
     for index, topic_handler in enumerate(topics):
         topic = topic_handler[0]
         handler_func = topic_handler[1]
-        executor.submit(ExternalTaskWorker(worker_id=index, config=default_config).subscribe, topic, handler_func)
+        tasks.append(loop.create_task(ExternalTaskWorker(worker_id=index, config=default_config).subscribe(topic, handler_func)))
 
+    await asyncio.gather(*tasks)
 
 def configure_logging():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s",
@@ -72,4 +76,4 @@ def configure_logging():
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

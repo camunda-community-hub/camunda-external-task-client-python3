@@ -1,5 +1,6 @@
 import logging
-from concurrent.futures.thread import ThreadPoolExecutor
+
+import asyncio
 
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_worker import ExternalTaskWorker
@@ -18,35 +19,37 @@ default_config = {
 }
 
 
-def generic_task_handler(task: ExternalTask):
+async def generic_task_handler(task: ExternalTask):
     log_context = {"WORKER_ID": task.get_worker_id(),
                    "TASK_ID": task.get_task_id(),
                    "TOPIC": task.get_topic_name()}
 
     log_with_context("executing generic task handler", log_context)
-    return task.complete()
+    return await task.complete()
 
 
-def fail_task_handler(task: ExternalTask):
+async def fail_task_handler(task: ExternalTask):
     log_context = {"WORKER_ID": task.get_worker_id(),
                    "TASK_ID": task.get_task_id(),
                    "TOPIC": task.get_topic_name()}
 
     log_with_context("executing fail_task_handler", log_context)
-    return task.failure("task failed", "task failed forced", 0, 10)
+    return await task.failure("task failed", "task failed forced", 0, 10)
 
 
-def main():
+async def main():
+    loop = asyncio.get_event_loop()
+
     configure_logging()
     topics = [
         ("TASK_1", fail_task_handler),
         ("TASK_2", fail_task_handler),
     ]
-    executor = ThreadPoolExecutor(max_workers=len(topics))
+    tasks = []
     for index, topic_handler in enumerate(topics):
         topic = topic_handler[0]
         handler_func = topic_handler[1]
-        executor.submit(ExternalTaskWorker(worker_id=index, config=default_config).subscribe, topic, handler_func)
+        tasks.append(loop.create_task(ExternalTaskWorker(worker_id=index, config=default_config).subscribe(topic, handler_func)))
 
 
 def configure_logging():
@@ -55,4 +58,4 @@ def configure_logging():
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

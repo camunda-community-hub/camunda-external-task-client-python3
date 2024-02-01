@@ -1,14 +1,14 @@
 import logging
 from http import HTTPStatus
 
-import requests
+import aiohttp
 
 from camunda.client.engine_client import ENGINE_LOCAL_BASE_URL
+from camunda.utils.auth_basic import AuthBasic, obfuscate_password
+from camunda.utils.auth_bearer import AuthBearer
 from camunda.utils.log_utils import log_with_context
 from camunda.utils.response_utils import raise_exception_if_not_ok
 from camunda.utils.utils import str_to_list
-from camunda.utils.auth_basic import AuthBasic, obfuscate_password
-from camunda.utils.auth_bearer import AuthBearer
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class ExternalTaskClient:
     def get_fetch_and_lock_url(self):
         return f"{self.external_task_base_url}/fetchAndLock"
 
-    def fetch_and_lock(self, topic_names, process_variables=None, variables=None):
+    async def fetch_and_lock(self, topic_names, process_variables=None, variables=None):
         url = self.get_fetch_and_lock_url()
         body = {
             "workerId": str(self.worker_id),  # convert to string to make it JSON serializable
@@ -54,13 +54,14 @@ class ExternalTaskClient:
         if self.is_debug:
             self._log_with_context(f"trying to fetch and lock with request payload: {body}")
         http_timeout_seconds = self.__get_fetch_and_lock_http_timeout_seconds()
-        response = requests.post(url, headers=self._get_headers(), json=body, timeout=http_timeout_seconds)
-        raise_exception_if_not_ok(response)
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(url, headers=self._get_headers(), json=body, timeout=http_timeout_seconds)
+        await raise_exception_if_not_ok(response)
 
-        resp_json = response.json()
+        resp_json = await response.json()
         if self.is_debug:
             self._log_with_context(f"fetch and lock response json: {resp_json} for request: {body}")
-        return response.json()
+        return resp_json
 
     def __get_fetch_and_lock_http_timeout_seconds(self):
         # use HTTP timeout slightly more than async Response / long polling timeout
@@ -80,7 +81,7 @@ class ExternalTaskClient:
             })
         return topics
 
-    def complete(self, task_id, global_variables, local_variables=None):
+    async def complete(self, task_id, global_variables, local_variables=None):
         url = self.get_task_complete_url(task_id)
 
         body = {
@@ -89,14 +90,15 @@ class ExternalTaskClient:
             "localVariables": Variables.format(local_variables)
         }
 
-        response = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        raise_exception_if_not_ok(response)
-        return response.status_code == HTTPStatus.NO_CONTENT
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+        await raise_exception_if_not_ok(response)
+        return response.status == HTTPStatus.NO_CONTENT
 
     def get_task_complete_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/complete"
 
-    def failure(self, task_id, error_message, error_details, retries, retry_timeout):
+    async def failure(self, task_id, error_message, error_details, retries, retry_timeout):
         url = self.get_task_failure_url(task_id)
         logger.info(f"setting retries to: {retries} for task: {task_id}")
         body = {
@@ -108,14 +110,15 @@ class ExternalTaskClient:
         if error_details:
             body["errorDetails"] = error_details
 
-        response = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
-        raise_exception_if_not_ok(response)
-        return response.status_code == HTTPStatus.NO_CONTENT
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+        await raise_exception_if_not_ok(response)
+        return response.status == HTTPStatus.NO_CONTENT
 
     def get_task_failure_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/failure"
 
-    def bpmn_failure(self, task_id, error_code, error_message, variables=None):
+    async def bpmn_failure(self, task_id, error_code, error_message, variables=None):
         url = self.get_task_bpmn_error_url(task_id)
 
         body = {
@@ -128,9 +131,10 @@ class ExternalTaskClient:
         if self.is_debug:
             self._log_with_context(f"trying to report bpmn error with request payload: {body}")
 
-        resp = requests.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
+        async with aiohttp.ClientSession() as session:
+            resp = await session.post(url, headers=self._get_headers(), json=body, timeout=self.http_timeout_seconds)
         resp.raise_for_status()
-        return resp.status_code == HTTPStatus.NO_CONTENT
+        return resp.status == HTTPStatus.NO_CONTENT
 
     def get_task_bpmn_error_url(self, task_id):
         return f"{self.external_task_base_url}/{task_id}/bpmnError"

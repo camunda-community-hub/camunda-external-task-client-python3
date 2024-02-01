@@ -1,10 +1,10 @@
-import time
+import asyncio
 
 from camunda.client.external_task_client import ExternalTaskClient, ENGINE_LOCAL_BASE_URL
 from camunda.external_task.external_task import ExternalTask
 from camunda.external_task.external_task_executor import ExternalTaskExecutor
-from camunda.utils.log_utils import log_with_context
 from camunda.utils.auth_basic import obfuscate_password
+from camunda.utils.log_utils import log_with_context
 from camunda.utils.utils import get_exception_detail
 
 
@@ -19,41 +19,46 @@ class ExternalTaskWorker:
         self.config = config
         self._log_with_context(f"Created new External Task Worker with config: {obfuscate_password(self.config)}")
 
-    def subscribe(self, topic_names, action, process_variables=None, variables=None):
-        while True:
-            self._fetch_and_execute_safe(topic_names, action, process_variables, variables)
+    async def subscribe(self, topic_names, action, process_variables=None, variables=None):
+        try:
+            while True:
+                await self._fetch_and_execute_safe(topic_names, action, process_variables, variables)
+        except asyncio.exceptions.CancelledError:
+            pass
 
-        self._log_with_context("Stopping worker")  # Fixme: This code seems to be unreachable?
+        self._log_with_context("Stopping worker")
 
-    def _fetch_and_execute_safe(
-        self, topic_names, action, process_variables=None, variables=None
+    async def _fetch_and_execute_safe(
+            self, topic_names, action, process_variables=None, variables=None
     ):
         try:
-            self.fetch_and_execute(topic_names, action, process_variables, variables)
+            await self.fetch_and_execute(topic_names, action, process_variables, variables)
         except NoExternalTaskFound:
             self._log_with_context(f"no External Task found for Topics: {topic_names}, "
                                    f"Process variables: {process_variables}", topic=topic_names)
+        except asyncio.exceptions.CancelledError:
+            raise
         except BaseException as e:
             sleep_seconds = self._get_sleep_seconds()
             self._log_with_context(f'error fetching and executing tasks: {get_exception_detail(e)} '
                                    f'for topic(s)={topic_names} with Process variables: {process_variables}. '
                                    f'retrying after {sleep_seconds} seconds', exc_info=True)
-            time.sleep(sleep_seconds)
+            await asyncio.sleep(sleep_seconds)
 
-    def fetch_and_execute(self, topic_names, action, process_variables=None, variables=None):
+    async def fetch_and_execute(self, topic_names, action, process_variables=None, variables=None):
         self._log_with_context(f"Fetching and Executing external tasks for Topics: {topic_names} "
                                f"with Process variables: {process_variables}")
-        resp_json = self._fetch_and_lock(topic_names, process_variables, variables)
+        resp_json = await self._fetch_and_lock(topic_names, process_variables, variables)
         tasks = self._parse_response(resp_json, topic_names, process_variables)
         if len(tasks) == 0:
             raise NoExternalTaskFound(f"no External Task found for Topics: {topic_names}, "
                                       f"Process variables: {process_variables}")
-        self._execute_tasks(tasks, action)
+        await self._execute_tasks(tasks, action)
 
-    def _fetch_and_lock(self, topic_names, process_variables=None, variables=None):
+    async def _fetch_and_lock(self, topic_names, process_variables=None, variables=None):
         self._log_with_context(f"Fetching and Locking external tasks for Topics: {topic_names} "
                                f"with Process variables: {process_variables}")
-        return self.client.fetch_and_lock(topic_names, process_variables, variables)
+        return await self.client.fetch_and_lock(topic_names, process_variables, variables)
 
     def _parse_response(self, resp_json, topic_names, process_variables):
         tasks = []
@@ -67,13 +72,13 @@ class ExternalTaskWorker:
                                f"Topics: {topic_names}, Process variables: {process_variables}")
         return tasks
 
-    def _execute_tasks(self, tasks, action):
+    async def _execute_tasks(self, tasks, action):
         for task in tasks:
-            self._execute_task(task, action)
+            await self._execute_task(task, action)
 
-    def _execute_task(self, task, action):
+    async def _execute_task(self, task, action):
         try:
-            self.executor.execute_task(task, action)
+            await self.executor.execute_task(task, action)
         except Exception as e:
             self._log_with_context(f'error when executing task: {get_exception_detail(e)}',
                                    topic=task.get_topic_name(), task_id=task.get_task_id(),

@@ -2,12 +2,12 @@ import base64
 import logging
 from http import HTTPStatus
 
-import requests
+import aiohttp
 
-from camunda.utils.response_utils import raise_exception_if_not_ok
-from camunda.utils.utils import join
 from camunda.utils.auth_basic import AuthBasic
 from camunda.utils.auth_bearer import AuthBearer
+from camunda.utils.response_utils import raise_exception_if_not_ok
+from camunda.utils.utils import join
 from camunda.variables.variables import Variables
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class EngineClient:
             return f"{self.engine_base_url}/process-definition/key/{process_key}/tenant-id/{tenant_id}/start"
         return f"{self.engine_base_url}/process-definition/key/{process_key}/start"
 
-    def start_process(self, process_key, variables, tenant_id=None, business_key=None):
+    async def start_process(self, process_key, variables, tenant_id=None, business_key=None):
         """
         Start a process instance with the process_key and variables passed.
         :param process_key: Mandatory
@@ -43,16 +43,18 @@ class EngineClient:
         if business_key:
             body["businessKey"] = business_key
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(url, headers=self._get_headers(), json=body)
+        await raise_exception_if_not_ok(response)
+        return await response.json()
 
-    def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
+    async def get_process_instance(self, process_key=None, variables=frozenset([]), tenant_ids=frozenset([])):
         url = f"{self.engine_base_url}/process-instance"
         url_params = self.__get_process_instance_url_params(process_key, tenant_ids, variables)
-        response = requests.get(url, headers=self._get_headers(), params=url_params)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=self._get_headers(), params=url_params)
+        await raise_exception_if_not_ok(response)
+        return await response.json()
 
     @staticmethod
     def __get_process_instance_url_params(process_key, tenant_ids, variables):
@@ -91,8 +93,8 @@ class EngineClient:
             headers.update(self.auth_bearer)
         return headers
 
-    def correlate_message(self, message_name, process_instance_id=None, tenant_id=None, business_key=None,
-                          process_variables=None):
+    async def correlate_message(self, message_name, process_instance_id=None, tenant_id=None, business_key=None,
+                                process_variables=None):
         """
         Correlates a message to the process engine to either trigger a message start event or
         an intermediate message catching event.
@@ -120,19 +122,20 @@ class EngineClient:
 
         body = {k: v for k, v in body.items() if v is not None}
 
-        response = requests.post(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.post(url, headers=self._get_headers(), json=body)
+        await raise_exception_if_not_ok(response)
+        return await response.json()
 
-    def get_jobs(self,
-                 offset: int,
-                 limit: int,
-                 tenant_ids=None,
-                 with_failure=None,
-                 process_instance_id=None,
-                 task_name=None,
-                 sort_by="jobDueDate",
-                 sort_order="desc"):
+    async def get_jobs(self,
+                       offset: int,
+                       limit: int,
+                       tenant_ids=None,
+                       with_failure=None,
+                       process_instance_id=None,
+                       task_name=None,
+                       sort_by="jobDueDate",
+                       sort_order="desc"):
         # offset starts with zero
         # sort_order can be "asc" or "desc
 
@@ -151,29 +154,33 @@ class EngineClient:
             params["withException"] = "true"
         if tenant_ids:
             params["tenantIdIn"] = ','.join(tenant_ids)
-        response = requests.get(url, params=params, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, params=params, headers=self._get_headers())
+        await raise_exception_if_not_ok(response)
+        return await response.json()
 
-    def set_job_retry(self, job_id, retries=1):
+    async def set_job_retry(self, job_id, retries=1):
         url = f"{self.engine_base_url}/job/{job_id}/retries"
         body = {"retries": retries}
 
-        response = requests.put(url, headers=self._get_headers(), json=body)
-        raise_exception_if_not_ok(response)
-        return response.status_code == HTTPStatus.NO_CONTENT
+        async with aiohttp.ClientSession() as session:
+            response = await session.put(url, headers=self._get_headers(), json=body)
+        await raise_exception_if_not_ok(response)
+        return response.status == HTTPStatus.NO_CONTENT
 
-    def get_process_instance_variable(self, process_instance_id, variable_name, with_meta=False):
+    async def get_process_instance_variable(self, process_instance_id, variable_name, with_meta=False):
         url = f"{self.engine_base_url}/process-instance/{process_instance_id}/variables/{variable_name}"
-        response = requests.get(url, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
-        resp_json = response.json()
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=self._get_headers())
+        await raise_exception_if_not_ok(response)
+        resp_json = await response.json()
 
         url_with_data = f"{url}/data"
-        response = requests.get(url_with_data, headers=self._get_headers())
-        raise_exception_if_not_ok(response)
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url_with_data, headers=self._get_headers())
+        await raise_exception_if_not_ok(response)
 
-        decoded_value = base64.encodebytes(response.content).decode("utf-8")
+        decoded_value = base64.encodebytes(await response.content.read()).decode("utf-8")
 
         if with_meta:
             return dict(resp_json, value=decoded_value)

@@ -1,5 +1,6 @@
 import logging
-from concurrent.futures.thread import ThreadPoolExecutor
+
+import asyncio
 
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from examples.task_handler_example import handle_task
@@ -18,13 +19,15 @@ default_config = {
 }
 
 
-def main():
+async def main():
+    loop = asyncio.get_event_loop()
+
     configure_logging()
     topics = ["PARALLEL_STEP_1", "PARALLEL_STEP_2", "COMBINE_STEP"]
-    executor = ThreadPoolExecutor(max_workers=len(topics))
+    tasks = []
     for index, topic in enumerate(topics):
-        executor.submit(ExternalTaskWorker(worker_id=index, config=default_config).subscribe, topic, handle_task,
-                        {"strVar": "hello"})
+        tasks.append(loop.create_task(ExternalTaskWorker(worker_id=index, config=default_config).subscribe(topic, handle_task,
+                        {"strVar": "hello"})))
 
 
 def configure_logging():
@@ -33,4 +36,4 @@ def configure_logging():
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
