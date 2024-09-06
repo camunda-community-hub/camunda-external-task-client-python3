@@ -25,7 +25,8 @@ class ExternalTaskClient:
         "timeoutDeltaMillis": 5000,
         "includeExtensionProperties": True,  # enables Camunda Extension Properties
         "deserializeValues": True,  # deserialize values when fetch a task by default
-        "usePriority": False
+        "usePriority": False,
+        "sorting": None
     }
 
     def __init__(self, worker_id, engine_base_url=ENGINE_LOCAL_BASE_URL, config=None):
@@ -48,7 +49,8 @@ class ExternalTaskClient:
             "maxTasks": self.config["maxTasks"],
             "topics": self._get_topics(topic_names, process_variables, variables),
             "asyncResponseTimeout": self.config["asyncResponseTimeout"],
-            "usePriority": self.config["usePriority"]
+            "usePriority": self.config["usePriority"],
+            "sorting": self.config["sorting"]
         }
 
         if self.is_debug:
