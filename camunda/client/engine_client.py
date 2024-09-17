@@ -178,3 +178,15 @@ class EngineClient:
         if with_meta:
             return dict(resp_json, value=decoded_value)
         return decoded_value
+    
+    def get_tasks(self, processDefinitionId=None, assignee=None) -> dict:
+        # return the task list based on processDefinitionId and/or assignee
+        url = f"{self.engine_base_url}/task"
+        body = {
+            "processDefinitionId": processDefinitionId,
+            "assignee": assignee
+        }
+        body = {k: v for k, v in body.items() if v is not None}
+        response = requests.post(url, headers=self._get_headers(), json=body)
+        raise_exception_if_not_ok(response)
+        return response.json()
