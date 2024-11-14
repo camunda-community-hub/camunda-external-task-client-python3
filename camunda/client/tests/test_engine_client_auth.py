@@ -78,7 +78,7 @@ class EngineClientAuthTest(TestCase):
         with self.assertRaises(Exception) as exception_ctx:
             self.client.start_process(self.process_key, {"int_var": "1aa2345"}, self.tenant_id)
 
-        self.assertTrue("HTTPStatus.INTERNAL_SERVER_ERROR Server Error: Internal Server Error"
+        self.assertTrue(f"{HTTPStatus.INTERNAL_SERVER_ERROR} Server Error: Internal Server Error"
                         in str(exception_ctx.exception))
 
     @responses.activate
@@ -136,7 +136,7 @@ class EngineClientAuthTest(TestCase):
                                              variables=["intVar_XXX_1", "strVar_eq_hello"],
                                              tenant_ids=[self.tenant_id])
 
-        self.assertTrue("HTTPStatus.INTERNAL_SERVER_ERROR Server Error: Internal Server Error"
+        self.assertTrue(f"{HTTPStatus.INTERNAL_SERVER_ERROR} Server Error: Internal Server Error"
                         in str(exception_ctx.exception))
 
     @patch('requests.post')
