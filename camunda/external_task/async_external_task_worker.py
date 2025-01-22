@@ -123,21 +123,37 @@ class AsyncExternalTaskWorker:
         try:
             await self.executor.execute_task(task, action)
         except asyncio.CancelledError:
+            task_result = task.failure(
+                error_message='Task execution cancelled',
+                error_details='Task was cancelled by the user or system',
+                max_retries=self.config.get('retries', AsyncExternalTaskClient.default_config['retries']),
+                retry_timeout=self.config.get('retryTimeout', AsyncExternalTaskClient.default_config['retryTimeout'])
+            )
+            await self.executor._handle_task_result(task_result)
             self._log_with_context(
                 f"Task execution cancelled for task_id: {task.get_task_id()}",
                 topic=task.get_topic_name(),
                 task_id=task.get_task_id(),
                 log_level="info"
             )
-            raise  # Re-raise the exception to propagate cancellation
+            return task_result
         except Exception as e:
+            task_result = task.failure(
+                error_message='Task execution failed',
+                error_details='An unexpected error occurred while executing the task',
+                max_retries=self.config.get('retries', AsyncExternalTaskClient.default_config['retries']),
+                retry_timeout=self.config.get('retryTimeout', AsyncExternalTaskClient.default_config['retryTimeout'])
+            )
+            await self.executor._handle_task_result(task_result)
             self._log_with_context(
-                f"Error when executing task: {get_exception_detail(e)}",
+                f"Error when executing task: {get_exception_detail(e)}. "
+                f"Task execution cancelled for task_id: {task.get_task_id()}.",
                 topic=task.get_topic_name(),
                 task_id=task.get_task_id(),
                 log_level="error",
                 exc_info=True
             )
+            return task_result
 
     def _log_with_context(
         self,
