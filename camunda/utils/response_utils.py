@@ -1,6 +1,12 @@
 def raise_exception_if_not_ok(response):
-    if response.ok:
-        return
+    # Check if the response has the `ok` attribute
+    if hasattr(response, 'ok'):
+        if response.ok:
+            return
+    else:
+        # For httpx, treat status_code < 400 as "ok"
+        if response.status_code < 400:
+            return
 
     resp_json = __get_json_or_raise_for_status(response)
 
