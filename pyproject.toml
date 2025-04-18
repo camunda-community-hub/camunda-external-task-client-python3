@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=78", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "camunda_external_task_client_python3"
+version = "4.5.0"
+authors = [
+    { name = "Deserve Labs", email="devteam@deserve.com" },
+]
+dependencies = [
+    "requests>=2.24.0"
+]
+description = "Camunda External Task Client for Python 3"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries",
+]
+license = "Apache-2.0"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/camunda-community-hub/camunda-external-task-client-python3"
+Issues = "https://github.com/camunda-community-hub/camunda-external-task-client-python3/issues"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests"]
+include = ["*"]
